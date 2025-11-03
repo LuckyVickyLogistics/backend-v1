@@ -1,0 +1,37 @@
+name: "✨ Feature"
+description: "새로운 기능 추가"
+title: "[Feature] "
+labels: ["feature"]
+assignees: []
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "📄 설명"
+      description: "새로운 기능에 대한 설명을 작성해 주세요."
+      placeholder: "자세히 적을수록 좋습니다!"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: tasks
+    attributes:
+      label: "✅ 작업할 내용"
+      description: "할 일을 체크박스 형태로 작성해주세요."
+      options:
+        - label: "기능 요구사항 정리"
+        - label: "API 스펙 정의"
+        - label: "구현"
+        - label: "테스트"
+        - label: "문서화"
+    validations:
+      required: false
+
+  - type: textarea
+    id: refs
+    attributes:
+      label: "🙋🏻 참고 자료"
+      description: "관련 링크, 스크린샷 등을 적어주세요."
+      placeholder: "예: 관련 이슈/PR, 디자인 시안, 문서 링크 등"
+    validations:
+      required: false
