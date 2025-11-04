@@ -1,15 +1,14 @@
 package com.luckylogistics.company.application;
 
-import com.luckylogistics.company.application.external.HubService;
-import com.luckylogistics.company.domain.entity.Company;
-import com.luckylogistics.company.domain.CompanyRepository;
-import com.luckylogistics.company.domain.CompanyDomainService;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
+import com.luckylogistics.company.application.external.HubService;
+import com.luckylogistics.company.domain.CompanyDomainService;
+import com.luckylogistics.company.domain.CompanyRepository;
+import com.luckylogistics.company.domain.entity.Company;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +21,18 @@ public class CompanyService {
 
     private final HubService hubService;
 
-    public Page<CompanyResponse> getCompanies(String keyword, Pageable pageable) {
-        //todo: 구현해야함
-        return null;
+    public List<CompanyResponse> getCompanies(String name) {
+        List<Company> result;
+        if (name == null || name.isEmpty()) {
+            result = companyRepository.findAll();
+        }
+        else{
+            result = companyRepository.findByName(name);
+        }
+        return result
+            .stream()
+            .map(CompanyResponse::from)
+            .toList();
     }
 
     public CompanyResponse getCompany(UUID companyId) {

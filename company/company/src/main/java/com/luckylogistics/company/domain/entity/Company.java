@@ -1,7 +1,6 @@
 package com.luckylogistics.company.domain.entity;
 
 import com.luckylogistics.company.infrastructure.model.BaseEntity;
-import com.luckylogistics.company.application.dto.CompanyRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

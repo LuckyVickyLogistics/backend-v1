@@ -1,7 +1,8 @@
 package com.luckylogistics.company.infrastructure.repository;
 
-import com.luckylogistics.company.domain.entity.Company;
 import com.luckylogistics.company.domain.CompanyRepository;
+import com.luckylogistics.company.domain.entity.Company;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,5 +21,15 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
     @Override
     public void save(Company company) {
         jpaRepository.save(company);
+    }
+
+    @Override
+    public List<Company> findAll(){
+        return jpaRepository.findAll();
+    }
+
+    @Override
+    public List<Company> findByName(String name){
+        return jpaRepository.findByName(name);
     }
 }

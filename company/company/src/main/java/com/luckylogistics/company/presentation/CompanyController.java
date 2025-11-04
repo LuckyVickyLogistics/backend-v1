@@ -3,11 +3,9 @@ package com.luckylogistics.company.presentation;
 import com.luckylogistics.company.application.CompanyService;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,10 +27,9 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping
-    public ResponseEntity<Page<CompanyResponse>> getCompanies(
-        @RequestParam(required = false) String keyword,
-        @PageableDefault(size = 10) Pageable pageable) {
-        Page<CompanyResponse> result = companyService.getCompanies(keyword, pageable);
+    public ResponseEntity<List<CompanyResponse>> getCompanies(
+        @RequestParam(required = false) String name) {
+        List<CompanyResponse> result = companyService.getCompanies(name);
         return ResponseEntity.ok(result);
     }
 
