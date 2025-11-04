@@ -10,6 +10,12 @@ public interface CompanyJpaRepository extends JpaRepository<Company, UUID> {
 
     @Query("""
       select c from Company c
+      where c.deletedAt is null
+    """)
+    List<Company> findAllActive();
+
+    @Query("""
+      select c from Company c
       where (:name is null or lower(c.name) like lower(concat('%', :name, '%')))
       and c.deletedAt is null
     """)

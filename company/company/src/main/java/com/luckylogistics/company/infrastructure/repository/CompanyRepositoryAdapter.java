@@ -25,7 +25,7 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
 
     @Override
     public List<Company> findAll(){
-        return jpaRepository.findAll();
+        return jpaRepository.findAllActive();
     }
 
     @Override
