@@ -1,6 +1,6 @@
-package com.luckylogistics.company.infrastructure;
+package com.luckylogistics.company.infrastructure.repository;
 
-import com.luckylogistics.company.domain.Company;
+import com.luckylogistics.company.domain.entity.Company;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

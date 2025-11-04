@@ -1,4 +1,4 @@
-package com.luckylogistics.company.domain;
+package com.luckylogistics.company.domain.entity;
 
 public enum CompanyType {
     SUPPLIER, CUSTOMER;
