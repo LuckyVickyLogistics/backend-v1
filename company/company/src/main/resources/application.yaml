@@ -1,3 +1,13 @@
 spring:
   application:
     name: company
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19095/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost  # 클라이언트 호스트 이름
+    prefer-ip-address: true
