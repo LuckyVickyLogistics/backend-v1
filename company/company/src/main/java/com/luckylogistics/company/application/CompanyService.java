@@ -1,5 +1,6 @@
 package com.luckylogistics.company.application;
 
+import com.luckylogistics.company.application.external.HubService;
 import com.luckylogistics.company.domain.entity.Company;
 import com.luckylogistics.company.domain.CompanyRepository;
 import com.luckylogistics.company.domain.CompanyDomainService;
@@ -19,6 +20,8 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyDomainService domainService;
 
+    private final HubService hubService;
+
     public Page<CompanyResponse> getCompanies(String keyword, Pageable pageable) {
         //todo: 구현해야함
         return null;
@@ -30,23 +33,22 @@ public class CompanyService {
     }
 
     @Transactional
-    public CompanyResponse createCompany(CompanyRequest companyRequest) {
-        // todo: 허브가 존재하는지 확인 > feignClient
-        Company company = companyRequest.toEntity();
+    public CompanyResponse createCompany(CompanyRequest request) {
+        hubService.isHubExists(request.hubId());
+        Company company = request.toEntity();
         companyRepository.save(company);
         return CompanyResponse.from(company);
     }
 
     @Transactional
     public void updateCompany(UUID companyId, CompanyRequest request) {
-        // todo: 허브가 존재하는지 확인 > feignClient
+        hubService.isHubExists(request.hubId());
         Company company = companyRepository.findById(companyId);
         company.update(request.name(), request.address(), request.type(), request.hubId());
     }
 
     @Transactional
     public void deleteCompany(Long userId, UUID companyId) {
-        // todo: 허브가 존재하는지 확인 > feignClient
         Company company = companyRepository.findById(companyId);
         company.delete(userId);
     }
