@@ -29,6 +29,7 @@ ext {
 }
 
 dependencies {
+	implementation 'io.zipkin.reporter2.:zipkin-reporter-brave'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
