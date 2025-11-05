@@ -22,7 +22,7 @@ public abstract class BaseEntity {
     private LocalDateTime createdAt;
 
     @CreatedBy
-    @Column(name = "created_by", updatable = false, length = 100)
+    @Column(name = "created_by", updatable = false)
     private Long createdBy;
 
     @LastModifiedDate
@@ -30,18 +30,23 @@ public abstract class BaseEntity {
     private LocalDateTime updatedAt;
 
     @LastModifiedBy
-    @Column(name = "updated_by", length = 100)
+    @Column(name = "updated_by")
     private Long updatedBy;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @Column(name = "deleted_by", length = 100)
+    @Column(name = "deleted_by")
     private Long deletedBy;
 
     public void delete(Long deletedBy) {
         this.deletedAt = LocalDateTime.now();
         this.deletedBy = deletedBy;
+    }
+
+    public void restore() {
+        this.deletedAt = null;
+        this.deletedBy = null;
     }
 
     public boolean isDeleted() {
