@@ -3,6 +3,7 @@ package com.luckylogistics.company.infrastructure.repository;
 import com.luckylogistics.company.domain.CompanyRepository;
 import com.luckylogistics.company.domain.entity.Company;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,9 +14,8 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
     private final CompanyJpaRepository jpaRepository;
 
     @Override
-    public Company findById(UUID companyId){
-        return jpaRepository.findById(companyId)
-            .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+    public Optional<Company> findById(UUID companyId){
+        return jpaRepository.findById(companyId);
     }
 
     @Override

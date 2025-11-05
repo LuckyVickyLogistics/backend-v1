@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "p_company")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Company extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,7 +30,7 @@ public class Company extends BaseEntity {
     private String name;
 
     @Column(name = "address", nullable = false)
-    private String address; // todo: VO 객체로 전환 가능
+    private String address;
 
     @Column(name = "type", nullable = false, length = 10)
     private CompanyType type;
@@ -35,12 +38,13 @@ public class Company extends BaseEntity {
     @Column(name = "hub_id", nullable = false)
     private UUID hubId;
 
-    @Builder
-    public Company(String name, String address, CompanyType type, UUID hubId) {
-        this.name = name;
-        this.address = address;
-        this.type = type;
-        this.hubId = hubId;
+    public static Company create(String name, String address, CompanyType type, UUID hubId) {
+        return Company.builder()
+            .name(name)
+            .address(address)
+            .type(type)
+            .hubId(hubId)
+            .build();
     }
 
     public void update(String name, String address, CompanyType type, UUID hubId) {

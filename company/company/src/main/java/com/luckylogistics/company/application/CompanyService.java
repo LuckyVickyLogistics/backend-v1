@@ -36,14 +36,15 @@ public class CompanyService {
     }
 
     public CompanyResponse getCompany(UUID companyId) {
-        Company company = companyRepository.findById(companyId);
+        Company company = companyRepository.findById(companyId)
+            .orElseThrow(() -> new IllegalArgumentException("Company not found"));
         return CompanyResponse.from(company);
     }
 
     @Transactional
     public CompanyResponse createCompany(CompanyRequest request) {
         hubService.isHubExists(request.hubId());
-        Company company = request.toEntity();
+        Company company = Company.create(request.name(), request.address(), request.type(), request.hubId());
         companyRepository.save(company);
         return CompanyResponse.from(company);
     }
@@ -51,13 +52,15 @@ public class CompanyService {
     @Transactional
     public void updateCompany(UUID companyId, CompanyRequest request) {
         hubService.isHubExists(request.hubId());
-        Company company = companyRepository.findById(companyId);
+        Company company = companyRepository.findById(companyId)
+            .orElseThrow(() -> new IllegalArgumentException("Company not found"));
         company.update(request.name(), request.address(), request.type(), request.hubId());
     }
 
     @Transactional
     public void deleteCompany(Long userId, UUID companyId) {
-        Company company = companyRepository.findById(companyId);
+        Company company = companyRepository.findById(companyId)
+            .orElseThrow(() -> new IllegalArgumentException("Company not found"));
         company.delete(userId);
     }
 }
