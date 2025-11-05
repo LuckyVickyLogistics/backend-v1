@@ -30,9 +30,13 @@ public class Quantity {
         return new Quantity(totalAmount);
     }
 
-    //품절 대비로 넣음
+    //재고 확인하는 메서드
     public boolean isZero() {
         return this.value == 0;
+    }
+
+    public boolean nonZero() {
+        return this.value > 0;
     }
 
 

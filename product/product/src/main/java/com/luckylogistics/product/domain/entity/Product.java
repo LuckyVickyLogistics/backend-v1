@@ -3,16 +3,13 @@ package com.luckylogistics.product.domain.entity;
 import com.luckylogistics.product.infrastructure.model.BaseEntity;
 import com.luckylogistics.product.domain.vo.Quantity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "p_products")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -24,12 +21,16 @@ public class Product extends BaseEntity {
     @Column(name = "product_name", nullable = false)
     private String productName;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "company_id", nullable = false))
+
+    @Column(name = "company_id", nullable = false)
     private UUID companyId;
-    @AttributeOverride(name = "value", column = @Column(name = "hub_id", nullable = false))
+    @Column(name = "hub_id", nullable = false)
     private UUID hubId;
-    @AttributeOverride(name = "value", column = @Column(name = "product_quantity", nullable = false))
+
+
+    @Embedded
+    @AttributeOverride(name = "value",
+            column = @Column(name = "product_quantity", nullable = false))
     private Quantity quantity;
     @Column(name = "product_total_quantity", nullable = false)
     private int totalQuantity;
@@ -42,7 +43,7 @@ public class Product extends BaseEntity {
 
     //DDD에선 내부에서 모든값을 검증하고 조정한다.
 
-    public static Product create(String productName, UUID companyId, UUID hubId, Quantity quantity, int totalQuantity, int price, ProductStatus status) {
+    public static Product create(String productName, UUID companyId, UUID hubId, Quantity quantity, int totalQuantity, int price) {
 
         if (productName == null || productName.isBlank()) {
             throw new IllegalArgumentException("상품 이름은 빌 수 없습니다.");
@@ -77,6 +78,44 @@ public class Product extends BaseEntity {
                 .status(ProductStatus.ON_SALE)
                 .build();
     }
+
+    public void update(String productName, int price, int totalQuantity, Quantity quantity, ProductStatus status) {
+        if (productName == null || productName.isBlank()) {
+            throw new IllegalArgumentException("수정할 상품의 이름은 빌 수 없습니다.");
+        }
+        if (price < 0) {
+            throw new IllegalArgumentException("수정할 상품 가격은 0원 이상이어야 합니다.");
+        }
+        if (quantity == null) {
+            throw new IllegalArgumentException("수정할 수량은 0 이상의 숫자여야 합니다.");
+        }
+        if (quantity.getValue() > totalQuantity) {
+            throw new IllegalArgumentException("수정한 재고 수가 총 수량을 초과했습니다.");
+        }
+        this.productName = productName;
+        this.price = price;
+        this.quantity = quantity;
+        this.status = status;
+    }
+
+    public void delete() {
+        this.status = ProductStatus.DELETED;
+    }
+
+    public void rollbackDelete() {
+        this.status = ProductStatus.ON_SALE;
+    }
+
+    public void minusQuantity(int amount) {
+        if (this.status == ProductStatus.DELETED) {
+            throw new IllegalArgumentException("삭제된 상품의 재고는 차감될 수 없습니다.");
+        }
+        this.quantity = this.quantity.minus(amount);
+        //0이면 SOLD_OUT 으로 바뀌게 조작
+        this.status = ProductStatus.fromQuantity(this.quantity.getValue());
+    }
+
+
 }
 
 

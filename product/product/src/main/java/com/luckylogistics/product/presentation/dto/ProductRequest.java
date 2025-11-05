@@ -3,9 +3,9 @@ package com.luckylogistics.product.presentation.dto;
 import java.util.UUID;
 
 public record ProductRequest(
-        String name,
+        String productName,
         Integer price,
-        Integer Quantity,
+        Integer totalQuantity,
         UUID companyId,
         UUID hubId,
         Integer initialQuantity
