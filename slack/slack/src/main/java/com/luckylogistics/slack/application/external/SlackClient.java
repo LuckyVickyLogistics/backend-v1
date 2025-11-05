@@ -6,4 +6,6 @@ public interface SlackClient {
 
 	void sendMessage(OrderCreatedResult command, String receiverEmail, String aiPrompt);
 
+	boolean existsByEmail(String email);
+
 }

@@ -1,5 +1,6 @@
 package com.luckylogistics.slack.infrastructure.external.slack;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -8,30 +9,27 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.luckylogistics.slack.application.result.OrderCreatedResult;
 import com.luckylogistics.slack.application.external.SlackClient;
+import com.luckylogistics.slack.application.result.OrderCreatedResult;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
+import com.slack.api.methods.SlackApiException;
 import com.slack.api.model.Attachment;
 import com.slack.api.model.Field;
 
 @Component
 public class SlackClientImpl implements SlackClient {
 
-	private final Slack slack;
-	private final String botToken;
+	private final MethodsClient client;
 	private final DateTimeFormatter formatter;
 
 	public SlackClientImpl(@Value("${slack.bot.token}") String botToken) {
-		this.slack = Slack.getInstance();
-		this.botToken = botToken;
+		this.client = Slack.getInstance().methods(botToken);
 		formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Seoul"));
 	}
 
 	@Override
 	public void sendMessage(OrderCreatedResult command, String receiverEmail, String aiPrompt) {
-		MethodsClient client = slack.methods(botToken);
-
 		try {
 			String userId = client.usersLookupByEmail(r -> r.email(receiverEmail)).getUser().getId();
 			String channelId = client.conversationsOpen(r -> r.users(List.of(userId))).getChannel().getId();
@@ -41,7 +39,17 @@ public class SlackClientImpl implements SlackClient {
 				.text("주문이 생성되었습니다.")
 				.attachments(List.of(createAttachment(command, aiPrompt)))
 			);
-		} catch (Exception e) {
+		} catch (IOException | SlackApiException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public boolean existsByEmail(String email) {
+		try {
+			return client.usersLookupByEmail(r -> r.email(email)).getUser() != null;
+		} catch (IOException | SlackApiException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}

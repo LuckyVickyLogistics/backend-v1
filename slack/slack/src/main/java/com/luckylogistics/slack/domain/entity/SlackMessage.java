@@ -48,7 +48,9 @@ public class SlackMessage extends BaseEntity<SlackMessage> {
 		this.registerEvent(new SlackMessageSavedEvent(status.getDescription()));
 	}
 
-	public void updateStatus(Status newStatus) {
+	public void updateStatus(String strStatus) {
+		Status newStatus = validateStatus(strStatus);
+
 		if (!status.canTransitionTo(newStatus)) {
 			throw new IllegalArgumentException(("'%s' 상태에서 '%s' 상태로 변경할 수 없습니다.")
 				.formatted(status.getDescription(), newStatus.getDescription()));
@@ -56,6 +58,18 @@ public class SlackMessage extends BaseEntity<SlackMessage> {
 		this.status = newStatus;
 
 		this.registerEvent(new SlackMessageSavedEvent(status.getDescription()));
+	}
+
+	private Status validateStatus(String strStatus) {
+		if (strStatus == null || strStatus.isBlank()) {
+			throw new IllegalArgumentException("상태 값이 비어있습니다.");
+		}
+
+		try {
+			return Status.valueOf(strStatus.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("유효하지 않은 상태 값입니다.");
+		}
 	}
 
 }
