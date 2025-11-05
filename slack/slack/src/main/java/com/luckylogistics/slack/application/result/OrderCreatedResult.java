@@ -1,4 +1,4 @@
-package com.luckylogistics.slack.application.command;
+package com.luckylogistics.slack.application.result;
 
 import java.time.Instant;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record OrderCreatedCommand(
+public record OrderCreatedResult(
 
 	UUID orderId,
 

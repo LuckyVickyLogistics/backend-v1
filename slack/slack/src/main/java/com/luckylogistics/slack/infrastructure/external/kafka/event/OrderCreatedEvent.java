@@ -1,10 +1,10 @@
-package com.luckylogistics.slack.application.event;
+package com.luckylogistics.slack.infrastructure.external.kafka.event;
 
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
-// TODO: receiverEmail 필드 추가
 public record OrderCreatedEvent(
 
 	UUID orderId,
@@ -14,6 +14,8 @@ public record OrderCreatedEvent(
 	String customerEmail,
 
 	Instant orderedAt,
+
+	String receiverEmail,
 
 	String productName,
 
@@ -30,6 +32,10 @@ public record OrderCreatedEvent(
 	String deliveryManagerName,
 
 	String deliveryManagerEmail,
+
+	LocalTime deliveryManagerStartTime,
+
+	LocalTime deliveryManagerEndTime,
 
 	Instant occurredAt
 

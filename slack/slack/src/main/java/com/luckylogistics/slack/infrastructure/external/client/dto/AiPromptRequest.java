@@ -3,17 +3,42 @@ package com.luckylogistics.slack.infrastructure.external.client.dto;
 import java.time.LocalTime;
 import java.util.List;
 
-public record AiPromptRequest(String productName,
+import com.luckylogistics.slack.application.result.OrderCreatedResult;
 
-							  String request,
+import lombok.Builder;
 
-							  String startPoint,
+@Builder
+public record AiPromptRequest(
 
-							  List<String> waypoints,
+	String productName,
 
-							  String endPoint,
+	int quantity,
 
-							  LocalTime deliveryManagerStartTime,
+	String request,
 
-							  LocalTime deliveryManagerEndTime) {
+	String startPoint,
+
+	List<String> waypoints,
+
+	String endPoint,
+
+	LocalTime deliveryManagerStartTime,
+
+	LocalTime deliveryManagerEndTime
+
+) {
+
+	public static AiPromptRequest from(OrderCreatedResult result, LocalTime startTime, LocalTime endTime) {
+		return AiPromptRequest.builder()
+			.productName(result.productName())
+			.quantity(result.quantity())
+			.request(result.request())
+			.startPoint(result.startPoint())
+			.waypoints(result.waypoints())
+			.endPoint(result.endPoint())
+			.deliveryManagerStartTime(startTime)
+			.deliveryManagerEndTime(endTime)
+			.build();
+	}
+
 }

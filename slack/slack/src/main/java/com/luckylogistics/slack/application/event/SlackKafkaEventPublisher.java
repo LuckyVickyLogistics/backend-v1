@@ -1,6 +1,8 @@
 package com.luckylogistics.slack.application.event;
 
-public interface SlackEventPublisher {
+import com.luckylogistics.slack.infrastructure.external.kafka.event.OrderCreatedEvent;
+
+public interface SlackKafkaEventPublisher {
 
 	void publish(OrderCreatedEvent event);
 

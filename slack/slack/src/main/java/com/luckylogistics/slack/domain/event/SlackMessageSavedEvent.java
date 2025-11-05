@@ -1,6 +1,6 @@
 package com.luckylogistics.slack.domain.event;
 
-public record SlackMessagePendingEvent(
+public record SlackMessageSavedEvent(
 
 	String status
 

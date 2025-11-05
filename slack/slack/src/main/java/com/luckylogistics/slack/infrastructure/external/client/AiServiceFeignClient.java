@@ -7,9 +7,9 @@ import com.luckylogistics.slack.infrastructure.external.client.dto.AiPromptReque
 import com.luckylogistics.slack.infrastructure.external.client.dto.AiPromptResponse;
 
 @FeignClient(name = "ai")
-public interface AiServiceClient {
+public interface AiServiceFeignClient {
 
 	@PostMapping("/api/v1/ai-prompts")
-	AiPromptResponse createAiPrompt(AiPromptRequest requestDto);
+	AiPromptResponse generateAiPrompt(AiPromptRequest requestDto);
 
 }

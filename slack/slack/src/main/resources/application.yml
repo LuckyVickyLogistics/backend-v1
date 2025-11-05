@@ -8,5 +8,6 @@ spring:
   profiles:
     include:
       - datasource
-#      - eureka
+      - eureka
       - slack
+      - zipkin

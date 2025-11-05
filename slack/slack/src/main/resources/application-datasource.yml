@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/luckyvicky-logistics-db
-    username: postgres
-    password: 0204
+    url: jdbc:postgresql://localhost:5432/luckylogistics
+    username: luckyvicky
+    password: luckyvicky
 
   jpa:
     show-sql: true
@@ -11,4 +11,4 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
-        default_schema: slack_message_schema
+        default_schema: slack

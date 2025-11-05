@@ -1,4 +1,11 @@
 package com.luckylogistics.slack.application.result;
 
-public record AiPromptCreatedResult() {
+import lombok.Builder;
+
+@Builder
+public record AiPromptCreatedResult(
+
+	String responseContent
+
+) {
 }
