@@ -43,12 +43,4 @@ public class DeliveryManager extends BaseEntity {
         this.type = type;
         this.deliverySequence = deliverySequence;
     }
-
-    public boolean isHubDeliveryManager() {
-        return this.type == DeliveryManagerType.HUB_DELIVERY;
-    }
-
-    public boolean isCompanyDeliveryManager() {
-        return this.type == DeliveryManagerType.COMPANY_DELIVERY;
-    }
 }
