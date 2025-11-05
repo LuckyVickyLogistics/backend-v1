@@ -79,7 +79,7 @@ public class Product extends BaseEntity {
                 .build();
     }
 
-    public void update(String productName, int price, int totalQuantity, Quantity quantity, ProductStatus status) {
+    public void update(String productName, int price, int totalQuantity, Quantity quantity) {
         if (productName == null || productName.isBlank()) {
             throw new IllegalArgumentException("수정할 상품의 이름은 빌 수 없습니다.");
         }
@@ -92,10 +92,13 @@ public class Product extends BaseEntity {
         if (quantity.getValue() > totalQuantity) {
             throw new IllegalArgumentException("수정한 재고 수가 총 수량을 초과했습니다.");
         }
+        if (totalQuantity < 0) {
+            throw new IllegalArgumentException("총 수량은 0 이상이어야 합니다.");
+        }
         this.productName = productName;
         this.price = price;
         this.quantity = quantity;
-        this.status = status;
+        this.totalQuantity = totalQuantity;
     }
 
     public void delete() {
