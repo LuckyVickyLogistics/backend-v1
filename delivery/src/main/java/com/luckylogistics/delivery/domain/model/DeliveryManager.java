@@ -91,17 +91,27 @@ public class DeliveryManager extends BaseEntity {
     }
 
     /**
-     * 특정 허브에 속한 배송 담당자인지 확인
+     * 특정 허브 소속 여부 확인 (HUB_MANAGER 권한 검증용)
+     * 1. HUB_DELIVERY: 허브 간 배송이므로 특정 허브에 속하지 않음 → false
+     * 2. COMPANY_DELIVERY: 특정 허브의 업체 배송 담당자 → hubId 일치 여부 확인
      */
     public boolean belongsToHub(HubId targetHubId) {
-        // 허브 배송 담당자는 어떤 허브에도 속하지 않음
+        // HUB_DELIVERY는 어떤 허브에도 속하지 않음
         if (this.type == DeliveryManagerType.HUB_DELIVERY) {
             return false;
         }
-        // 업체 배송 담당자인데 허브 정보가 없으면 잘못된 상태
+
+        // COMPANY_DELIVERY인데 hubId가 없으면 데이터 오류
         if (this.hubId == null) {
-            throw new IllegalStateException("업체 배송 담당자는 허브 ID를 반드시 가져야 합니다.");
+            throw new IllegalStateException("업체 배송 담당자는 허브 ID를 반드시 가져야 합니다");
         }
+
+        // targetHubId가 null이면 비교 불가
+        if (targetHubId == null) {
+            return false;
+        }
+
+        // 허브 ID 일치 여부 확인
         return this.hubId.equals(targetHubId);
     }
 }

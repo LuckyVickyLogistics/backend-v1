@@ -2,8 +2,12 @@ package com.luckylogistics.delivery.application.service;
 
 import com.luckylogistics.delivery.application.dto.CreateDeliveryManagerRequest;
 import com.luckylogistics.delivery.application.dto.CreateDeliveryManagerResponse;
+import com.luckylogistics.delivery.application.dto.DeliveryManagerResponse;
 import com.luckylogistics.delivery.application.facade.HubFacade;
 import com.luckylogistics.delivery.application.facade.UserFacade;
+import com.luckylogistics.delivery.common.enums.UserRole;
+import com.luckylogistics.delivery.common.exception.BusinessException;
+import com.luckylogistics.delivery.common.exception.ErrorCode;
 import com.luckylogistics.delivery.domain.model.DeliveryManager;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
@@ -59,6 +63,19 @@ public class DeliveryManagerService {
     }
 
     /**
+     * 배송 담당자 단건 조회
+     */
+    public DeliveryManagerResponse getDeliveryManager(
+            Long deliveryManagerId,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
+        validateReadPermission(manager, currentUserId, currentUserRole);
+        return DeliveryManagerResponse.from(manager);
+    }
+
+    /**
      * HubId 생성
      */
     private HubId createHubId(DeliveryManagerType type, UUID hubId) {
@@ -68,5 +85,44 @@ public class DeliveryManagerService {
             return HubId.of(hubId);
         }
         return null;
+    }
+
+    /**
+     * ID로 배송 담당자 조회
+     */
+    private DeliveryManager findDeliveryManagerById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_MANAGER_NOT_FOUND));
+    }
+
+    /**
+     * 배송 담당자 조회 권한 (마스터, 허브관리자, 배송담당자)
+     */
+    private void validateReadPermission(
+            DeliveryManager manager,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        if (currentUserRole == UserRole.MASTER_ADMIN) {
+            return;
+        }
+
+        if (currentUserRole == UserRole.HUB_MANAGER) {
+            UUID hubId = hubFacade.getUserHubId(currentUserId);
+
+            if (!manager.belongsToHub(HubId.of(hubId))) {
+                throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
+            }
+            return;
+        }
+
+        if (currentUserRole == UserRole.DELIVERY_MANAGER) {
+            if (!manager.getDeliveryManagerId().equals(currentUserId)) {
+                throw new BusinessException(ErrorCode.DELIVERY_MANAGER_SELF_ONLY);
+            }
+            return;
+        }
+
+        throw new BusinessException(ErrorCode.USER_ROLE_UNAUTHORIZED);
     }
 }
