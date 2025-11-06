@@ -11,6 +11,8 @@ import java.util.UUID;
 
 public interface JpaDeliveryManagerRepository extends JpaRepository<DeliveryManager, Long> {
 
+    boolean existsByDeliveryManagerIdAndDeletedAtIsNull(Long id);
+
     @Query("""
         SELECT MAX(dm.deliverySequence)
         FROM DeliveryManager dm

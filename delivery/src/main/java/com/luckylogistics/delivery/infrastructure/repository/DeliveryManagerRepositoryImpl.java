@@ -25,7 +25,7 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
 
     @Override
     public boolean existsById(Long id) {
-        return jpaRepository.existsById(id);
+        return jpaRepository.existsByDeliveryManagerIdAndDeletedAtIsNull(id);
     }
 
     @Override
