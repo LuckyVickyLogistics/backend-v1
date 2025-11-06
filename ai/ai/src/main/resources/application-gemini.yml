@@ -1,0 +1,4 @@
+gemini:
+  api:
+    key: AIzaSyCLLDi-GXMZdoc7v5ZcX_tgnx9coWx7y5Q
+    model: gemini-2.0-flash
