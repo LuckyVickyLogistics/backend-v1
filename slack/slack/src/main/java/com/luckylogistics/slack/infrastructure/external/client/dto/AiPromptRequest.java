@@ -3,7 +3,7 @@ package com.luckylogistics.slack.infrastructure.external.client.dto;
 import java.time.LocalTime;
 import java.util.List;
 
-import com.luckylogistics.slack.application.result.OrderCreatedResult;
+import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 
 import lombok.Builder;
 

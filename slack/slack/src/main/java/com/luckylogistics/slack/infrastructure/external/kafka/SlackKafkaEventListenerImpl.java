@@ -3,7 +3,7 @@ package com.luckylogistics.slack.infrastructure.external.kafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.luckylogistics.slack.application.result.OrderCreatedResult;
+import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 import com.luckylogistics.slack.infrastructure.external.kafka.event.OrderCreatedEvent;
 import com.luckylogistics.slack.application.event.SlackKafkaEventListener;
 import com.luckylogistics.slack.application.event.SlackKafkaEventHandler;

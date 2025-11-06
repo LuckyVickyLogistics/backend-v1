@@ -1,4 +1,4 @@
-package com.luckylogistics.slack.application.command;
+package com.luckylogistics.slack.application.dto;
 
 import lombok.Builder;
 

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.luckylogistics.slack.application.external.SlackClient;
-import com.luckylogistics.slack.application.result.OrderCreatedResult;
+import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;

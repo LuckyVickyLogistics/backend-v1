@@ -1,6 +1,6 @@
 package com.luckylogistics.slack.application.external;
 
-import com.luckylogistics.slack.application.result.OrderCreatedResult;
+import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 
 public interface SlackClient {
 

@@ -4,7 +4,7 @@ import java.time.LocalTime;
 
 import org.springframework.stereotype.Component;
 
-import com.luckylogistics.slack.application.result.OrderCreatedResult;
+import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 import com.luckylogistics.slack.application.service.SlackService;
 
 import lombok.RequiredArgsConstructor;

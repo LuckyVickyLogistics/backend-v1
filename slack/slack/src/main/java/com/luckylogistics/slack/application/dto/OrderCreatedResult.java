@@ -1,4 +1,4 @@
-package com.luckylogistics.slack.application.result;
+package com.luckylogistics.slack.application.dto;
 
 import java.time.Instant;
 import java.util.List;

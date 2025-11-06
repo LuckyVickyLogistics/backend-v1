@@ -5,8 +5,8 @@ import java.time.LocalTime;
 import org.springframework.stereotype.Component;
 
 import com.luckylogistics.slack.application.external.AiServiceClient;
-import com.luckylogistics.slack.application.result.AiPromptCreatedResult;
-import com.luckylogistics.slack.application.result.OrderCreatedResult;
+import com.luckylogistics.slack.application.dto.AiPromptCreatedResult;
+import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 import com.luckylogistics.slack.infrastructure.external.client.dto.AiPromptResponse;
 
 import lombok.RequiredArgsConstructor;

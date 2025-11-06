@@ -1,6 +1,6 @@
 package com.luckylogistics.slack.infrastructure.external.client.dto;
 
-import com.luckylogistics.slack.application.result.AiPromptCreatedResult;
+import com.luckylogistics.slack.application.dto.AiPromptCreatedResult;
 
 public record AiPromptResponse(
 

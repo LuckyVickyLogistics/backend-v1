@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.luckylogistics.slack.application.command.EmailCheckCommand;
-import com.luckylogistics.slack.application.command.StatusUpdateCommand;
-import com.luckylogistics.slack.application.result.SlackEmailCheckResult;
-import com.luckylogistics.slack.application.result.SlackMessageResult;
+import com.luckylogistics.slack.application.dto.EmailCheckCommand;
+import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
+import com.luckylogistics.slack.application.dto.SlackEmailCheckResult;
+import com.luckylogistics.slack.application.dto.SlackMessageResult;
 import com.luckylogistics.slack.application.service.SlackService;
 import com.luckylogistics.slack.infrastructure.external.kafka.event.OrderCreatedEvent;
 import com.luckylogistics.slack.presentation.ApiResponse;
