@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -80,5 +81,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .internalServerError()
                 .body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<?>> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        if ("X-User-Role".equalsIgnoreCase(e.getName())) {
+            return ResponseEntity
+                    .status(ErrorCode.INVALID_HEADER_USER_ROLE.getStatus())
+                    .body(ApiResponse.error(ErrorCode.INVALID_HEADER_USER_ROLE, "value=" + e.getValue()));
+        }
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponse.error(ErrorCode.BAD_REQUEST, e.getMessage()));
     }
 }
