@@ -19,7 +19,7 @@ public class DeliveryManager extends BaseEntity {
 
     // COMPANY_DELIVERY만 보유, HUB_DELIVERY는 null
     @Embedded
-    @AttributeOverride(name = "hubId", column = @Column(name = "hub_id", columnDefinition = "uuid"))
+    @AttributeOverride(name = "hubId", column = @Column(name = "hub_id", columnDefinition = "uuid", nullable = true))
     private HubId hubId;
 
     @Embedded
