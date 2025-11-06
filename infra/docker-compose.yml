@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: postgres-luckylogistics
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: luckylogistics
+      POSTGRES_USER: luckyvicky
+      POSTGRES_PASSWORD: luckyvicky
+      TZ: Asia/Seoul
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
