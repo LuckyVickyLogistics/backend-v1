@@ -20,17 +20,11 @@ public class HubId {
     private UUID hubId;
 
     private HubId(UUID hubId) {
-        validate(hubId);
         this.hubId = hubId;
     }
 
+    // null 허용 (허브 담당자는 hubId가 없음)
     public static HubId of(UUID hubId) {
-        return new HubId(hubId);
-    }
-
-    private void validate(UUID hubId) {
-        if (hubId == null) {
-            throw new IllegalArgumentException("Hub ID는 필수입니다");
-        }
+        return hubId == null ? null : new HubId(hubId);
     }
 }
