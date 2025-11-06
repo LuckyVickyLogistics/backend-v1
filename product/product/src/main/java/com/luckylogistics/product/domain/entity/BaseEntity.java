@@ -1,4 +1,4 @@
-package com.luckylogistics.product.infrastructure.model;
+package com.luckylogistics.product.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -23,7 +23,7 @@ public abstract class BaseEntity {
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)
-    private Long createdBy;
+    private String createdBy;
 
     @LastModifiedDate
     @Column(name = "updated_at")
@@ -31,15 +31,15 @@ public abstract class BaseEntity {
 
     @LastModifiedBy
     @Column(name = "updated_by")
-    private Long updatedBy;
+    private String updatedBy;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @Column(name = "deleted_by")
-    private Long deletedBy;
+    private String deletedBy;
 
-    public void delete(Long deletedBy) {
+    public void delete(String deletedBy) {
         this.deletedAt = LocalDateTime.now();
         this.deletedBy = deletedBy;
     }

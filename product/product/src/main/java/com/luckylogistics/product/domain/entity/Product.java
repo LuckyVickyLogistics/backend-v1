@@ -1,10 +1,15 @@
 package com.luckylogistics.product.domain.entity;
 
-import com.luckylogistics.product.infrastructure.model.BaseEntity;
 import com.luckylogistics.product.domain.vo.Quantity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -16,6 +21,7 @@ import java.util.UUID;
 public class Product extends BaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "product_id", nullable = false, updatable = false)
     private UUID productId;
     @Column(name = "product_name", nullable = false)
@@ -122,6 +128,47 @@ public class Product extends BaseEntity {
     //주문 -> 재고 차감 -> 실패 (ROLLBACK)
 
 
+    @Getter
+    @MappedSuperclass
+    @EntityListeners(AuditingEntityListener.class)
+    public abstract static class BaseEntity {
+
+        @CreatedDate
+        @Column(name = "created_at", nullable = false, updatable = false)
+        private LocalDateTime createdAt;
+
+        @CreatedBy
+        @Column(name = "created_by", updatable = false)
+        private Long createdBy;
+
+        @LastModifiedDate
+        @Column(name = "updated_at")
+        private LocalDateTime updatedAt;
+
+        @LastModifiedBy
+        @Column(name = "updated_by")
+        private Long updatedBy;
+
+        @Column(name = "deleted_at")
+        private LocalDateTime deletedAt;
+
+        @Column(name = "deleted_by")
+        private Long deletedBy;
+
+        public void delete(Long deletedBy) {
+            this.deletedAt = LocalDateTime.now();
+            this.deletedBy = deletedBy;
+        }
+
+        public void restore() {
+            this.deletedAt = null;
+            this.deletedBy = null;
+        }
+
+        public boolean isDeleted() {
+            return this.deletedAt != null;
+        }
+    }
 }
 
 
