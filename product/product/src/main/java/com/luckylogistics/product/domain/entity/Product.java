@@ -118,6 +118,9 @@ public class Product extends BaseEntity {
         this.status = ProductStatus.fromQuantity(this.quantity.getValue());
     }
 
+    //주문 -> 재고 차감 -> 0개가 되면 SOLD_OUT 이런식으로 표시
+    //주문 -> 재고 차감 -> 실패 (ROLLBACK)
+
 
 }
 

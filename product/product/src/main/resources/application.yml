@@ -1,13 +1,31 @@
+server:
+  port: 19097
+
 spring:
   application:
     name: product
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/luckylogistics?currentSchema=products
+    username: luckyvicky
+    password: luckyvicky
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show_sql: true
+        default_schema: deliveries
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19094/eureka/
-    register-with-eureka: true
-    fetch-registry: true
+      defaultZone: http://localhost:19095/eureka/
+      register-with-eureka: true
+      fetch-registry: true
   instance:
-    hostname: localhost  # 클라이언트 호스트 이름
-    prefer-ip-address: true
+   hostname: localhost  # 클라이언트 호스트 이름
+   prefer-ip-address: true

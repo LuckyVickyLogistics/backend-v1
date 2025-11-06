@@ -3,11 +3,10 @@ package com.luckylogistics.product.application.service;
 import com.luckylogistics.product.application.external.CompanyService;
 import com.luckylogistics.product.application.external.HubService;
 import com.luckylogistics.product.domain.entity.Product;
-import com.luckylogistics.product.domain.entity.ProductStatus;
 import com.luckylogistics.product.domain.repository.ProductRepository;
 import com.luckylogistics.product.domain.vo.Quantity;
-import com.luckylogistics.product.presentation.dto.ProductRequest;
-import com.luckylogistics.product.presentation.dto.ProductResponse;
+import com.luckylogistics.product.application.dto.ProductRequest;
+import com.luckylogistics.product.application.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +74,11 @@ public class ProductService {
     //전체 조회!
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    //검색
+    public List<Product> searchProductsByName(String keyword) {
+        return productRepository.findByProductNameContainingIgnoreCase(keyword);
     }
 
     @Transactional
