@@ -3,6 +3,7 @@ package com.luckylogistics.delivery.common.exception;
 import com.luckylogistics.delivery.common.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -55,6 +56,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ErrorCode.DOMAIN_ERROR.getStatus())
                 .body(ApiResponse.error(ErrorCode.DOMAIN_ERROR, e.getMessage()));
+    }
+
+    /**
+     * 요청 본문(JSON) 파싱 실패 예외 처리
+     * - 잘못된 UUID, Enum, 숫자 형식 등 역직렬화 오류 대응
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleJsonParseException(HttpMessageNotReadableException e) {
+        log.warn("JSON parse error: {}", e.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponse.error(ErrorCode.INVALID_INPUT_VALUE, "형식을 확인해주세요."));
     }
 
     /**
