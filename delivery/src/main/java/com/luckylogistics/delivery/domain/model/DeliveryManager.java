@@ -80,14 +80,16 @@ public class DeliveryManager extends BaseEntity {
     /**
      * 배송 담당자 정보 수정
      */
-    public void update(HubId newHubId, SlackId newSlackId, DeliveryManagerType newType) {
+    public void update(HubId newHubId, SlackId newSlackId, DeliveryManagerType newType, Integer newDeliverySequence) {
         validateType(newType);
+        validateDeliverySequence(newDeliverySequence);
         // 타입에 따른 허브 ID 검증
         newType.validateHubId(newHubId);
 
         this.hubId = newHubId;
         this.slackId = newSlackId;
         this.type = newType;
+        this.deliverySequence = newDeliverySequence;
     }
 
     /**
