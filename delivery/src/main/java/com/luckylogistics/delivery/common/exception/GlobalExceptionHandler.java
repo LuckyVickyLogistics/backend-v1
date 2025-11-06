@@ -1,6 +1,6 @@
 package com.luckylogistics.delivery.common.exception;
 
-import com.luckylogistics.delivery.common.response.CommonResponse;
+import com.luckylogistics.delivery.common.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,22 +16,23 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     /**
-     * 비즈니스 로직 예외 처리
+     * 비즈니스 규칙 위반 예외 처리
      */
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<CommonResponse<Void>> handleBusinessException(BusinessException e) {
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
         log.error("BusinessException: {}", e.getMessage());
         ErrorCode errorCode = e.getErrorCode();
+
         return ResponseEntity
                 .status(errorCode.getStatus())
-                .body(CommonResponse.error(errorCode));
+                .body(ApiResponse.error(errorCode));
     }
 
     /**
-     * @Valid (RequestBody) 유효성 검사 실패
+     * 입력 검증 실패 예외 처리 (Spring Validation)
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<CommonResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(err -> {
             String field = (err instanceof FieldError fe) ? fe.getField() : err.getObjectName();
@@ -40,20 +41,31 @@ public class GlobalExceptionHandler {
         log.warn("Validation failed: {}", errors);
 
         return ResponseEntity
-                .status(ErrorCode.INVALID_REQUEST.getStatus())
-                .body(CommonResponse.error(ErrorCode.INVALID_REQUEST));
+                .badRequest()
+                .body(ApiResponse.error(ErrorCode.INVALID_INPUT_VALUE, errors.toString()));
     }
 
+    /**
+     * 도메인 계층 예외 처리
+     */
+    @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
+    public ResponseEntity<ApiResponse<Void>> handleDomainException(RuntimeException e) {
+        log.warn("DomainException: {}", e.getMessage());
+
+        return ResponseEntity
+                .status(ErrorCode.DOMAIN_ERROR.getStatus())
+                .body(ApiResponse.error(ErrorCode.DOMAIN_ERROR, e.getMessage()));
+    }
 
     /**
-     * 그 외 예상치 못한 예외 처리 (Fallback)
+     * 서버 내부 오류 예외 처리
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<CommonResponse<Void>> handleException(Exception e) {
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
         log.error("Unexpected exception", e);
 
         return ResponseEntity
-                .status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus())
-                .body(CommonResponse.error(ErrorCode.INTERNAL_SERVER_ERROR));
+                .internalServerError()
+                .body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 }
