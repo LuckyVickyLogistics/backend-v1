@@ -12,6 +12,8 @@ public interface DeliveryManagerRepository {
 
     boolean existsById(Long id);
 
+    Optional<DeliveryManager> findById(Long id);
+
     Optional<Integer> findMaxSequenceByType(DeliveryManagerType type);
 
     Optional<Integer> findMaxSequenceByTypeAndHubId(

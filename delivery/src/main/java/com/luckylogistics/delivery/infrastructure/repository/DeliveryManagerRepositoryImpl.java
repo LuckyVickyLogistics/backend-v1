@@ -29,6 +29,11 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
     }
 
     @Override
+    public Optional<DeliveryManager> findById(Long id) {
+        return jpaRepository.findByDeliveryManagerIdAndDeletedAtIsNull(id);
+    }
+
+    @Override
     public Optional<Integer> findMaxSequenceByType(DeliveryManagerType type) {
         return jpaRepository.findMaxSequenceByType(type);
     }

@@ -11,6 +11,8 @@ import java.util.UUID;
 
 public interface JpaDeliveryManagerRepository extends JpaRepository<DeliveryManager, Long> {
 
+    Optional<DeliveryManager> findByDeliveryManagerIdAndDeletedAtIsNull(Long id);
+
     boolean existsByDeliveryManagerIdAndDeletedAtIsNull(Long id);
 
     @Query("""
