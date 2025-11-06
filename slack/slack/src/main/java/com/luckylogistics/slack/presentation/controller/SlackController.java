@@ -49,11 +49,7 @@ public class SlackController {
 	public ResponseEntity<ApiResponse<List<SlackSummaryResponse>>> getAllMessages() {
 		List<SlackMessageResult> resultList = slackService.getAllMessages();
 		List<SlackSummaryResponse> responseDtoList = resultList.stream()
-			.map(result -> SlackSummaryResponse.builder()
-				.slackMessageId(result.slackMessageId())
-				.receiverEmail(result.receiverEmail())
-				.status(result.status().name())
-				.build())
+			.map(SlackSummaryResponse::from)
 			.toList();
 
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDtoList));
@@ -62,16 +58,7 @@ public class SlackController {
 	@GetMapping("/{slackMessageId}")
 	public ResponseEntity<ApiResponse<SlackDetailResponse>> getMessage(@PathVariable UUID slackMessageId) {
 		SlackMessageResult result = slackService.getMessage(slackMessageId);
-		SlackDetailResponse responseDto = SlackDetailResponse.builder()
-			.slackMessageId(result.slackMessageId())
-			.receiverEmail(result.receiverEmail())
-			.content(result.content())
-			.status(result.status().name())
-			.createdAt(result.createdAt())
-			.createdBy(result.createdBy())
-			.updatedAt(result.updatedAt())
-			.updatedBy(result.updatedBy())
-			.build();
+		SlackDetailResponse responseDto = SlackDetailResponse.from(result);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
 	}
@@ -84,9 +71,7 @@ public class SlackController {
 			.email(requestDto.email())
 			.build();
 		SlackEmailCheckResult result = slackService.checkInWorkspace(command);
-		SlackCheckInWorkSpaceResponse responseDto = SlackCheckInWorkSpaceResponse.builder()
-			.exists(result.exists())
-			.build();
+		SlackCheckInWorkSpaceResponse responseDto = SlackCheckInWorkSpaceResponse.from(result);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
 	}
