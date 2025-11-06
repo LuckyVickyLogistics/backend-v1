@@ -2,6 +2,7 @@ package com.luckylogistics.ai.infrastructure.repository;
 
 import org.springframework.stereotype.Component;
 
+import com.luckylogistics.ai.domain.entity.AiPrompt;
 import com.luckylogistics.ai.domain.repository.AiRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -11,5 +12,10 @@ import lombok.RequiredArgsConstructor;
 public class AiRepositoryAdapter implements AiRepository {
 
 	private final JpaAiRepository jpaAiRepository;
+
+	@Override
+	public void save(AiPrompt aiPrompt) {
+		jpaAiRepository.save(aiPrompt);
+	}
 
 }
