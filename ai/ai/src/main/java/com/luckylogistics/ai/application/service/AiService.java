@@ -1,7 +1,6 @@
 package com.luckylogistics.ai.application.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +25,8 @@ public class AiService {
 	private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-	@Transactional
+	// @Transactional
+	// TODO: 별도의 서비스 클래스를 통해 트랜잭셔널 분리
 	public AiPromptResult createAiPrompt(AiPromptCreatedCommand command) {
 		AiPrompt aiPrompt = AiPrompt.builder()
 			.requestContent(toJson(command))
@@ -39,10 +39,10 @@ public class AiService {
 			aiPrompt.updateStatus("SUCCESS");
 			return result;
 		} catch (Exception e) {
-			aiRepository.save(aiPrompt);
 			aiPrompt.updateStatus("RETRY");
 			throw new RuntimeException(e.getMessage());
 		} finally {
+			aiRepository.save(aiPrompt);
 			log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
 		}
 	}
