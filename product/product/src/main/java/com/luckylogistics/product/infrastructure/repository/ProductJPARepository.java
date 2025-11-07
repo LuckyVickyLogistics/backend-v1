@@ -1,9 +1,13 @@
-package com.luckylogistics.product.domain.repository;
+package com.luckylogistics.product.infrastructure.repository;
 
 import com.luckylogistics.product.domain.entity.Product;
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository{
+import java.util.List;
+import java.util.UUID;
+
+public interface ProductJPARepository extends JpaRepository<Product, UUID> {
+
     boolean existsByProductName(String productName);
 
     //Keyword 검색
