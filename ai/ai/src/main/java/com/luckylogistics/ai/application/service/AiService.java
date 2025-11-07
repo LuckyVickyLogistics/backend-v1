@@ -1,12 +1,17 @@
 package com.luckylogistics.ai.application.service;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
+import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.external.GeminiClient;
 import com.luckylogistics.ai.domain.entity.AiPrompt;
@@ -46,6 +51,18 @@ public class AiService {
 			aiRepository.save(aiPrompt);
 			log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public List<AiPromptReadResult> getAllPrompts() {
+		return aiRepository.findAllByDeletedAtIsNull().stream().map(AiPromptReadResult::from).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public AiPromptReadResult getPrompt(UUID aiPromptId) {
+		return aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
+			.map(AiPromptReadResult::from)
+			.orElseThrow(() -> new IllegalArgumentException("일치하는 Ai 프롬프트를 찾을 수 없습니다."));
 	}
 
 	private String toJson(Object obj) {

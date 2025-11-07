@@ -1,18 +1,26 @@
 package com.luckylogistics.ai.presentation.controller;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
+import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.service.AiService;
 import com.luckylogistics.ai.presentation.ApiResponse;
 import com.luckylogistics.ai.presentation.dto.AiPromptCreatedRequest;
 import com.luckylogistics.ai.presentation.dto.AiPromptCreatedResponse;
+import com.luckylogistics.ai.presentation.dto.AiPromptDetailResponse;
+import com.luckylogistics.ai.presentation.dto.AiPromptSummaryResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +41,23 @@ public class AiController {
 		AiPromptCreatedResponse responseDto = AiPromptCreatedResponse.from(result);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
+	}
+
+	// TODO: 페이징 및 검색 구현
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<AiPromptSummaryResponse>>> getAllPrompts() {
+		List<AiPromptReadResult> resultList = aiService.getAllPrompts();
+		List<AiPromptSummaryResponse> responseDtoList = resultList.stream().map(AiPromptSummaryResponse::from).toList();
+
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDtoList));
+	}
+
+	@GetMapping("/{aiPromptId}")
+	public ResponseEntity<ApiResponse<AiPromptDetailResponse>> getPrompt(@PathVariable UUID aiPromptId) {
+		AiPromptReadResult result = aiService.getPrompt(aiPromptId);
+		AiPromptDetailResponse responseDto = AiPromptDetailResponse.from(result);
+
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
 	}
 
 }
