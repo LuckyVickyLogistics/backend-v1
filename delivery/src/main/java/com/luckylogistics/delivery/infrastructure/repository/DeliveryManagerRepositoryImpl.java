@@ -4,6 +4,8 @@ import com.luckylogistics.delivery.domain.model.DeliveryManager;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,15 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
     @Override
     public Optional<DeliveryManager> findById(Long id) {
         return jpaRepository.findByDeliveryManagerIdAndDeletedAtIsNull(id);
+    }
+
+    @Override
+    public Page<DeliveryManager> findByTypeAndHubId(
+            DeliveryManagerType type,
+            UUID hubId,
+            Pageable pageable
+    ) {
+        return jpaRepository.findByTypeAndHubId(type, hubId, pageable);
     }
 
     @Override
