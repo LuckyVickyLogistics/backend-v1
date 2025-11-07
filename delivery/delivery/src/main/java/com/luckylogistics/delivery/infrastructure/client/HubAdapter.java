@@ -1,6 +1,6 @@
 package com.luckylogistics.delivery.infrastructure.client;
 
-import com.luckylogistics.delivery.application.service.HubClientService;
+import com.luckylogistics.delivery.application.service.HubService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class HubClientAdapter implements HubClientService {
+public class HubAdapter implements HubService {
     // TODO: 외부 서비스 클라이언트 주입
     // private final HubFeignClient hubFeignClient;
 

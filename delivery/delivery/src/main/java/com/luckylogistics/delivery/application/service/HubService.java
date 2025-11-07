@@ -1,12 +1,8 @@
 package com.luckylogistics.delivery.application.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
 import java.util.UUID;
 
-public interface HubClientService {
+public interface HubService {
 
     /**
      * 허브 존재 여부 검증

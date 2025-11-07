@@ -1,6 +1,6 @@
 package com.luckylogistics.delivery.application.service;
 
-public interface UserClientService {
+public interface UserService {
 
     void validateDeliveryManagerRole(Long userId);
 }
