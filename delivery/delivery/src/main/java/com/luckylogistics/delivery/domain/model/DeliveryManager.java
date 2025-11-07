@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -101,9 +102,8 @@ public class DeliveryManager extends BaseEntity {
     /**
      * 배송 담당자 정보 수정
      */
-    public void update(UUID newHubId, SlackId newSlackId, DeliveryManagerType newType, Integer newDeliverySequence, LocalTime startTime, LocalTime endTime) {
+    public void update(UUID newHubId, SlackId newSlackId, DeliveryManagerType newType, LocalTime newStartTime, LocalTime newEndTime) {
         validateType(newType);
-        validateDeliverySequence(newDeliverySequence);
         validateWorkingHours(startTime, endTime);
         // 타입에 따른 허브 ID 검증
         newType.validateHubId(newHubId);
@@ -111,9 +111,31 @@ public class DeliveryManager extends BaseEntity {
         this.hubId = newHubId;
         this.slackId = newSlackId;
         this.type = newType;
-        this.deliverySequence = newDeliverySequence;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startTime = newStartTime;
+        this.endTime = newEndTime;
+    }
+
+    /** 시퀀스 재배정 */
+    public void reassignSequence(Integer newSequence) {
+        validateDeliverySequence(newSequence);
+        this.deliverySequence = newSequence;
+    }
+
+    /**
+     * 타입/허브 변경 여부 판단 (시퀀스 재배정 필요성)
+     * - 타입 변경 시: 항상 재배정
+     * - 타입 동일 + COMPANY_DELIVERY: 허브 변경 시 재배정
+     * - 타입 동일 + HUB_DELIVERY: 재배정 없음
+     */
+    public boolean requiresSequenceReassignment(DeliveryManagerType newType, UUID newHubId) {
+        // 타입 변경 - 재배정
+        if (this.type != newType) return true;
+        // 타입 동일 - COMPANY_DELIVERY: 허브 변경시 재배정
+        if (newType.isCompanyDelivery()) {
+            return !Objects.equals(this.hubId, newHubId);
+        }
+        // 타입 동일 - HUB_DELIVERY: 재배정 없음
+        return false;
     }
 
     /**

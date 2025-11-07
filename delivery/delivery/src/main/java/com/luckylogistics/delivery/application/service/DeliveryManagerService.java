@@ -148,10 +148,16 @@ public class DeliveryManagerService {
         validateWritePermission(manager, currentUserId, currentUserRole);
         // Hub ID 검증
         UUID newHubId = validateHubId(request.type(), request.hubId());
-        // 순서 재배정
+        // 새 순번 결정
         Integer newSequence = determineSequenceForUpdate(manager, request.type(), newHubId);
         // 배송 담당자 수정
-        manager.update(newHubId, SlackId.of(request.slackId()), request.type(), newSequence, request.startTime(), request.endTime());
+        manager.update(newHubId, SlackId.of(request.slackId()), request.type(), request.startTime(), request.endTime());
+
+        // 필요시, 순서 재배정
+        if (newSequence != null) {
+            manager.reassignSequence(newSequence);
+            log.info("[DeliveryManager] 시퀀스 재배정 완료 id={}, newSeq={}", deliveryManagerId, newSequence);
+        }
 
         log.info("[DeliveryManager] 배송 담당자 수정 완료. id: {}", deliveryManagerId);
         return DeliveryManagerResponse.from(manager);
@@ -188,22 +194,21 @@ public class DeliveryManagerService {
      * - COMPANY_DELIVERY: 특정 허브 내 시퀀스(max + 1)
      * - 변경 없으면 기존 유지(null)
      */
-    private Integer determineSequenceForUpdate(DeliveryManager manager, DeliveryManagerType newType, UUID newHubId) {
-        DeliveryManagerType prevType = manager.getType();
-        UUID prevHubId = manager.getHubId();
-
-        // 타입 변경 여부
-        boolean typeChanged = prevType != newType;
-        // 허브 변경 여부
-        boolean hubChanged = newType.isCompanyDelivery() && (prevHubId == null || !prevHubId.equals(newHubId));
-        // 타입과 허브가 모두 동일하면 순서 유지
-        if (!(typeChanged || hubChanged)) {
-            return null; // 기존 순번 유지
+    private Integer determineSequenceForUpdate(
+            DeliveryManager manager,
+            DeliveryManagerType newType,
+            UUID newHubId
+    ) {
+        // 재배정 불필요 - 기존 순번 유지
+        if (!manager.requiresSequenceReassignment(newType, newHubId)) {
+            return null;
         }
+
         // 새 순번 계산
         int nextSeq = domainService.calculateNextSequence(newType, newHubId);
-        log.info("[DeliveryManager] 순서 재배정 필요: prevType={}, newType={}, newHubId={}, newSeq={}",
-                prevType, newType, newHubId, nextSeq);
+        log.info("[DeliveryManager] 시퀀스 재배정 필요: prevType={}, newType={}, newHubId={}, newSeq={}",
+                manager.getType(), newType, newHubId, nextSeq);
+
         return nextSeq;
     }
 
