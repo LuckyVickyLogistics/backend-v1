@@ -28,11 +28,11 @@ public enum DeliveryManagerType {
 
     private final String description;
 
-    public boolean isHubDeliveryManager() {
+    public boolean isHubDelivery() {
         return this == HUB_DELIVERY;
     }
 
-    public boolean isCompanyDeliveryManager() {
+    public boolean isCompanyDelivery() {
         return this == COMPANY_DELIVERY;
     }
 

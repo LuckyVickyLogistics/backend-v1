@@ -71,7 +71,7 @@ public class DeliveryManagerService {
      * Hub ID 검증 및 반환
      */
     private UUID validateHubId(DeliveryManagerType type, UUID hubId) {
-        if (type == DeliveryManagerType.COMPANY_DELIVERY) {
+        if (type.isCompanyDelivery()) {
             // 외부 Hub 서비스: Hub 도메인에서 존재 검증
             hubClientService.validateHubExists(hubId);
             return hubId;
@@ -108,11 +108,11 @@ public class DeliveryManagerService {
             Long currentUserId,
             UserRole currentUserRole
     ) {
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
+        if (currentUserRole.isMaster()) {
             return;
         }
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager()) {
             UUID hubId = hubClientService.getUserHubId(currentUserId);
 
             if (!manager.belongsToHub(hubId)) {
@@ -121,7 +121,7 @@ public class DeliveryManagerService {
             return;
         }
 
-        if (currentUserRole == UserRole.DELIVERY_MANAGER) {
+        if (currentUserRole.isDeliveryManager()) {
             if (!manager.getDeliveryManagerId().equals(currentUserId)) {
                 throw new BusinessException(ErrorCode.DELIVERY_MANAGER_SELF_ONLY);
             }
@@ -165,11 +165,11 @@ public class DeliveryManagerService {
             Long currentUserId,
             UserRole currentUserRole
     ) {
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
+        if (currentUserRole.isMaster()) {
             return;
         }
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager()) {
             UUID hubId = hubClientService.getUserHubId(currentUserId);
 
             if (!manager.belongsToHub(hubId)) {
@@ -195,8 +195,7 @@ public class DeliveryManagerService {
         // 타입 변경 여부
         boolean typeChanged = prevType != newType;
         // 허브 변경 여부
-        boolean hubChanged = newType == DeliveryManagerType.COMPANY_DELIVERY
-                && (prevHubId == null || !prevHubId.equals(newHubId));
+        boolean hubChanged = newType.isCompanyDelivery() && (prevHubId == null || !prevHubId.equals(newHubId));
         // 타입과 허브가 모두 동일하면 순서 유지
         if (!(typeChanged || hubChanged)) {
             return null; // 기존 순번 유지
@@ -256,38 +255,40 @@ public class DeliveryManagerService {
             UserRole currentUserRole,
             Pageable pageable
     ) {
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
-            if (requestType == DeliveryManagerType.HUB_DELIVERY) {
+        // 권한 검증
+        if (!currentUserRole.isMaster() && !currentUserRole.isHubManager()) {
+            throw new BusinessException(ErrorCode.USER_ROLE_UNAUTHORIZED);
+        }
+
+        // 마스터 관리자
+        if (currentUserRole.isMaster()) {
+            // HUB_DELIVERY: hubId는 항상 null (전체 조회)
+            if (requestType.isHubDelivery()) {
                 return repository.findByTypeAndHubId(DeliveryManagerType.HUB_DELIVERY, null, pageable);
             }
-
+            // COMPANY_DELIVERY: hubId 필터 유/무 모두 허용 (허브별/전체조회)
             return repository.findByTypeAndHubId(requestType, requestHubId, pageable);
         }
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
-            UUID myHubId = hubClientService.getUserHubId(currentUserId);
-            if (myHubId == null) {
-                throw new BusinessException(ErrorCode.USER_HUB_NOT_FOUND);
-            }
-
-            if (requestType == DeliveryManagerType.HUB_DELIVERY) {
-                throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
-            }
-
-            if (requestHubId != null && !Objects.equals(requestHubId, myHubId)) {
-                throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
-            }
-
-            DeliveryManagerType effectiveType =
-                    (requestType == null) ? DeliveryManagerType.COMPANY_DELIVERY : requestType;
-
-            if (effectiveType != DeliveryManagerType.COMPANY_DELIVERY) {
-                throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
-            }
-
-            return repository.findByTypeAndHubId(requestType, myHubId, pageable);
+        // 허브 관리자
+        UUID myHubId = hubClientService.getUserHubId(currentUserId);
+        if (myHubId == null) {
+            throw new BusinessException(ErrorCode.USER_HUB_NOT_FOUND);
         }
 
-        throw new BusinessException(ErrorCode.USER_ROLE_UNAUTHORIZED);
+        // 다른 허브 접근 불가 (담당 허브만 가능)
+        if (requestHubId != null && !Objects.equals(requestHubId, myHubId)) {
+            throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
+        }
+
+        // 타입이 null이면 COMPANY_DELIVERY로 강제
+        DeliveryManagerType effectiveType =
+                (requestType == null) ? DeliveryManagerType.COMPANY_DELIVERY : requestType;
+
+        if (effectiveType != DeliveryManagerType.COMPANY_DELIVERY) {
+            throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
+        }
+
+        return repository.findByTypeAndHubId(requestType, myHubId, pageable);
     }
 }
