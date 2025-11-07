@@ -103,6 +103,24 @@ public class DeliveryManagerService {
     }
 
     /**
+     * 배송 담당자 삭제
+     */
+    @Transactional
+    public void deleteDeliveryManager(
+            Long deliveryManagerId,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        log.info("[DeliveryManager] 배송 담당자 삭제 시작. id: {}", deliveryManagerId);
+
+        DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
+        validateWritePermission(manager, currentUserId, currentUserRole);
+        manager.delete(currentUserId);
+
+        log.info("[DeliveryManager] 배송 담당자 삭제 완료. id: {}", deliveryManagerId);
+    }
+
+    /**
      * 타입/허브 변경에 따른 순서 재배정
      * - HUB_DELIVERY: 전체 허브 대상 전역 시퀀스(max + 1)
      * - COMPANY_DELIVERY: 특정 허브 내 시퀀스(max + 1)
@@ -180,7 +198,7 @@ public class DeliveryManagerService {
     }
 
     /**
-     * 배송 담당자 수정 권한 (마스터, 허브관리자)
+     * 배송 담당자 수정/삭제 권한 (마스터, 허브관리자)
      */
     private void validateWritePermission(
             DeliveryManager manager,
