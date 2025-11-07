@@ -10,9 +10,9 @@ import com.luckylogistics.delivery.common.exception.ErrorCode;
 import com.luckylogistics.delivery.common.util.PageableUtils;
 import com.luckylogistics.delivery.domain.model.DeliveryManager;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
+import com.luckylogistics.delivery.domain.model.SlackId;
 import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
 import com.luckylogistics.delivery.domain.service.DeliveryDomainService;
-import com.luckylogistics.delivery.domain.model.SlackId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -68,110 +68,6 @@ public class DeliveryManagerService {
     }
 
     /**
-     * 배송 담당자 단건 조회
-     */
-    public DeliveryManagerResponse getDeliveryManager(
-            Long deliveryManagerId,
-            Long currentUserId,
-            UserRole currentUserRole
-    ) {
-        DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
-        validateReadPermission(manager, currentUserId, currentUserRole);
-        return DeliveryManagerResponse.from(manager);
-    }
-
-    /**
-     * 배송 담당자 수정
-     */
-    @Transactional
-    public DeliveryManagerResponse updateDeliveryManager(
-            Long deliveryManagerId,
-            UpdateDeliveryManagerRequest request,
-            Long currentUserId,
-            UserRole currentUserRole
-    ) {
-        log.info("[DeliveryManager] 배송 담당자 수정 시작. id: {}, type: {}", deliveryManagerId, request.type());
-        // 조회
-        DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
-        // 권한 검증
-        validateWritePermission(manager, currentUserId, currentUserRole);
-        // Hub ID 검증
-        UUID newHubId = validateHubId(request.type(), request.hubId());
-        // 순서 재배정
-        Integer newSequence = determineSequenceForUpdate(manager, request.type(), newHubId);
-        // 배송 담당자 수정
-        manager.update(newHubId, SlackId.of(request.slackId()), request.type(), newSequence, request.startTime(), request.endTime());
-
-        log.info("[DeliveryManager] 배송 담당자 수정 완료. id: {}", deliveryManagerId);
-        return DeliveryManagerResponse.from(manager);
-    }
-
-    /**
-     * 배송 담당자 삭제
-     */
-    @Transactional
-    public void deleteDeliveryManager(
-            Long deliveryManagerId,
-            Long currentUserId,
-            UserRole currentUserRole
-    ) {
-        log.info("[DeliveryManager] 배송 담당자 삭제 시작. id: {}", deliveryManagerId);
-
-        DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
-        validateWritePermission(manager, currentUserId, currentUserRole);
-        manager.delete(currentUserId);
-
-        log.info("[DeliveryManager] 배송 담당자 삭제 완료. id: {}", deliveryManagerId);
-    }
-
-    /**
-     * 배송 담당자 목록 조회
-     */
-    public Page<DeliveryManagerResponse> getDeliveryManagers(
-            DeliveryManagerType type,
-            UUID hubId,
-            int page,
-            int size,
-            String sortBy,
-            Sort.Direction direction,
-            Long currentUserId,
-            UserRole currentUserRole
-    ) {
-        Pageable pageable = PageableUtils.createPageable(page, size, sortBy, direction);
-        Page<DeliveryManager> managers = findDeliveryManagers(
-                type, hubId, currentUserId, currentUserRole, pageable);
-
-        return managers.map(DeliveryManagerResponse::from);
-    }
-
-
-    /**
-     * 타입/허브 변경에 따른 순서 재배정
-     * - HUB_DELIVERY: 전체 허브 대상 전역 시퀀스(max + 1)
-     * - COMPANY_DELIVERY: 특정 허브 내 시퀀스(max + 1)
-     * - 변경 없으면 기존 유지(null)
-     */
-    private Integer determineSequenceForUpdate(DeliveryManager manager, DeliveryManagerType newType, UUID newHubId) {
-        DeliveryManagerType prevType = manager.getType();
-        UUID prevHubId = manager.getHubId();
-
-        // 타입 변경 여부
-        boolean typeChanged = prevType != newType;
-        // 허브 변경 여부
-        boolean hubChanged = newType == DeliveryManagerType.COMPANY_DELIVERY
-                && (prevHubId == null || !prevHubId.equals(newHubId));
-        // 타입과 허브가 모두 동일하면 순서 유지
-        if (!(typeChanged || hubChanged)) {
-            return null; // 기존 순번 유지
-        }
-        // 새 순번 계산
-        int nextSeq = domainService.calculateNextSequence(newType, newHubId);
-        log.info("[DeliveryManager] 순서 재배정 필요: prevType={}, newType={}, newHubId={}, newSeq={}",
-                prevType, newType, newHubId, nextSeq);
-        return nextSeq;
-    }
-
-    /**
      * Hub ID 검증 및 반환
      */
     private UUID validateHubId(DeliveryManagerType type, UUID hubId) {
@@ -183,6 +79,18 @@ public class DeliveryManagerService {
         return null;
     }
 
+    /**
+     * 배송 담당자 단건 조회
+     */
+    public DeliveryManagerResponse getDeliveryManager(
+            Long deliveryManagerId,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
+        validateReadPermission(manager, currentUserId, currentUserRole);
+        return DeliveryManagerResponse.from(manager);
+    }
 
     /**
      * ID로 배송 담당자 조회
@@ -224,6 +132,32 @@ public class DeliveryManagerService {
     }
 
     /**
+     * 배송 담당자 수정
+     */
+    @Transactional
+    public DeliveryManagerResponse updateDeliveryManager(
+            Long deliveryManagerId,
+            UpdateDeliveryManagerRequest request,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        log.info("[DeliveryManager] 배송 담당자 수정 시작. id: {}, type: {}", deliveryManagerId, request.type());
+        // 조회
+        DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
+        // 권한 검증
+        validateWritePermission(manager, currentUserId, currentUserRole);
+        // Hub ID 검증
+        UUID newHubId = validateHubId(request.type(), request.hubId());
+        // 순서 재배정
+        Integer newSequence = determineSequenceForUpdate(manager, request.type(), newHubId);
+        // 배송 담당자 수정
+        manager.update(newHubId, SlackId.of(request.slackId()), request.type(), newSequence, request.startTime(), request.endTime());
+
+        log.info("[DeliveryManager] 배송 담당자 수정 완료. id: {}", deliveryManagerId);
+        return DeliveryManagerResponse.from(manager);
+    }
+
+    /**
      * 배송 담당자 수정/삭제 권한 (마스터, 허브관리자)
      */
     private void validateWritePermission(
@@ -246,6 +180,70 @@ public class DeliveryManagerService {
         }
 
         throw new BusinessException(ErrorCode.USER_ROLE_UNAUTHORIZED);
+    }
+
+    /**
+     * 타입/허브 변경에 따른 순서 재배정
+     * - HUB_DELIVERY: 전체 허브 대상 전역 시퀀스(max + 1)
+     * - COMPANY_DELIVERY: 특정 허브 내 시퀀스(max + 1)
+     * - 변경 없으면 기존 유지(null)
+     */
+    private Integer determineSequenceForUpdate(DeliveryManager manager, DeliveryManagerType newType, UUID newHubId) {
+        DeliveryManagerType prevType = manager.getType();
+        UUID prevHubId = manager.getHubId();
+
+        // 타입 변경 여부
+        boolean typeChanged = prevType != newType;
+        // 허브 변경 여부
+        boolean hubChanged = newType == DeliveryManagerType.COMPANY_DELIVERY
+                && (prevHubId == null || !prevHubId.equals(newHubId));
+        // 타입과 허브가 모두 동일하면 순서 유지
+        if (!(typeChanged || hubChanged)) {
+            return null; // 기존 순번 유지
+        }
+        // 새 순번 계산
+        int nextSeq = domainService.calculateNextSequence(newType, newHubId);
+        log.info("[DeliveryManager] 순서 재배정 필요: prevType={}, newType={}, newHubId={}, newSeq={}",
+                prevType, newType, newHubId, nextSeq);
+        return nextSeq;
+    }
+
+    /**
+     * 배송 담당자 삭제
+     */
+    @Transactional
+    public void deleteDeliveryManager(
+            Long deliveryManagerId,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        log.info("[DeliveryManager] 배송 담당자 삭제 시작. id: {}", deliveryManagerId);
+
+        DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
+        validateWritePermission(manager, currentUserId, currentUserRole);
+        manager.delete(currentUserId);
+
+        log.info("[DeliveryManager] 배송 담당자 삭제 완료. id: {}", deliveryManagerId);
+    }
+
+    /**
+     * 배송 담당자 목록 조회
+     */
+    public Page<DeliveryManagerResponse> getDeliveryManagers(
+            DeliveryManagerType type,
+            UUID hubId,
+            int page,
+            int size,
+            String sortBy,
+            Sort.Direction direction,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        Pageable pageable = PageableUtils.createPageable(page, size, sortBy, direction);
+        Page<DeliveryManager> managers = findDeliveryManagers(
+                type, hubId, currentUserId, currentUserRole, pageable);
+
+        return managers.map(DeliveryManagerResponse::from);
     }
 
     /**
