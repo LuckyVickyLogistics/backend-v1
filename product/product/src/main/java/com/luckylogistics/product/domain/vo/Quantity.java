@@ -23,11 +23,20 @@ public class Quantity {
         if (amount <= 0) {
             throw new IllegalArgumentException("출고할 재고를 1개 이상 선택해야 합니다");
         }
-        int totalAmount = this.value - amount;
-        if (totalAmount < 0) {
+        int finalQuantity  = this.value - amount;
+        if (finalQuantity < 0) {
             throw new IllegalArgumentException("상품 재고가 부족합니다.");
         }
-        return new Quantity(totalAmount);
+        return new Quantity(finalQuantity);
+    }
+
+    public Quantity plus(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("추가할 재고를 1개 이상 선택해야 합니다");
+        }
+        int finalQuantity  = this.value + amount;
+        return new Quantity(finalQuantity);
+
     }
 
     //재고 확인하는 메서드

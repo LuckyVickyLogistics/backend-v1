@@ -101,13 +101,37 @@ public class ProductService {
 
         product.delete();
     }
-
+    //롤백
     @Transactional
     public void rollbackDeleteProduct(UUID productId) {
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
 
         product.rollbackDelete();
+    }
+
+    //비활성
+    @Transactional
+    public void hiddenProducts(UUID productId) {
+        Product product = productRepository.findById(productId).
+                orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+        product.hidden();
+    }
+
+    //수량 감소
+    @Transactional
+    public void minusProducts(UUID productId, int amount) {
+        //id 찾기
+        Product product = productRepository.findById(productId).
+                orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+        product.minusQuantity(amount);
+    }
+    //수량 추가
+    @Transactional
+    public void plusProducts(UUID productId, int amount) {
+        Product product = productRepository.findById(productId).
+                orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+        product.plusQuantity(amount);
     }
 
 }

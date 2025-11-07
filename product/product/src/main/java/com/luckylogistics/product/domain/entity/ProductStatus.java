@@ -15,17 +15,10 @@ public enum ProductStatus {
         this.description = description;
     }
 
-    public boolean isAvailableForSale() {
-        return this == ProductStatus.ON_SALE;
-    }
-
     public static ProductStatus fromQuantity(int quantity) {
-        if (quantity <= 0) {
+        if (quantity == 0) {
             return SOLD_OUT;
         }
         return ON_SALE;
-    }
-    public ProductStatus hidden() {
-        return HIDDEN;
     }
 }

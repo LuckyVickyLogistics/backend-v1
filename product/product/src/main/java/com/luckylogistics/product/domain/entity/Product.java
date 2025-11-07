@@ -110,13 +110,45 @@ public class Product extends BaseEntity {
         this.status = ProductStatus.ON_SALE;
     }
 
+    public void hidden() {this.status = ProductStatus.HIDDEN;}
+
     public void minusQuantity(int amount) {
         if (this.status == ProductStatus.DELETED) {
             throw new IllegalArgumentException("삭제된 상품의 재고는 차감될 수 없습니다.");
         }
+
+        if (amount > this.totalQuantity) {
+            throw new IllegalArgumentException("주문 수량은 총 수량을 넘길 수 없습니다");
+        }
+
         this.quantity = this.quantity.minus(amount);
-        //0이면 SOLD_OUT 으로 바뀌게 조작
+
+        // 재고 0 이면 SOLD_OUT으로 변경
         this.status = ProductStatus.fromQuantity(this.quantity.getValue());
+    }
+
+    public void plusQuantity(int amount) {
+        if (this.status == ProductStatus.DELETED) {
+            throw new IllegalArgumentException("삭제된 상품의 재고는 추가할 수 없습니다.");
+        }
+
+        if (amount > this.totalQuantity) {
+            throw new IllegalArgumentException("주문 추가는 총 수량을 넘길 수 없습니다");
+        }
+
+        Quantity plusValue = this.quantity.plus(amount);
+
+        if (plusValue.getValue() > this.totalQuantity) {
+            throw new IllegalArgumentException("추가한 수량의 합이 총 수량을 초과합니다");
+        }
+
+        //더한 값 적용
+        this.quantity = plusValue;
+
+        //Sold Out 의 값에 재고 추가되면 바뀌어야 함
+        this.status = ProductStatus.fromQuantity(this.quantity.getValue());
+
+
     }
 
     //주문 -> 재고 차감 -> 0개가 되면 SOLD_OUT 이런식으로 표시
