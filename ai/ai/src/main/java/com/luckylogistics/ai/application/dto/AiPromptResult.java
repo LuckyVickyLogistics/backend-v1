@@ -6,18 +6,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record GeminiPromptResult(
+public record AiPromptResult(
 
-	Instant responseContent,
-
-	String error
+	Instant responseContent
 
 ) {
 
-	public static GeminiPromptResult from(Instant responseContent, String error) {
-		return GeminiPromptResult.builder()
+	public static AiPromptResult from(Instant responseContent) {
+		return AiPromptResult.builder()
 			.responseContent(responseContent)
-			.error(error)
 			.build();
 	}
 

@@ -19,7 +19,7 @@ import com.google.genai.types.Part;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
 import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
-import com.luckylogistics.ai.application.dto.GeminiPromptResult;
+import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.external.GeminiClient;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,25 +40,26 @@ public class GeminiClientImpl implements GeminiClient {
 
 	// TODO: 예외 처리 세분화
 	@Override
-	public GeminiPromptResult generatePrompt(AiPromptCreatedCommand command) {
+	public AiPromptResult generatePrompt(AiPromptCreatedCommand command) {
 		try {
 			GenerateContentConfig config = GenerateContentConfig.builder()
 				.responseMimeType("application/json")
 				.responseSchema(Schema.builder()
 					.type(Type.Known.OBJECT)
 					.properties(Map.of(
-						"responseContent",
-						Schema.builder().type(Type.Known.STRING).format("date-time").build()))
+						"responseContent", Schema.builder()
+							.type(Type.Known.STRING)
+							.format("date-time")
+							.build()
+					))
 					.required("responseContent")
 					.build())
 				.build();
 
 			GenerateContentResponse response = client.models.generateContent(model, createContentList(command), config);
-
-			return GeminiPromptResult.from(convertResponseToInstant(response), null);
+			return AiPromptResult.from(convertResponseToInstant(response));
 		} catch (Exception e) {
-			e.printStackTrace();
-			return GeminiPromptResult.from(null, e.getMessage());
+			throw new RuntimeException("Gemini API 호출에 실패했습니다.");
 		}
 	}
 
@@ -90,8 +91,7 @@ public class GeminiClientImpl implements GeminiClient {
 			String responseContent = mapper.readTree(response.text()).get("responseContent").asText();
 			return Instant.parse(responseContent);
 		} catch (JsonProcessingException | NullPointerException | DateTimeParseException e) {
-			log.error("Gemini API 호출에서 예상한 값을 받을 수 없습니다.", e);
-			throw new RuntimeException(e.getMessage());
+			throw new RuntimeException("Gemini API 호출에서 예상한 값을 받을 수 없습니다.");
 		}
 	}
 
