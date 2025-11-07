@@ -8,16 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CompanyJpaRepository extends JpaRepository<Company, UUID> {
 
-    @Query("""
-      select c from Company c
-      where c.deletedAt is null
-    """)
-    List<Company> findAllActive();
+    List<Company> findAllByDeletedAtIsNull();
 
     @Query("""
       select c from Company c
       where (:name is null or lower(c.name) like lower(concat('%', :name, '%')))
       and c.deletedAt is null
     """)
-    List<Company> findByName(String name);
+    List<Company> findByNameContainingIgnoreCaseAndDeletedAtIsNull(String name);
 }

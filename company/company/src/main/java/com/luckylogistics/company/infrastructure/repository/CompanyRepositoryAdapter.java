@@ -25,11 +25,11 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
 
     @Override
     public List<Company> findAll(){
-        return jpaRepository.findAllActive();
+        return jpaRepository.findAllByDeletedAtIsNull();
     }
 
     @Override
     public List<Company> findByName(String name){
-        return jpaRepository.findByName(name);
+        return jpaRepository.findByNameContainingIgnoreCaseAndDeletedAtIsNull(name);
     }
 }
