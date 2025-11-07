@@ -71,14 +71,26 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("상품 조회에 실패했습니다."));
     }
 
+    //전체조회 및 검색 서비스
+    public List<ProductResponse> allOrSearchProducts(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return getAllProducts();
+        }
+        return searchProductsByName(keyword);
+    }
+
+
     //전체 조회!
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    private List<ProductResponse> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream().map(ProductResponse::from).toList();
+
     }
 
     //검색
-    public List<Product> searchProductsByName(String keyword) {
-        return productRepository.findByProductNameContainingIgnoreCase(keyword);
+    private List<ProductResponse> searchProductsByName(String keyword) {
+        List<Product> products = productRepository.findByProductNameContainingIgnoreCase(keyword);
+        return products.stream().map(ProductResponse::from).toList();
     }
 
     @Transactional

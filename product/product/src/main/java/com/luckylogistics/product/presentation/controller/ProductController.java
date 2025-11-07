@@ -1,9 +1,6 @@
 package com.luckylogistics.product.presentation.controller;
 
-import brave.Response;
 import com.luckylogistics.product.application.service.ProductService;
-import com.luckylogistics.product.domain.entity.Product;
-import com.luckylogistics.product.domain.repository.ProductRepository;
 import com.luckylogistics.product.application.dto.ProductRequest;
 import com.luckylogistics.product.application.dto.ProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +18,6 @@ import java.util.UUID;
 @RequestMapping("/api/v1/products")
 @Tag(name = "상품 API" , description = "상품 관련 API입니다.")
 public class ProductController {
-    private final ProductRepository productRepository;
     private final ProductService productService;
 
     @Operation(summary = "상품 생성", description = "상품 생성 api")
@@ -42,7 +38,8 @@ public class ProductController {
     //단건 조회
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable(name = "productId") UUID productId) {
-        return ResponseEntity.ok(ProductResponse.from(productService.getProduct(productId)));
+        ProductResponse result = ProductResponse.from(productService.getProduct(productId));
+        return ResponseEntity.ok(result);
     }
 
     //전체 조회 및 검색
@@ -51,27 +48,21 @@ public class ProductController {
     public ResponseEntity<List<ProductResponse>> getAllProducts(
             @RequestParam(required = false) String productName
     ) {
-        List<Product> List;
-        if (productName != null && !productName.isBlank()) {
-            List = productService.searchProductsByName(productName);
-        } else {
-            List = productService.getAllProducts();
-        }
-        List <ProductResponse> finalList = List.stream().map(ProductResponse::from).toList();
-        return ResponseEntity.ok(finalList);
+        List<ProductResponse> list = productService.allOrSearchProducts(productName);
+        return ResponseEntity.ok(list);
     }
 
     @Operation(summary = "상품 정보 삭제", description = "상품 삭제 api")
     @PatchMapping("/{productId}")
-    public ResponseEntity<ProductResponse> deleteProduct(@Valid @PathVariable UUID productId) {
+    public ResponseEntity<Boolean> deleteProduct(@Valid @PathVariable UUID productId) {
         productService.deleteProduct(productId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(true);
     }
     @Operation(summary = "상품 삭제정보 롤백 ", description = "상품 삭제정보 롤백")
     @PatchMapping("rollbackProducts/{productId}")
-    public ResponseEntity<ProductResponse> rollbackProducts(@Valid @PathVariable UUID productId) {
+    public ResponseEntity<Boolean> rollbackProducts(@Valid @PathVariable UUID productId) {
         productService.rollbackDeleteProduct(productId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(true);
     }
 
 }
