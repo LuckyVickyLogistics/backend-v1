@@ -4,8 +4,6 @@ import com.luckylogistics.delivery.application.dto.CreateDeliveryManagerRequest;
 import com.luckylogistics.delivery.application.dto.CreateDeliveryManagerResponse;
 import com.luckylogistics.delivery.application.dto.DeliveryManagerResponse;
 import com.luckylogistics.delivery.application.dto.UpdateDeliveryManagerRequest;
-import com.luckylogistics.delivery.application.facade.HubFacade;
-import com.luckylogistics.delivery.application.facade.UserFacade;
 import com.luckylogistics.delivery.common.enums.UserRole;
 import com.luckylogistics.delivery.common.exception.BusinessException;
 import com.luckylogistics.delivery.common.exception.ErrorCode;
@@ -34,8 +32,8 @@ public class DeliveryManagerService {
 
     private final DeliveryManagerRepository repository;
     private final DeliveryDomainService domainService;
-    private final UserFacade userFacade;
-    private final HubFacade hubFacade;
+    private final UserClientService userClientService;
+    private final HubClientService hubClientService;
 
     /**
      * 배송 담당자 생성
@@ -46,7 +44,7 @@ public class DeliveryManagerService {
     ) {
         log.info("[DeliveryManager] 배송 담당자 생성 시작. userId: {}, type: {}", request.deliveryManagerId(), request.type());
         // 외부 User 서비스: USER 도메인에서 배송 담당자 타입 검증
-        userFacade.validateDeliveryManagerRole(request.deliveryManagerId());
+        userClientService.validateDeliveryManagerRole(request.deliveryManagerId());
         // 도메인 서비스: 중복 검증
         domainService.validateNotDuplicate(request.deliveryManagerId());
         // Hub ID 검증
@@ -179,7 +177,7 @@ public class DeliveryManagerService {
     private UUID validateHubId(DeliveryManagerType type, UUID hubId) {
         if (type == DeliveryManagerType.COMPANY_DELIVERY) {
             // 외부 Hub 서비스: Hub 도메인에서 존재 검증
-            hubFacade.validateHubExists(hubId);
+            hubClientService.validateHubExists(hubId);
             return hubId;
         }
         return null;
@@ -207,7 +205,7 @@ public class DeliveryManagerService {
         }
 
         if (currentUserRole == UserRole.HUB_MANAGER) {
-            UUID hubId = hubFacade.getUserHubId(currentUserId);
+            UUID hubId = hubClientService.getUserHubId(currentUserId);
 
             if (!manager.belongsToHub(hubId)) {
                 throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
@@ -238,7 +236,7 @@ public class DeliveryManagerService {
         }
 
         if (currentUserRole == UserRole.HUB_MANAGER) {
-            UUID hubId = hubFacade.getUserHubId(currentUserId);
+            UUID hubId = hubClientService.getUserHubId(currentUserId);
 
             if (!manager.belongsToHub(hubId)) {
                 throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
@@ -269,7 +267,7 @@ public class DeliveryManagerService {
         }
 
         if (currentUserRole == UserRole.HUB_MANAGER) {
-            UUID myHubId = hubFacade.getUserHubId(currentUserId);
+            UUID myHubId = hubClientService.getUserHubId(currentUserId);
             if (myHubId == null) {
                 throw new BusinessException(ErrorCode.USER_HUB_NOT_FOUND);
             }

@@ -1,4 +1,13 @@
 package com.luckylogistics.delivery.infrastructure.client.dto;
 
-public record UserResponse() {
+import com.luckylogistics.delivery.common.enums.UserRole;
+
+// TODO: User Service 연동
+public record UserResponse(
+        Long userId,
+        String username,
+        String slackId,
+        UserRole role,
+        String hubId
+) {
 }
