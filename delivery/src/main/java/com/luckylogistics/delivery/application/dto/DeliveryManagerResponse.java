@@ -5,6 +5,7 @@ import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Builder
@@ -14,6 +15,8 @@ public record DeliveryManagerResponse(
         String slackId,
         DeliveryManagerType type,
         Integer deliverySequence,
+        LocalTime startTime,
+        LocalTime endTime,
         LocalDateTime createdAt,
         Long createdBy,
         LocalDateTime updatedAt,
@@ -26,6 +29,8 @@ public record DeliveryManagerResponse(
                 .slackId(manager.getSlackId().getSlackId())
                 .type(manager.getType())
                 .deliverySequence(manager.getDeliverySequence())
+                .startTime(manager.getStartTime())
+                .endTime(manager.getEndTime())
                 .createdAt(manager.getCreatedAt())
                 .createdBy(manager.getCreatedBy())
                 .updatedAt(manager.getUpdatedAt())

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalTime;
 import java.util.UUID;
 
 /**
@@ -18,6 +19,12 @@ public record UpdateDeliveryManagerRequest(
         String slackId,
 
         @NotNull(message = "배송 담당자 타입은 필수입니다")
-        DeliveryManagerType type
+        DeliveryManagerType type,
+
+        @NotNull(message = "근무 시작 시간은 필수입니다.")
+        LocalTime startTime,
+
+        @NotNull(message = "근무 종료 시간은 필수입니다.")
+        LocalTime endTime
 ) {
 }

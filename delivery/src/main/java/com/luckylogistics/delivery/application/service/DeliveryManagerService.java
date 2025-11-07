@@ -60,7 +60,9 @@ public class DeliveryManagerService {
                 hubId,
                 SlackId.of(request.slackId()),
                 request.type(),
-                nextSequence
+                nextSequence,
+                request.startTime(),
+                request.endTime()
         );
         DeliveryManager saved = repository.save(manager);
         log.info("[DeliveryManager] 배송 담당자 생성 완료. id: {}, sequence: {}", saved.getDeliveryManagerId(), saved.getDeliverySequence());
@@ -101,7 +103,7 @@ public class DeliveryManagerService {
         // 순서 재배정
         Integer newSequence = determineSequenceForUpdate(manager, request.type(), newHubId);
         // 배송 담당자 수정
-        manager.update(newHubId, SlackId.of(request.slackId()), request.type(), newSequence);
+        manager.update(newHubId, SlackId.of(request.slackId()), request.type(), newSequence, request.startTime(), request.endTime());
 
         log.info("[DeliveryManager] 배송 담당자 수정 완료. id: {}", deliveryManagerId);
         return DeliveryManagerResponse.from(manager);

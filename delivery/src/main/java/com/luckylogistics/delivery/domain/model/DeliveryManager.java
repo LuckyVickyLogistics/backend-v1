@@ -5,6 +5,8 @@ import com.luckylogistics.delivery.domain.vo.SlackId;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalTime;
+
 @Getter
 @Entity
 @Table(name = "p_delivery_manager")
@@ -33,6 +35,14 @@ public class DeliveryManager extends BaseEntity {
     @Column(name = "delivery_sequence", nullable = false)
     private Integer deliverySequence;
 
+    // 근무 시작 시간
+    @Column(name = "start_time", nullable = false)
+    private LocalTime startTime;
+
+    // 근무 종료 시간
+    @Column(name = "end_time", nullable = false)
+    private LocalTime endTime;
+
     /**
      * 배송 담당자 생성
      */
@@ -41,12 +51,15 @@ public class DeliveryManager extends BaseEntity {
             HubId hubId,
             SlackId slackId,
             DeliveryManagerType type,
-            Integer deliverySequence
+            Integer deliverySequence,
+            LocalTime startTime,
+            LocalTime endTime
     ) {
         // 필수 입력 값 검증
         validateUserId(deliveryManagerId);
         validateType(type);
         validateDeliverySequence(deliverySequence);
+        validateWorkingHours(startTime, endTime);
         // 타입별 허브 ID 검증
         type.validateHubId(hubId);
 
@@ -56,6 +69,8 @@ public class DeliveryManager extends BaseEntity {
                 .slackId(slackId)
                 .type(type)
                 .deliverySequence(deliverySequence)
+                .startTime(startTime)
+                .endTime(endTime)
                 .build();
     }
 
@@ -77,12 +92,22 @@ public class DeliveryManager extends BaseEntity {
         }
     }
 
+    private static void validateWorkingHours(LocalTime startTime, LocalTime endTime) {
+        if (startTime == null || endTime == null) {
+            throw new IllegalArgumentException("근무 시간이 비어 있습니다.");
+        }
+        if (!endTime.isAfter(startTime)) {
+            throw new IllegalArgumentException("근무 종료 시간은 시작 시간보다 늦어야 합니다.");
+        }
+    }
+
     /**
      * 배송 담당자 정보 수정
      */
-    public void update(HubId newHubId, SlackId newSlackId, DeliveryManagerType newType, Integer newDeliverySequence) {
+    public void update(HubId newHubId, SlackId newSlackId, DeliveryManagerType newType, Integer newDeliverySequence, LocalTime startTime, LocalTime endTime) {
         validateType(newType);
         validateDeliverySequence(newDeliverySequence);
+        validateWorkingHours(startTime, endTime);
         // 타입에 따른 허브 ID 검증
         newType.validateHubId(newHubId);
 
@@ -90,6 +115,8 @@ public class DeliveryManager extends BaseEntity {
         this.slackId = newSlackId;
         this.type = newType;
         this.deliverySequence = newDeliverySequence;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     /**
