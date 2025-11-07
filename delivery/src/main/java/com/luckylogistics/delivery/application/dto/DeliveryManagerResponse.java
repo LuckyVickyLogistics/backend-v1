@@ -25,7 +25,7 @@ public record DeliveryManagerResponse(
     public static DeliveryManagerResponse from(DeliveryManager manager) {
         return DeliveryManagerResponse.builder()
                 .deliveryManagerId(manager.getDeliveryManagerId())
-                .hubId(manager.getHubId() == null ? null : manager.getHubId().getHubId())
+                .hubId(manager.getHubId() == null ? null : manager.getHubId())
                 .slackId(manager.getSlackId().getSlackId())
                 .type(manager.getType())
                 .deliverySequence(manager.getDeliverySequence())

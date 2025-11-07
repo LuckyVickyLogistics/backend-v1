@@ -14,7 +14,6 @@ import com.luckylogistics.delivery.domain.model.DeliveryManager;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
 import com.luckylogistics.delivery.domain.service.DeliveryDomainService;
-import com.luckylogistics.delivery.domain.vo.HubId;
 import com.luckylogistics.delivery.domain.vo.SlackId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,8 +49,8 @@ public class DeliveryManagerService {
         userFacade.validateDeliveryManagerRole(request.deliveryManagerId());
         // 도메인 서비스: 중복 검증
         domainService.validateNotDuplicate(request.deliveryManagerId());
-        // Hub ID 생성
-        HubId hubId = createHubId(request.type(), request.hubId());
+        // Hub ID 검증
+        UUID hubId = validateHubId(request.type(), request.hubId());
         // 도메인 서비스: 순번 계산
         Integer nextSequence = domainService.calculateNextSequence(request.type(), hubId);
         // 배송 담당자 생성
@@ -98,8 +97,8 @@ public class DeliveryManagerService {
         DeliveryManager manager = findDeliveryManagerById(deliveryManagerId);
         // 권한 검증
         validateWritePermission(manager, currentUserId, currentUserRole);
-        // Hub ID 생성
-        HubId newHubId = createHubId(request.type(), request.hubId());
+        // Hub ID 검증
+        UUID newHubId = validateHubId(request.type(), request.hubId());
         // 순서 재배정
         Integer newSequence = determineSequenceForUpdate(manager, request.type(), newHubId);
         // 배송 담당자 수정
@@ -154,9 +153,9 @@ public class DeliveryManagerService {
      * - COMPANY_DELIVERY: 특정 허브 내 시퀀스(max + 1)
      * - 변경 없으면 기존 유지(null)
      */
-    private Integer determineSequenceForUpdate(DeliveryManager manager, DeliveryManagerType newType, HubId newHubId) {
+    private Integer determineSequenceForUpdate(DeliveryManager manager, DeliveryManagerType newType, UUID newHubId) {
         DeliveryManagerType prevType = manager.getType();
-        HubId prevHubId = manager.getHubId();
+        UUID prevHubId = manager.getHubId();
 
         // 타입 변경 여부
         boolean typeChanged = prevType != newType;
@@ -175,16 +174,17 @@ public class DeliveryManagerService {
     }
 
     /**
-     * HubId 생성
+     * Hub ID 검증 및 반환
      */
-    private HubId createHubId(DeliveryManagerType type, UUID hubId) {
+    private UUID validateHubId(DeliveryManagerType type, UUID hubId) {
         if (type == DeliveryManagerType.COMPANY_DELIVERY) {
             // 외부 Hub 서비스: Hub 도메인에서 존재 검증
             hubFacade.validateHubExists(hubId);
-            return HubId.of(hubId);
+            return hubId;
         }
         return null;
     }
+
 
     /**
      * ID로 배송 담당자 조회
@@ -209,7 +209,7 @@ public class DeliveryManagerService {
         if (currentUserRole == UserRole.HUB_MANAGER) {
             UUID hubId = hubFacade.getUserHubId(currentUserId);
 
-            if (!manager.belongsToHub(HubId.of(hubId))) {
+            if (!manager.belongsToHub(hubId)) {
                 throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
             }
             return;
@@ -240,7 +240,7 @@ public class DeliveryManagerService {
         if (currentUserRole == UserRole.HUB_MANAGER) {
             UUID hubId = hubFacade.getUserHubId(currentUserId);
 
-            if (!manager.belongsToHub(HubId.of(hubId))) {
+            if (!manager.belongsToHub(hubId)) {
                 throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
             }
 

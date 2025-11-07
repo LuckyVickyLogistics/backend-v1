@@ -2,10 +2,11 @@ package com.luckylogistics.delivery.domain.service;
 
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
-import com.luckylogistics.delivery.domain.vo.HubId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * 배송 담당자 도메인 서비스
@@ -23,7 +24,7 @@ public class DeliveryDomainService {
      * - COMPANY_DELIVERY: 특정 허브의 업체 배송 담당자 중 최대값 + 1
      * - 0부터 시작
      */
-    public Integer calculateNextSequence(DeliveryManagerType type, HubId hubId) {
+    public Integer calculateNextSequence(DeliveryManagerType type, UUID hubId) {
         if (type == DeliveryManagerType.HUB_DELIVERY) {
             return repository.findMaxSequenceByType(type)
                     .map(maxSeq -> maxSeq + 1)
@@ -33,7 +34,7 @@ public class DeliveryDomainService {
                 throw new IllegalArgumentException(
                         "업체 배송 담당자는 Hub ID가 필요합니다");
             }
-            return repository.findMaxSequenceByTypeAndHubId(type, hubId.getHubId())
+            return repository.findMaxSequenceByTypeAndHubId(type, hubId)
                     .map(maxSeq -> maxSeq + 1)
                     .orElse(0);
         }

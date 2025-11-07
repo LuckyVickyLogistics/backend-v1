@@ -21,7 +21,7 @@ public interface JpaDeliveryManagerRepository extends JpaRepository<DeliveryMana
         SELECT dm
         FROM DeliveryManager dm
         WHERE (:type IS NULL OR dm.type = :type)
-          AND (:hubId IS NULL OR dm.hubId.hubId = :hubId)
+          AND (:hubId IS NULL OR dm.hubId = :hubId)
           AND dm.deletedAt IS NULL
     """)
     Page<DeliveryManager> findByTypeAndHubId(
@@ -41,7 +41,7 @@ public interface JpaDeliveryManagerRepository extends JpaRepository<DeliveryMana
         SELECT MAX(dm.deliverySequence)
         FROM DeliveryManager dm
         WHERE dm.type = :type
-          AND dm.hubId.hubId = :hubId
+          AND dm.hubId = :hubId
           AND dm.deletedAt IS NULL
     """)
     Optional<Integer> findMaxSequenceByTypeAndHubId(

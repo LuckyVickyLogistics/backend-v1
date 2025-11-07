@@ -1,11 +1,11 @@
 package com.luckylogistics.delivery.domain.model;
 
-import com.luckylogistics.delivery.domain.vo.HubId;
 import com.luckylogistics.delivery.domain.vo.SlackId;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -20,9 +20,8 @@ public class DeliveryManager extends BaseEntity {
     private Long deliveryManagerId; // userId와 동일한 값 사용 (PK)
 
     // COMPANY_DELIVERY만 보유, HUB_DELIVERY는 null
-    @Embedded
-    @AttributeOverride(name = "hubId", column = @Column(name = "hub_id", columnDefinition = "uuid", nullable = true))
-    private HubId hubId;
+    @Column(name = "hub_id", nullable = true)
+    private UUID hubId;
 
     @Embedded
     @AttributeOverride(name = "slackId", column = @Column(name = "slack_id", nullable = false, length = 100))
@@ -48,7 +47,7 @@ public class DeliveryManager extends BaseEntity {
      */
     public static DeliveryManager create(
             Long deliveryManagerId,
-            HubId hubId,
+            UUID hubId,
             SlackId slackId,
             DeliveryManagerType type,
             Integer deliverySequence,
@@ -104,7 +103,7 @@ public class DeliveryManager extends BaseEntity {
     /**
      * 배송 담당자 정보 수정
      */
-    public void update(HubId newHubId, SlackId newSlackId, DeliveryManagerType newType, Integer newDeliverySequence, LocalTime startTime, LocalTime endTime) {
+    public void update(UUID newHubId, SlackId newSlackId, DeliveryManagerType newType, Integer newDeliverySequence, LocalTime startTime, LocalTime endTime) {
         validateType(newType);
         validateDeliverySequence(newDeliverySequence);
         validateWorkingHours(startTime, endTime);
@@ -124,7 +123,7 @@ public class DeliveryManager extends BaseEntity {
      * 1. HUB_DELIVERY: 허브 간 배송이므로 특정 허브에 속하지 않음 → false
      * 2. COMPANY_DELIVERY: 특정 허브의 업체 배송 담당자 → hubId 일치 여부 확인
      */
-    public boolean belongsToHub(HubId targetHubId) {
+    public boolean belongsToHub(UUID targetHubId) {
         // HUB_DELIVERY는 어떤 허브에도 속하지 않음
         if (this.type == DeliveryManagerType.HUB_DELIVERY) {
             return false;

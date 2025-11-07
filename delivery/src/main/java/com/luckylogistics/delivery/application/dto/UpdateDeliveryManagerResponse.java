@@ -26,7 +26,7 @@ public record UpdateDeliveryManagerResponse(
     public static UpdateDeliveryManagerResponse from(DeliveryManager manager) {
         return UpdateDeliveryManagerResponse.builder()
                 .deliveryManagerId(manager.getDeliveryManagerId())
-                .hubId(manager.getHubId() == null ? null : manager.getHubId().getHubId())
+                .hubId(manager.getHubId() == null ? null : manager.getHubId())
                 .slackId(manager.getSlackId().getSlackId())
                 .type(manager.getType())
                 .deliverySequence(manager.getDeliverySequence())
