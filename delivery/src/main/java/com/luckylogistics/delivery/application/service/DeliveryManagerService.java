@@ -14,7 +14,7 @@ import com.luckylogistics.delivery.domain.model.DeliveryManager;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
 import com.luckylogistics.delivery.domain.service.DeliveryDomainService;
-import com.luckylogistics.delivery.domain.vo.SlackId;
+import com.luckylogistics.delivery.domain.model.SlackId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

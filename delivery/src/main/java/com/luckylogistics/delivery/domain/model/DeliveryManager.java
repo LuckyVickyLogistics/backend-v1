@@ -1,6 +1,5 @@
 package com.luckylogistics.delivery.domain.model;
 
-import com.luckylogistics.delivery.domain.vo.SlackId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +23,6 @@ public class DeliveryManager extends BaseEntity {
     private UUID hubId;
 
     @Embedded
-    @AttributeOverride(name = "slackId", column = @Column(name = "slack_id", nullable = false, length = 100))
     private SlackId slackId;
 
     @Enumerated(EnumType.STRING)

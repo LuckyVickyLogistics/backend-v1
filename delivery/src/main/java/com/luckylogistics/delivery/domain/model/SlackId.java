@@ -1,5 +1,6 @@
-package com.luckylogistics.delivery.domain.vo;
+package com.luckylogistics.delivery.domain.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -21,6 +22,7 @@ public class SlackId {
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
+    @Column(name = "slack_id", nullable = false, length = 100)
     private String slackId;
 
     private SlackId(String slackId) {
