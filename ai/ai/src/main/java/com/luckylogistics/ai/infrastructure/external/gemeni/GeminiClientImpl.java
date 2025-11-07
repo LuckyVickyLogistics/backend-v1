@@ -55,9 +55,9 @@ public class GeminiClientImpl implements GeminiClient {
 					.required("responseContent")
 					.build())
 				.build();
-throw new RuntimeException("에러");
-			// GenerateContentResponse response = client.models.generateContent(model, createContentList(command), config);
-			// return AiPromptResult.from(convertResponseToInstant(response));
+			GenerateContentResponse response = client.models.generateContent(model, createContentList(command), config);
+
+			return AiPromptResult.from(convertResponseToInstant(response));
 		} catch (Exception e) {
 			throw new RuntimeException("Gemini API 호출에 실패했습니다.");
 		}

@@ -36,6 +36,7 @@ public class AiService {
 
 		try {
 			AiPromptResult result = geminiClient.generatePrompt(command);
+			aiPrompt.updateResponseContent(result.responseContent());
 			aiPrompt.updateStatus("SUCCESS");
 			return result;
 		} catch (Exception e) {

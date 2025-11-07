@@ -1,5 +1,6 @@
 package com.luckylogistics.ai.domain.entity;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -32,7 +33,7 @@ public class AiPrompt extends BaseEntity<AiPrompt>{
 	private String requestContent;
 
 	@Column(name = "response_content")
-	private String responseContent;
+	private Instant responseContent;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
@@ -42,6 +43,21 @@ public class AiPrompt extends BaseEntity<AiPrompt>{
 	private AiPrompt(String requestContent) {
 		this.requestContent = requestContent;
 		this.status = Status.PENDING;
+	}
+
+	public void updateResponseContent(Instant newResponseContent) {
+		validateResponseContent(newResponseContent);
+		this.responseContent = newResponseContent;
+	}
+
+	private void validateResponseContent(Instant newResponseContent) {
+		if (newResponseContent == null) {
+			throw new IllegalArgumentException("응답 내용이 비어있습니다.");
+		}
+
+		if (newResponseContent.isBefore(Instant.now())) {
+			throw new IllegalArgumentException("응답 내용은 현재 시각 이후여야 합니다.");
+		}
 	}
 
 	public void updateStatus(String strStatus) {
