@@ -9,6 +9,7 @@ import com.luckylogistics.delivery.application.facade.UserFacade;
 import com.luckylogistics.delivery.common.enums.UserRole;
 import com.luckylogistics.delivery.common.exception.BusinessException;
 import com.luckylogistics.delivery.common.exception.ErrorCode;
+import com.luckylogistics.delivery.common.util.PageableUtils;
 import com.luckylogistics.delivery.domain.model.DeliveryManager;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
@@ -17,9 +18,13 @@ import com.luckylogistics.delivery.domain.vo.HubId;
 import com.luckylogistics.delivery.domain.vo.SlackId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -121,6 +126,27 @@ public class DeliveryManagerService {
     }
 
     /**
+     * 배송 담당자 목록 조회
+     */
+    public Page<DeliveryManagerResponse> getDeliveryManagers(
+            DeliveryManagerType type,
+            UUID hubId,
+            int page,
+            int size,
+            String sortBy,
+            Sort.Direction direction,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        Pageable pageable = PageableUtils.createPageable(page, size, sortBy, direction);
+        Page<DeliveryManager> managers = findDeliveryManagers(
+                type, hubId, currentUserId, currentUserRole, pageable);
+
+        return managers.map(DeliveryManagerResponse::from);
+    }
+
+
+    /**
      * 타입/허브 변경에 따른 순서 재배정
      * - HUB_DELIVERY: 전체 허브 대상 전역 시퀀스(max + 1)
      * - COMPANY_DELIVERY: 특정 허브 내 시퀀스(max + 1)
@@ -217,6 +243,51 @@ public class DeliveryManagerService {
             }
 
             return;
+        }
+
+        throw new BusinessException(ErrorCode.USER_ROLE_UNAUTHORIZED);
+    }
+
+    /**
+     * 조건에 따른 배송 담당자 목록 조회
+     */
+    public Page<DeliveryManager> findDeliveryManagers(
+            DeliveryManagerType requestType,
+            UUID requestHubId,
+            Long currentUserId,
+            UserRole currentUserRole,
+            Pageable pageable
+    ) {
+        if (currentUserRole == UserRole.MASTER_ADMIN) {
+            if (requestType == DeliveryManagerType.HUB_DELIVERY) {
+                return repository.findByTypeAndHubId(DeliveryManagerType.HUB_DELIVERY, null, pageable);
+            }
+
+            return repository.findByTypeAndHubId(requestType, requestHubId, pageable);
+        }
+
+        if (currentUserRole == UserRole.HUB_MANAGER) {
+            UUID myHubId = hubFacade.getUserHubId(currentUserId);
+            if (myHubId == null) {
+                throw new BusinessException(ErrorCode.USER_HUB_NOT_FOUND);
+            }
+
+            if (requestType == DeliveryManagerType.HUB_DELIVERY) {
+                throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
+            }
+
+            if (requestHubId != null && !Objects.equals(requestHubId, myHubId)) {
+                throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
+            }
+
+            DeliveryManagerType effectiveType =
+                    (requestType == null) ? DeliveryManagerType.COMPANY_DELIVERY : requestType;
+
+            if (effectiveType != DeliveryManagerType.COMPANY_DELIVERY) {
+                throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
+            }
+
+            return repository.findByTypeAndHubId(requestType, myHubId, pageable);
         }
 
         throw new BusinessException(ErrorCode.USER_ROLE_UNAUTHORIZED);
