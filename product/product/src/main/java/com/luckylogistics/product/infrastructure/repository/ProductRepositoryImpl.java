@@ -6,10 +6,28 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 @AllArgsConstructor
 public class ProductRepositoryImpl implements ProductRepository {
     private final ProductJPARepository productJPARepository;
+
+    @Override
+    public Product save(Product product) {
+        return productJPARepository.save(product);
+    }
+
+    @Override
+    public Optional<Product> findById(UUID id) {
+        return productJPARepository.findById(id);
+    }
+
+    @Override
+    public List<Product> findAll() {
+        return productJPARepository.findAll();
+    }
 
     @Override
     public boolean existsByProductName(String productName) {
@@ -20,4 +38,6 @@ public class ProductRepositoryImpl implements ProductRepository {
     public List<Product> findByProductNameContainingIgnoreCase(String keyword) {
         return  productJPARepository.findByProductNameContainingIgnoreCase(keyword);
     }
+
+
 }
