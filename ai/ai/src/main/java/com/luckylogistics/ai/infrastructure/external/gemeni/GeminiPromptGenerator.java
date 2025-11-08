@@ -44,28 +44,31 @@ public class GeminiPromptGenerator implements AiPromptGenerator {
 	// TODO: 예외 처리 세분화
 	@Override
 	public AiPromptResult generatePrompt(AiPromptCreatedCommand command) {
+		GenerateContentConfig config = generateContentConfig();
 		try {
-			GenerateContentConfig config = GenerateContentConfig.builder()
-				.responseMimeType("application/json")
-				.responseSchema(Schema.builder()
-					.type(Type.Known.OBJECT)
-					.properties(Map.of(
-						"responseContent", Schema.builder()
-							.type(Type.Known.STRING)
-							.format("date-time")
-							.build()
-					))
-					.required("responseContent")
-					.build())
-				.build();
 			GenerateContentResponse response = client.models.generateContent(model, createContentList(command), config);
-
 			return AiPromptResult.from(
 				convertResponseToInstant(response, command.deliveryManagerStartTime(), command.deliveryManagerEndTime())
 			);
 		} catch (Exception e) {
 			throw new RuntimeException("Gemini API 호출에 실패했습니다.");
 		}
+	}
+
+	private GenerateContentConfig generateContentConfig() {
+		return GenerateContentConfig.builder()
+			.responseMimeType("application/json")
+			.responseSchema(Schema.builder()
+				.type(Type.Known.OBJECT)
+				.properties(Map.of(
+					"responseContent", Schema.builder()
+						.type(Type.Known.STRING)
+						.format("date-time")
+						.build()
+				))
+				.required("responseContent")
+				.build())
+			.build();
 	}
 
 	private List<Content> createContentList(AiPromptCreatedCommand command) {
@@ -98,7 +101,7 @@ public class GeminiPromptGenerator implements AiPromptGenerator {
 			Instant parsedResponseContent = Instant.parse(responseContent);
 			return adjustToWorkingTime(parsedResponseContent, startTime, endTime);
 		} catch (JsonProcessingException | NullPointerException | DateTimeParseException e) {
-			throw new RuntimeException("Gemini API 호출에서 예상한 값을 받을 수 없습니다.");
+			throw new RuntimeException("Gemini API 응답 파싱에 실패했습니다.", e);
 		}
 	}
 
