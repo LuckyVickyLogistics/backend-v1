@@ -68,7 +68,7 @@ public class ProductController {
     }
 
     //비활성
-    @Operation(summary = "상품 삭제정보 롤백 ", description = "상품 삭제정보 롤백")
+    @Operation(summary = "상품 정보 숨기기 ", description = "상품 삭제정보 숨기기")
     @PatchMapping("/hiddenProducts/{productId}")
     public ResponseEntity<Boolean> hiddenProducts(@Valid @PathVariable UUID productId) {
         productService.hiddenProducts(productId);
