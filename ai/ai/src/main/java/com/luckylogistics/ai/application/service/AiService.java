@@ -1,6 +1,7 @@
 package com.luckylogistics.ai.application.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
 import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
+import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
 import com.luckylogistics.ai.application.external.GeminiClient;
 import com.luckylogistics.ai.domain.entity.AiPrompt;
 import com.luckylogistics.ai.domain.repository.AiRepository;
@@ -63,6 +65,13 @@ public class AiService {
 		return aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
 			.map(AiPromptReadResult::from)
 			.orElseThrow(() -> new IllegalArgumentException("일치하는 Ai 프롬프트를 찾을 수 없습니다."));
+	}
+
+	@Transactional
+	public void updateStatus(UUID aiPromptId, StatusUpdateCommand command) {
+		AiPrompt aiPrompt = aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
+			.orElseThrow(() -> new IllegalArgumentException("일치하는 Ai 프롬프트를 찾을 수 없습니다."));
+		aiPrompt.updateStatus(command.status());
 	}
 
 	private String toJson(Object obj) {
