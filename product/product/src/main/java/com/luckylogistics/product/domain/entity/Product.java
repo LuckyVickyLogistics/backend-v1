@@ -1,5 +1,7 @@
 package com.luckylogistics.product.domain.entity;
 
+import com.luckylogistics.product.common.exception.BusinessException;
+import com.luckylogistics.product.common.exception.ExceptionCode;
 import com.luckylogistics.product.domain.vo.Quantity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,26 +49,26 @@ public class Product extends BaseEntity {
     public static Product create(String productName, UUID companyId, UUID hubId, Quantity quantity, int totalQuantity, int price) {
 
         if (productName == null || productName.isBlank()) {
-            throw new IllegalArgumentException("상품 이름은 빌 수 없습니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_NAME_ERROR);
         }
         if (price < 0) {
-            throw new IllegalArgumentException("상품 가격은 0원 이상이어야 합니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_PRICE_ZERO);
         }
         if (companyId == null) {
-            throw new IllegalArgumentException("업체 ID는 필수값입니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_COMPANY_ERROR);
         }
         if (hubId == null) {
-            throw new IllegalArgumentException("허브 ID는 필수값입니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_HUB_ERROR);
         }
         if (totalQuantity < 0) {
-            throw new IllegalArgumentException("총 수량은 0 이상이어야 합니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_NONZERO);
         }
 
         if (quantity == null) {
             quantity = new Quantity(0);
         }
         if (quantity.getValue() > totalQuantity) {
-            throw new IllegalArgumentException("초기 재고가 총 수량을 초과했습니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_TOTAL_EXCEED);
         }
 
         return Product.builder()
@@ -82,19 +84,19 @@ public class Product extends BaseEntity {
 
     public void update(String productName, int price, int totalQuantity, Quantity quantity) {
         if (productName == null || productName.isBlank()) {
-            throw new IllegalArgumentException("수정할 상품의 이름은 빌 수 없습니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_NAME_UPDATE);
         }
         if (price < 0) {
-            throw new IllegalArgumentException("수정할 상품 가격은 0원 이상이어야 합니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_PRICE_UPDATE);
         }
         if (quantity == null) {
-            throw new IllegalArgumentException("수정할 수량은 0 이상의 숫자여야 합니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_ZERO_UPDATE);
         }
         if (quantity.getValue() > totalQuantity) {
-            throw new IllegalArgumentException("수정한 재고 수가 총 수량을 초과했습니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_TOTAL_UPDATE);
         }
         if (totalQuantity < 0) {
-            throw new IllegalArgumentException("총 수량은 0 이상이어야 합니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_NONZERO);
         }
         this.productName = productName;
         this.price = price;
@@ -114,11 +116,11 @@ public class Product extends BaseEntity {
 
     public void minusQuantity(int amount) {
         if (this.status == ProductStatus.DELETED) {
-            throw new IllegalArgumentException("삭제된 상품의 재고는 차감될 수 없습니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_DELETED);
         }
 
         if (amount > this.totalQuantity) {
-            throw new IllegalArgumentException("주문 수량은 총 수량을 넘길 수 없습니다");
+            throw new BusinessException(ExceptionCode.QUANTITY_AMOUNT_ERROR);
         }
 
         this.quantity = this.quantity.minus(amount);
@@ -129,17 +131,17 @@ public class Product extends BaseEntity {
 
     public void plusQuantity(int amount) {
         if (this.status == ProductStatus.DELETED) {
-            throw new IllegalArgumentException("삭제된 상품의 재고는 추가할 수 없습니다.");
+            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_DELETED);
         }
 
         if (amount > this.totalQuantity) {
-            throw new IllegalArgumentException("주문 추가는 총 수량을 넘길 수 없습니다");
+            throw new BusinessException(ExceptionCode.QUANTITY_AMOUNT_ERROR);
         }
 
         Quantity plusValue = this.quantity.plus(amount);
 
         if (plusValue.getValue() > this.totalQuantity) {
-            throw new IllegalArgumentException("추가한 수량의 합이 총 수량을 초과합니다");
+            throw new BusinessException(ExceptionCode.QUANTITY_PLUS_EXCEED);
         }
 
         //더한 값 적용
