@@ -20,19 +20,19 @@ import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
 import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
-import com.luckylogistics.ai.application.external.GeminiClient;
+import com.luckylogistics.ai.application.external.AiPromptGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class GeminiClientImpl implements GeminiClient {
+public class GeminiPromptGenerator implements AiPromptGenerator {
 
 	private final Client client;
 	private final String model;
 	private final ObjectMapper mapper;
 
-	public GeminiClientImpl(@Value("${gemini.api.key}") String key, @Value("${gemini.api.model}") String model) {
+	public GeminiPromptGenerator(@Value("${gemini.api.key}") String key, @Value("${gemini.api.model}") String model) {
 		this.client = Client.builder().apiKey(key).build();
 		this.model = model;
 		this.mapper = new ObjectMapper();

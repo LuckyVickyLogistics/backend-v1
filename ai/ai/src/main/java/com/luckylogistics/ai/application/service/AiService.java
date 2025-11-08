@@ -1,7 +1,6 @@
 package com.luckylogistics.ai.application.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
 import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
-import com.luckylogistics.ai.application.external.GeminiClient;
+import com.luckylogistics.ai.application.external.AiPromptGenerator;
 import com.luckylogistics.ai.domain.entity.AiPrompt;
 import com.luckylogistics.ai.domain.repository.AiRepository;
 
@@ -28,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AiService {
 
 	private final AiRepository aiRepository;
-	private final GeminiClient geminiClient;
+	private final AiPromptGenerator aiPromptGenerator;
 	private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
@@ -42,7 +41,7 @@ public class AiService {
 		log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
 
 		try {
-			AiPromptResult result = geminiClient.generatePrompt(command);
+			AiPromptResult result = aiPromptGenerator.generatePrompt(command);
 			aiPrompt.updateResponseContent(result.responseContent());
 			aiPrompt.updateStatus("SUCCESS");
 			return result;
