@@ -78,7 +78,7 @@ public class AiController {
 	public ResponseEntity<ApiResponse<Void>> deletePrompt(@PathVariable UUID aiPromptId) {
 		aiService.deletePrompt(aiPromptId);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success());
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success());
 	}
 
 }
