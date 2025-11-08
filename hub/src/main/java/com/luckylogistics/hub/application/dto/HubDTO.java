@@ -1,13 +1,12 @@
 package com.luckylogistics.hub.application.dto;
 
 import com.luckylogistics.hub.domain.model.Hub;
-import com.luckylogistics.hub.domain.model.Location;
 import lombok.*;
 
 @Getter @Setter @Builder
 @AllArgsConstructor @NoArgsConstructor
 public class HubDTO {
-    private String hubId;
+    private String hubId;   // 외부 노출은 문자열
     private String name;
     private String address;
     private Double latitude;
@@ -15,20 +14,11 @@ public class HubDTO {
 
     public static HubDTO from(Hub hub) {
         return HubDTO.builder()
-                .hubId(hub.getHubId())
+                .hubId(hub.getHubId() != null ? hub.getHubId().toString() : null)
                 .name(hub.getName())
                 .address(hub.getAddress())
-                .latitude(hub.getLocation() != null ? hub.getLocation().getLatitude() : null)
-                .longitude(hub.getLocation() != null ? hub.getLocation().getLongitude() : null)
-                .build();
-    }
-
-    public Hub toDomain() {
-        return Hub.builder()
-                .hubId(hubId)
-                .name(name)
-                .address(address)
-                .location(Location.of(latitude, longitude))
+                .latitude(hub.getLatitude())
+                .longitude(hub.getLongitude())
                 .build();
     }
 }

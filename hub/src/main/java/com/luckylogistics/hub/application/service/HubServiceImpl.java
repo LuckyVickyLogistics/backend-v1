@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.luckylogistics.hub.application.dto.HubDTO;
+import com.luckylogistics.hub.application.dto.hubCreateCommand;
+import com.luckylogistics.hub.application.dto.hubCreateResult;
 import com.luckylogistics.hub.domain.model.Hub;
 import com.luckylogistics.hub.domain.repository.HubRepository;
 import com.luckylogistics.hub.domain.service.HubDomainService;
@@ -18,7 +20,7 @@ public class HubServiceImpl implements HubService {
     private final HubDomainService hubDomainService;
 
     @Override
-    public HubDTO create(HubDTO dto, String username) {
+    public hubCreateResult create(hubCreateCommand command) {
         Hub hub = dto.toDomain();
         hub = Hub.builder()
                 .hubId(UUID.randomUUID().toString())
