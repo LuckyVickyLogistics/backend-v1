@@ -74,6 +74,13 @@ public class AiService {
 		aiPrompt.updateStatus(command.status());
 	}
 
+	@Transactional
+	public void deletePrompt(UUID aiPromptId) {
+		AiPrompt aiPrompt = aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
+			.orElseThrow(() -> new IllegalArgumentException("일치하는 Ai 프롬프트를 찾을 수 없습니다."));
+		aiPrompt.softDelete(1L);
+	}
+
 	private String toJson(Object obj) {
 		try {
 			return mapper.writeValueAsString(obj);
