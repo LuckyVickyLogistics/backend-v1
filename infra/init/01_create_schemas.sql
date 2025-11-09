@@ -4,7 +4,6 @@
 --   → avoids SQL reserved keywords like "user", "order"
 -- ======================================================
 CREATE SCHEMA IF NOT EXISTS ai           AUTHORIZATION luckyvicky;
-CREATE SCHEMA IF NOT EXISTS common       AUTHORIZATION luckyvicky;
 CREATE SCHEMA IF NOT EXISTS companies    AUTHORIZATION luckyvicky;
 CREATE SCHEMA IF NOT EXISTS deliveries   AUTHORIZATION luckyvicky;
 CREATE SCHEMA IF NOT EXISTS hubs         AUTHORIZATION luckyvicky;
