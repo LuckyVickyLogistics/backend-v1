@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: user
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+      timeout: 6000
+
+  jwt:
+    secret: ""
+    access-token-expiration: 1800000 # 30m
+    refresh-token-expiration: 604800000 # 7d
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:19090/eureka/
