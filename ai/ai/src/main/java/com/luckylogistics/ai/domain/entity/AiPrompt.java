@@ -63,6 +63,10 @@ public class AiPrompt extends BaseEntity<AiPrompt>{
 	public void updateStatus(String strStatus) {
 		Status newStatus = validateStatus(strStatus);
 
+		if (status.equals(newStatus)) {
+			return;
+		}
+
 		if (!status.canTransitionTo(newStatus)) {
 			throw new IllegalArgumentException(("'%s' 상태에서 '%s' 상태로 변경할 수 없습니다.")
 				.formatted(status.getDescription(), newStatus.getDescription()));

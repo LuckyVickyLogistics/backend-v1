@@ -3,6 +3,7 @@ package com.luckylogistics.ai.application.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,18 +42,38 @@ public class AiService {
 		aiRepository.save(aiPrompt);
 		log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
 
-		try {
-			AiPromptResult result = aiPromptGenerator.generatePrompt(command);
-			aiPrompt.updateResponseContent(result.responseContent());
-			aiPrompt.updateStatus("SUCCESS");
-			return result;
-		} catch (Exception e) {
-			aiPrompt.updateStatus("RETRY");
-			throw e;
-		} finally {
-			aiRepository.save(aiPrompt);
-			log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
+		for (int retry = 1; retry <= 3; retry++) {
+			try {
+				AiPromptResult result = aiPromptGenerator.generatePrompt(command);
+				aiPrompt.updateResponseContent(result.responseContent());
+				aiPrompt.updateStatus("SUCCESS");
+				return result;
+			} catch (AiException e) {
+				if (e.getHttpStatus().equals(HttpStatus.GATEWAY_TIMEOUT) || e.getHttpStatus().equals(HttpStatus.SERVICE_UNAVAILABLE)) {
+					aiPrompt.updateStatus("RETRY");
+					if (retry == 3) {
+						aiPrompt.updateStatus("FAILED");
+						throw e;
+					}
+
+					try {
+						Thread.sleep(5000L);
+					} catch (InterruptedException ex) {
+						Thread.currentThread().interrupt();
+					}
+				} else {
+					aiPrompt.updateStatus("FAILED");
+					throw e;
+				}
+			} catch (Exception e) {
+				aiPrompt.updateStatus("FAILED");
+				throw e;
+			} finally {
+				aiRepository.save(aiPrompt);
+				log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
+			}
 		}
+		return null;
 	}
 
 	@Transactional(readOnly = true)

@@ -10,7 +10,7 @@ public enum Status {
 	PENDING("준비") {
 		@Override
 		public boolean canTransitionTo(Status newStatus) {
-			return newStatus == SUCCESS || newStatus == RETRY;
+			return newStatus == SUCCESS || newStatus == RETRY || newStatus == FAILED;
 		}
 	},
 
