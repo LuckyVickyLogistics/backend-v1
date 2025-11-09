@@ -20,6 +20,7 @@ import com.luckylogistics.ai.common.exception.ErrorCode;
 import com.luckylogistics.ai.domain.entity.AiPrompt;
 import com.luckylogistics.ai.domain.repository.AiRepository;
 
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,20 +58,20 @@ public class AiService {
 	public AiPromptReadResult getPrompt(UUID aiPromptId) {
 		return aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
 			.map(AiPromptReadResult::from)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 AI 프롬프트를 찾을 수 없습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
 	}
 
 	@Transactional
 	public void updateStatus(UUID aiPromptId, StatusUpdateCommand command) {
 		AiPrompt aiPrompt = aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 AI 프롬프트를 찾을 수 없습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
 		aiPrompt.updateStatus(command.status());
 	}
 
 	@Transactional
 	public void deletePrompt(UUID aiPromptId) {
 		AiPrompt aiPrompt = aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 AI 프롬프트를 찾을 수 없습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND));
 		aiPrompt.softDelete(1L);
 	}
 
@@ -78,7 +79,7 @@ public class AiService {
 		try {
 			return mapper.writeValueAsString(obj);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("JSON 형식으로 변환할 수 없습니다.", e);
+			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
 		}
 	}
 

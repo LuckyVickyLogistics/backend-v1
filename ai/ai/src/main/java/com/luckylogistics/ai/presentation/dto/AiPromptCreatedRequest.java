@@ -9,27 +9,27 @@ import jakarta.validation.constraints.NotNull;
 
 public record AiPromptCreatedRequest(
 
-	@NotEmpty
+	@NotEmpty(message = "상품명은 필수입니다.")
 	String productName,
 
-	@Min(value = 1)
+	@Min(value = 1, message = "수량은 1개 이상이어야 합니다.")
 	int quantity,
 
-	@NotEmpty
+	@NotEmpty(message = "요청사항은 필수입니다.")
 	String request,
 
-	@NotEmpty
+	@NotEmpty(message = "출발지는 필수입니다.")
 	String startPoint,
 
 	List<String> waypoints,
 
-	@NotEmpty
+	@NotEmpty(message = "도착지는 필수입니다.")
 	String endPoint,
 
-	@NotNull
+	@NotNull(message = "배송 매니저 근무 시작 시간은 필수입니다.")
 	LocalTime deliveryManagerStartTime,
 
-	@NotNull
+	@NotNull(message = "배송 매니저 근무 종료 시간은 필수입니다.")
 	LocalTime deliveryManagerEndTime
 
 ) {

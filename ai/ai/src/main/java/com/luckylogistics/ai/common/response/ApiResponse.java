@@ -31,4 +31,9 @@ public record ApiResponse<T>(
 		return new ApiResponse<>(false, errorCode.getMessage(), null, errorCode.getCode());
 	}
 
+	/// 실패
+	public static <T> ApiResponse<T> error(ErrorCode errorCode, String message) {
+		return new ApiResponse<>(false, errorCode.getMessage() + " (" + message + ")", null, errorCode.getCode());
+	}
+
 }
