@@ -11,6 +11,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 
 	@Override
 	public Optional<String> getCurrentAuditor() {
+		// TODO: 헤더 값 가져오기
 		// 로그인된 사용자의 username 반환
 		return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
