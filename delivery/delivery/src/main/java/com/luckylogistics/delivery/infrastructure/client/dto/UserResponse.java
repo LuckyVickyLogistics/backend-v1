@@ -5,9 +5,6 @@ import com.luckylogistics.delivery.common.enums.UserRole;
 // TODO: User Service 연동
 public record UserResponse(
         Long userId,
-        String username,
-        String slackId,
-        UserRole role,
-        String hubId
+        UserRole role
 ) {
 }
