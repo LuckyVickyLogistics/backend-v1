@@ -33,6 +33,9 @@ public class AiService {
 	private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+	private final int MAX_RETRY = 3;
+	private final long SLEEP_MILLIS = 5000L;
+
 	// @Transactional
 	// TODO: 별도의 서비스 클래스를 통해 트랜잭셔널 분리
 	public AiPromptResult createAiPrompt(AiPromptCreatedCommand command) {
@@ -42,38 +45,7 @@ public class AiService {
 		aiRepository.save(aiPrompt);
 		log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
 
-		for (int retry = 1; retry <= 3; retry++) {
-			try {
-				AiPromptResult result = aiPromptGenerator.generatePrompt(command);
-				aiPrompt.updateResponseContent(result.responseContent());
-				aiPrompt.updateStatus("SUCCESS");
-				return result;
-			} catch (AiException e) {
-				if (e.getHttpStatus().equals(HttpStatus.GATEWAY_TIMEOUT) || e.getHttpStatus().equals(HttpStatus.SERVICE_UNAVAILABLE)) {
-					aiPrompt.updateStatus("RETRY");
-					if (retry == 3) {
-						aiPrompt.updateStatus("FAILED");
-						throw e;
-					}
-
-					try {
-						Thread.sleep(5000L);
-					} catch (InterruptedException ex) {
-						Thread.currentThread().interrupt();
-					}
-				} else {
-					aiPrompt.updateStatus("FAILED");
-					throw e;
-				}
-			} catch (Exception e) {
-				aiPrompt.updateStatus("FAILED");
-				throw e;
-			} finally {
-				aiRepository.save(aiPrompt);
-				log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
-			}
-		}
-		return null;
+		return generateAiPrompt(aiPrompt, command);
 	}
 
 	@Transactional(readOnly = true)
@@ -107,6 +79,47 @@ public class AiService {
 			return mapper.writeValueAsString(obj);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException("JSON 형식으로 변환할 수 없습니다.", e);
+		}
+	}
+
+	private AiPromptResult generateAiPrompt(AiPrompt aiPrompt, AiPromptCreatedCommand command) {
+		for (int retry = 1; retry <= MAX_RETRY; retry++) {
+			try {
+				AiPromptResult result = aiPromptGenerator.generatePrompt(command);
+
+				aiPrompt.updateResponseContent(result.responseContent());
+				aiPrompt.updateStatus("SUCCESS");
+				return result;
+			} catch (AiException e) {
+				if (isRetryable(e) && retry < MAX_RETRY) {
+					aiPrompt.updateStatus("RETRY");
+					sleep();
+					continue;
+				}
+
+				aiPrompt.updateStatus("FAILED");
+				throw e;
+			} catch (Exception e) {
+				aiPrompt.updateStatus("FAILED");
+				throw e;
+			} finally {
+				aiRepository.save(aiPrompt);
+				log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
+			}
+		}
+
+		return null;
+	}
+
+	private boolean isRetryable(AiException e) {
+		return e.getHttpStatus() == HttpStatus.GATEWAY_TIMEOUT || e.getHttpStatus() == HttpStatus.SERVICE_UNAVAILABLE;
+	}
+
+	private void sleep() {
+		try {
+			Thread.sleep(SLEEP_MILLIS);
+		} catch (InterruptedException ignored) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
