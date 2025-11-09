@@ -5,6 +5,7 @@ import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,4 +25,8 @@ public interface DeliveryManagerRepository {
             DeliveryManagerType type,
             UUID hubId
     );
+
+    List<DeliveryManager> findCompanyDeliveryManagersByHubId(UUID hubId);
+
+    List<DeliveryManager> findHubDeliveryManagers();
 }
