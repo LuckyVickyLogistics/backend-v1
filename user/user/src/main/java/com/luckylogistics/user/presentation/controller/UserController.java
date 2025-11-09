@@ -1,5 +1,7 @@
 package com.luckylogistics.user.presentation.controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,6 @@ public class UserController {
 
 		Long userId = userService.signup(command);
 
-		return ResponseEntity.ok("회원가입 요청 완료");
+		return ResponseEntity.ok(Map.of("userId", userId, "message", "회원가입 요청 완료"));
 	}
 }

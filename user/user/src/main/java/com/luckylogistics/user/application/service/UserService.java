@@ -26,8 +26,15 @@ public class UserService {
 
 		String encodedPassword = passwordEncoder.encode(command.password());
 
-		User user = User.createPendingUser(command);
+		SignupCommand encodedCommand = SignupCommand.builder()
+			.username(command.username())
+			.password(encodedPassword)
+			.role(command.role())
+			.organizationType(command.organizationType())
+			.slackId(command.slackId())
+			.build();
 
+		User user = User.createPendingUser(command);
 		return userRepository.save(user).getUserId();
 	}
 }
