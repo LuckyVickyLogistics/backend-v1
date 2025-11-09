@@ -1,26 +1,34 @@
 package com.luckylogistics.ai.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.luckylogistics.ai.common.exception.ErrorCode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ApiResponse<T>(
 
-	String messages,
+	boolean success,
 
-	T data
+	String message,
+
+	T data,
+
+	String code
 
 ) {
 
-	public static <T> ApiResponse<T> success() {
-		return new ApiResponse<>("success", null);
+	/// 성공 - 반환 데이터 없음
+	public static <T> ApiResponse<T> success(String message) {
+		return new ApiResponse<>(true, message, null, null);
 	}
 
-	public static <T> ApiResponse<T> success(T data) {
-		return new ApiResponse<>("success", data);
+	///  성공 - 반환 데이터 있음
+	public static <T> ApiResponse<T> success(String message, T data) {
+		return new ApiResponse<>(true, message, data, null);
 	}
 
-	public static <T> ApiResponse<T> error(String message) {
-		return new ApiResponse<>(message, null);
+	/// 실패
+	public static <T> ApiResponse<T> error(ErrorCode errorCode) {
+		return new ApiResponse<>(false, errorCode.getMessage(), null, errorCode.getCode());
 	}
 
 }

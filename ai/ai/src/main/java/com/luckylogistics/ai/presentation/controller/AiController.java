@@ -44,7 +44,7 @@ public class AiController {
 		AiPromptResult result = aiService.createAiPrompt(command);
 		AiPromptCreatedResponse responseDto = AiPromptCreatedResponse.from(result);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto));
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("AI 프롬프트가 생성되었습니다.", responseDto));
 	}
 
 	// TODO: 페이징 및 검색 구현
@@ -53,7 +53,7 @@ public class AiController {
 		List<AiPromptReadResult> resultList = aiService.getAllPrompts();
 		List<AiPromptSummaryResponse> responseDtoList = resultList.stream().map(AiPromptSummaryResponse::from).toList();
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDtoList));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("AI 프롬프트 목록이 조회되었습니다.", responseDtoList));
 	}
 
 	@GetMapping("/{aiPromptId}")
@@ -61,7 +61,7 @@ public class AiController {
 		AiPromptReadResult result = aiService.getPrompt(aiPromptId);
 		AiPromptDetailResponse responseDto = AiPromptDetailResponse.from(result);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("AI 프롬프트가 조회되었습니다.", responseDto));
 	}
 
 	@PatchMapping("/{aiPromptId}/status")
@@ -71,14 +71,14 @@ public class AiController {
 		StatusUpdateCommand command = StatusUpdateCommand.from(requestDto);
 		aiService.updateStatus(aiPromptId, command);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success());
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("AI 프롬프트의 상태가 수정되었습니다."));
 	}
 
 	@DeleteMapping("/{aiPromptId}")
 	public ResponseEntity<ApiResponse<Void>> deletePrompt(@PathVariable UUID aiPromptId) {
 		aiService.deletePrompt(aiPromptId);
 
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success());
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("AI 프롬프트가 삭제되었습니다."));
 	}
 
 }
