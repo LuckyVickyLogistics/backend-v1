@@ -3,7 +3,6 @@ package com.luckylogistics.ai.application.service;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +14,9 @@ import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
 import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
-import com.luckylogistics.ai.application.exception.AiException;
 import com.luckylogistics.ai.application.external.AiPromptGenerator;
+import com.luckylogistics.ai.common.exception.BusinessException;
+import com.luckylogistics.ai.common.exception.ErrorCode;
 import com.luckylogistics.ai.domain.entity.AiPrompt;
 import com.luckylogistics.ai.domain.repository.AiRepository;
 
@@ -90,7 +90,7 @@ public class AiService {
 				aiPrompt.updateResponseContent(result.responseContent());
 				aiPrompt.updateStatus("SUCCESS");
 				return result;
-			} catch (AiException e) {
+			} catch (BusinessException e) {
 				if (isRetryable(e) && retry < MAX_RETRY) {
 					aiPrompt.updateStatus("RETRY");
 					sleep();
@@ -111,8 +111,8 @@ public class AiService {
 		return null;
 	}
 
-	private boolean isRetryable(AiException e) {
-		return e.getHttpStatus() == HttpStatus.GATEWAY_TIMEOUT || e.getHttpStatus() == HttpStatus.SERVICE_UNAVAILABLE;
+	private boolean isRetryable(BusinessException e) {
+		return e.getErrorCode() == ErrorCode.GEMINI_API_TIMEOUT || e.getErrorCode() == ErrorCode.GEMINI_API_SERVICE_UNAVAILABLE;
 	}
 
 	private void sleep() {

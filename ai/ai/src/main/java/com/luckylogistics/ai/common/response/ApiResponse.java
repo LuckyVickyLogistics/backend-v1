@@ -1,9 +1,15 @@
-package com.luckylogistics.ai.presentation;
+package com.luckylogistics.ai.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ApiResponse<T>(String messages, T data) {
+public record ApiResponse<T>(
+
+	String messages,
+
+	T data
+
+) {
 
 	public static <T> ApiResponse<T> success() {
 		return new ApiResponse<>("success", null);

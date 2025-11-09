@@ -19,7 +19,7 @@ import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
 import com.luckylogistics.ai.application.service.AiService;
-import com.luckylogistics.ai.presentation.ApiResponse;
+import com.luckylogistics.ai.common.response.ApiResponse;
 import com.luckylogistics.ai.presentation.dto.AiPromptCreatedRequest;
 import com.luckylogistics.ai.presentation.dto.AiPromptCreatedResponse;
 import com.luckylogistics.ai.presentation.dto.AiPromptDetailResponse;
