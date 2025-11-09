@@ -20,7 +20,7 @@ import com.luckylogistics.slack.application.dto.SlackEmailCheckResult;
 import com.luckylogistics.slack.application.dto.SlackMessageResult;
 import com.luckylogistics.slack.application.service.SlackService;
 import com.luckylogistics.slack.infrastructure.external.kafka.event.OrderCreatedEvent;
-import com.luckylogistics.slack.presentation.ApiResponse;
+import com.luckylogistics.slack.common.response.ApiResponse;
 import com.luckylogistics.slack.presentation.dto.SlackCheckInWorkSpaceResponse;
 import com.luckylogistics.slack.presentation.dto.SlackCheckInWorkspaceRequest;
 import com.luckylogistics.slack.presentation.dto.SlackDetailResponse;
@@ -41,7 +41,7 @@ public class SlackController {
 	@PostMapping("/publish")
 	public ResponseEntity<ApiResponse<Void>> publish(@RequestBody OrderCreatedEvent requestDto) {
 		slackService.publish(requestDto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success());
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("이벤트가 생성되었습니다."));
 	}
 
 	// TODO: 페이징 및 검색 구현
@@ -52,7 +52,7 @@ public class SlackController {
 			.map(SlackSummaryResponse::from)
 			.toList();
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDtoList));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지 목록이 조회되었습니다.", responseDtoList));
 	}
 
 	@GetMapping("/{slackMessageId}")
@@ -60,7 +60,7 @@ public class SlackController {
 		SlackMessageResult result = slackService.getMessage(slackMessageId);
 		SlackDetailResponse responseDto = SlackDetailResponse.from(result);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지가 조회되었습니다.", responseDto));
 	}
 
 	@GetMapping("/workspaces")
@@ -73,7 +73,7 @@ public class SlackController {
 		SlackEmailCheckResult result = slackService.checkInWorkspace(command);
 		SlackCheckInWorkSpaceResponse responseDto = SlackCheckInWorkSpaceResponse.from(result);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 워크스페이스 가입 여부가 확인되었습니다.", responseDto));
 	}
 
 	@PatchMapping("/{slackMessageId}/status")
@@ -85,14 +85,14 @@ public class SlackController {
 			.build();
 		slackService.updateStatus(slackMessageId, command);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success());
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지의 상태가 수정되었습니다."));
 	}
 
 	@DeleteMapping("/{slackMessageId}")
 	public ResponseEntity<ApiResponse<Void>> deleteMessage(@PathVariable UUID slackMessageId) {
 		slackService.deleteMessage(slackMessageId);
 
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success());
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("Slack 메시지가 삭제되었습니다."));
 	}
 
 }

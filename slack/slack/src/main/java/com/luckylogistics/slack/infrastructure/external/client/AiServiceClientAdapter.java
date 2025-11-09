@@ -1,5 +1,6 @@
 package com.luckylogistics.slack.infrastructure.external.client;
 
+import java.time.Instant;
 import java.time.LocalTime;
 
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class AiServiceClientAdapter implements AiServiceClient {
 
 	// TODO: AI 서비스가 개발된 후 실제 feignClient로 요청
 	public AiPromptCreatedResult generateAiPrompt(OrderCreatedResult result, LocalTime startTime, LocalTime endTime) {
-		return AiPromptResponse.of(new AiPromptResponse("2025-11-05T14:00:00Z"));
+		return AiPromptResponse.of(new AiPromptResponse(Instant.now()));
 		// return AiPromptResponse.of(feignClient.generateAiPrompt(AiPromptRequest.from(result, startTime, endTime)));
 	}
 

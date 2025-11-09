@@ -1,5 +1,6 @@
 package com.luckylogistics.slack.application.service;
 
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -51,7 +52,7 @@ public class SlackService {
 		slackRepository.save(slackMessage);
 		log.info("슬랙 메시지 발송 상태 - {}", slackMessage.getStatus().getDescription());
 
-		String aiPrompt = generateAiPrompt(result, startTime, endTIme);
+		Instant aiPrompt = generateAiPrompt(result, startTime, endTIme);
 		if (sendMessage(result, receiverEmail, aiPrompt)) {
 			slackMessage.updateStatus("SUCCESS");
 		} else {
@@ -92,7 +93,7 @@ public class SlackService {
 		slackMessage.softDelete(1L);
 	}
 
-	private String generateAiPrompt(OrderCreatedResult result, LocalTime startTime, LocalTime endTIme) {
+	private Instant generateAiPrompt(OrderCreatedResult result, LocalTime startTime, LocalTime endTIme) {
 		try {
 			AiPromptCreatedResult aiResult = aiServiceClient.generateAiPrompt(result, startTime, endTIme);
 			return aiResult.responseContent();
@@ -102,7 +103,7 @@ public class SlackService {
 		}
 	}
 
-	private boolean sendMessage(OrderCreatedResult orderResult, String receiverEmail, String aiPrompt) {
+	private boolean sendMessage(OrderCreatedResult orderResult, String receiverEmail, Instant aiPrompt) {
 		try {
 			slackClient.sendMessage(orderResult, receiverEmail, aiPrompt);
 			return true;

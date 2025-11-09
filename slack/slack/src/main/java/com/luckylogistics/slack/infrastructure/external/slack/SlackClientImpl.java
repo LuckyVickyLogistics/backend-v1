@@ -29,7 +29,7 @@ public class SlackClientImpl implements SlackClient {
 	}
 
 	@Override
-	public void sendMessage(OrderCreatedResult command, String receiverEmail, String aiPrompt) {
+	public void sendMessage(OrderCreatedResult command, String receiverEmail, Instant aiPrompt) {
 		try {
 			String userId = client.usersLookupByEmail(r -> r.email(receiverEmail)).getUser().getId();
 			String channelId = client.conversationsOpen(r -> r.users(List.of(userId))).getChannel().getId();
@@ -55,7 +55,7 @@ public class SlackClientImpl implements SlackClient {
 		}
 	}
 
-	private Attachment createAttachment(OrderCreatedResult command, String aiPrompt) {
+	private Attachment createAttachment(OrderCreatedResult command, Instant aiPrompt) {
 		return Attachment.builder()
 			.color("#36A64F")
 			.fields(List.of(
@@ -69,7 +69,7 @@ public class SlackClientImpl implements SlackClient {
 				createField("*도착지* : ", command.endPoint()),
 				createField("*배송담당자* : ",
 					String.format("%s(%s)", command.deliveryManagerName(), command.deliveryManagerEmail())),
-				createField("", "위 내용을 기반으로 도출된 최종 발송 시한은 *%s* 입니다.".formatted(formatter.format(Instant.parse(aiPrompt))))
+				createField("", "위 내용을 기반으로 도출된 최종 발송 시한은 *%s* 입니다.".formatted(formatter.format(aiPrompt)))
 			))
 			.build();
 	}
