@@ -14,6 +14,7 @@ import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
 import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
+import com.luckylogistics.ai.application.exception.AiException;
 import com.luckylogistics.ai.application.external.AiPromptGenerator;
 import com.luckylogistics.ai.domain.entity.AiPrompt;
 import com.luckylogistics.ai.domain.repository.AiRepository;
@@ -47,7 +48,7 @@ public class AiService {
 			return result;
 		} catch (Exception e) {
 			aiPrompt.updateStatus("RETRY");
-			throw new RuntimeException(e.getMessage());
+			throw e;
 		} finally {
 			aiRepository.save(aiPrompt);
 			log.info("AI 프롬프트 요청 상태 - {}", aiPrompt.getStatus().getDescription());
@@ -63,20 +64,20 @@ public class AiService {
 	public AiPromptReadResult getPrompt(UUID aiPromptId) {
 		return aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
 			.map(AiPromptReadResult::from)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 Ai 프롬프트를 찾을 수 없습니다."));
+			.orElseThrow(() -> new IllegalArgumentException("일치하는 AI 프롬프트를 찾을 수 없습니다."));
 	}
 
 	@Transactional
 	public void updateStatus(UUID aiPromptId, StatusUpdateCommand command) {
 		AiPrompt aiPrompt = aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 Ai 프롬프트를 찾을 수 없습니다."));
+			.orElseThrow(() -> new IllegalArgumentException("일치하는 AI 프롬프트를 찾을 수 없습니다."));
 		aiPrompt.updateStatus(command.status());
 	}
 
 	@Transactional
 	public void deletePrompt(UUID aiPromptId) {
 		AiPrompt aiPrompt = aiRepository.findByAiPromptIdAndDeletedAtIsNull(aiPromptId)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 Ai 프롬프트를 찾을 수 없습니다."));
+			.orElseThrow(() -> new IllegalArgumentException("일치하는 AI 프롬프트를 찾을 수 없습니다."));
 		aiPrompt.softDelete(1L);
 	}
 
@@ -84,7 +85,7 @@ public class AiService {
 		try {
 			return mapper.writeValueAsString(obj);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("JSON 형식으로 변환할 수 없습니다.");
+			throw new RuntimeException("JSON 형식으로 변환할 수 없습니다.", e);
 		}
 	}
 

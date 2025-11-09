@@ -10,19 +10,25 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
+import com.google.genai.errors.ClientException;
+import com.google.genai.errors.GenAiIOException;
+import com.google.genai.errors.ServerException;
 import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
+import com.google.genai.types.HttpOptions;
 import com.google.genai.types.Part;
 import com.google.genai.types.Schema;
 import com.google.genai.types.Type;
 import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
+import com.luckylogistics.ai.application.exception.AiException;
 import com.luckylogistics.ai.application.external.AiPromptGenerator;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +42,11 @@ public class GeminiPromptGenerator implements AiPromptGenerator {
 	private final ObjectMapper mapper;
 
 	public GeminiPromptGenerator(@Value("${gemini.api.key}") String key, @Value("${gemini.api.model}") String model) {
-		this.client = Client.builder().apiKey(key).build();
+		this.client = Client.builder().httpOptions(HttpOptions.builder().timeout(10000).build()).apiKey(key).build();
 		this.model = model;
 		this.mapper = new ObjectMapper();
 	}
 
-	// TODO: 예외 처리 세분화
 	@Override
 	public AiPromptResult generatePrompt(AiPromptCreatedCommand command) {
 		GenerateContentConfig config = generateContentConfig();
@@ -50,8 +55,22 @@ public class GeminiPromptGenerator implements AiPromptGenerator {
 			return AiPromptResult.from(
 				convertResponseToInstant(response, command.deliveryManagerStartTime(), command.deliveryManagerEndTime())
 			);
-		} catch (Exception e) {
-			throw new RuntimeException("Gemini API 호출에 실패했습니다.");
+		} catch (GenAiIOException e) {
+			throw new AiException(HttpStatus.GATEWAY_TIMEOUT, "Gemini API 요청이 타임아웃되었습니다.", e);
+		} catch (ClientException e) {
+			switch (e.code()) {
+				case 400: throw new AiException(HttpStatus.BAD_REQUEST, "Gemini API 요청이 잘못되었습니다.", e);
+				case 403: throw new AiException(HttpStatus.FORBIDDEN, "Gemini API 요청에 권한이 없습니다.", e);
+				case 404: throw new AiException(HttpStatus.NOT_FOUND, "Gemini API 요청한 리소스를 찾을 수 없습니다.", e);
+				case 429: throw new AiException(HttpStatus.TOO_MANY_REQUESTS, "Gemini API 요청 제한 횟수를 초과했습니다.", e);
+				default: throw new AiException(HttpStatus.INTERNAL_SERVER_ERROR, "Gemini API 서비스에 알 수 없는 오류가 발생했습니다.", e);
+			}
+		} catch (ServerException e) {
+			switch (e.code()) {
+				case 500: throw new AiException(HttpStatus.INTERNAL_SERVER_ERROR, "Gemini API 서비스 내부에 오류가 발생했습니다.", e);
+				case 503: throw new AiException(HttpStatus.SERVICE_UNAVAILABLE, "Gemini API 서비스를 일시적으로 호출할 수 없습니다.", e);
+				default: throw new AiException(HttpStatus.INTERNAL_SERVER_ERROR, "Gemini API 서비스에 알 수 없는 오류가 발생했습니다.", e);
+			}
 		}
 	}
 
@@ -101,7 +120,7 @@ public class GeminiPromptGenerator implements AiPromptGenerator {
 			Instant parsedResponseContent = Instant.parse(responseContent);
 			return adjustToWorkingTime(parsedResponseContent, startTime, endTime);
 		} catch (JsonProcessingException | NullPointerException | DateTimeParseException e) {
-			throw new RuntimeException("Gemini API 응답 파싱에 실패했습니다.", e);
+			throw new AiException(HttpStatus.INTERNAL_SERVER_ERROR, "Gemini API 응답 파싱에 실패했습니다.", e);
 		}
 	}
 
