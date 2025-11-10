@@ -63,10 +63,38 @@ public enum DeliveryStatus {
         }
     }
 
-    /**
-     * 배송이 완료되었는지 확인
-     */
+    /** 업체 배송 중 상태 확인 */
+    public boolean isCompanyMoving() {
+        return this == COMPANY_MOVING;
+    }
+
+    /** 배송 완료 상태 확인 */
     public boolean isCompleted() {
-        return this == DeliveryStatus.COMPLETED;
+        return this == COMPLETED;
+    }
+
+    /** 목적지 허브 도착 상태 확인 */
+    public boolean isHubArrived() {
+        return this == HUB_ARRIVED;
+    }
+
+    /** 허브 대기 상태 확인 */
+    public boolean isHubWaiting() {
+        return this == HUB_WAITING;
+    }
+
+    /** 허브 이동 중 상태 확인 */
+    public boolean isHubMoving() {
+        return this == HUB_MOVING;
+    }
+
+    /** 허브 관련 단계 확인 (대기/이동중/도착) */
+    public boolean isHubPhase() {
+        return this == HUB_WAITING || this == HUB_MOVING || this == HUB_ARRIVED;
+    }
+
+    /** 업체 관련 단계 확인 (배송중/완료) */
+    public boolean isCompanyPhase() {
+        return this == COMPANY_MOVING || this == COMPLETED;
     }
 }
