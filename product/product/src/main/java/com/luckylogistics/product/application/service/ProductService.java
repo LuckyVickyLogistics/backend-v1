@@ -2,6 +2,8 @@ package com.luckylogistics.product.application.service;
 
 import com.luckylogistics.product.application.external.CompanyService;
 import com.luckylogistics.product.application.external.HubService;
+import com.luckylogistics.product.common.exception.BusinessException;
+import com.luckylogistics.product.common.exception.ExceptionCode;
 import com.luckylogistics.product.domain.entity.Product;
 import com.luckylogistics.product.domain.repository.ProductRepository;
 import com.luckylogistics.product.domain.vo.Quantity;
@@ -53,7 +55,7 @@ public class ProductService {
         companyService.isCompanyExists(productRequest.companyId());
 
         Product product = productRepository.findById(productId)
-                .orElseThrow( () -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+                .orElseThrow( () -> new BusinessException(ExceptionCode.PRODUCT_CANNOT_FIND));
 
 
         product.update(
@@ -68,7 +70,7 @@ public class ProductService {
     //단건 조회 서비스
     public Product getProduct(UUID productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("상품 조회에 실패했습니다."));
+                .orElseThrow(() -> new BusinessException(ExceptionCode.PRODUCT_READ_FAIL));
     }
 
     //전체조회 및 검색 서비스
@@ -97,17 +99,41 @@ public class ProductService {
     //삭제 처리
     public void deleteProduct(UUID productId) {
         Product product = productRepository.findById(productId).
-                orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+                orElseThrow(() -> new BusinessException(ExceptionCode.PRODUCT_CANNOT_FIND));
 
         product.delete();
     }
-
+    //롤백
     @Transactional
     public void rollbackDeleteProduct(UUID productId) {
         Product product = productRepository.findById(productId).
-                orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+                orElseThrow(() -> new BusinessException(ExceptionCode.PRODUCT_CANNOT_FIND));
 
         product.rollbackDelete();
+    }
+
+    //비활성
+    @Transactional
+    public void hiddenProducts(UUID productId) {
+        Product product = productRepository.findById(productId).
+                orElseThrow(() -> new BusinessException(ExceptionCode.PRODUCT_CANNOT_FIND));
+        product.hidden();
+    }
+
+    //수량 감소
+    @Transactional
+    public void minusProducts(UUID productId, int amount) {
+        //id 찾기
+        Product product = productRepository.findById(productId).
+                orElseThrow(() -> new BusinessException(ExceptionCode.PRODUCT_CANNOT_FIND));
+        product.minusQuantity(amount);
+    }
+    //수량 추가
+    @Transactional
+    public void plusProducts(UUID productId, int amount) {
+        Product product = productRepository.findById(productId).
+                orElseThrow(() -> new BusinessException(ExceptionCode.PRODUCT_CANNOT_FIND));
+        product.plusQuantity(amount);
     }
 
 }

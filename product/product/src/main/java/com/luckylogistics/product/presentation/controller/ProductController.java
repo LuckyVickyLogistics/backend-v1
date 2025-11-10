@@ -52,17 +52,45 @@ public class ProductController {
         return ResponseEntity.ok(list);
     }
 
+    // 삭제
     @Operation(summary = "상품 정보 삭제", description = "상품 삭제 api")
     @PatchMapping("/{productId}")
     public ResponseEntity<Boolean> deleteProduct(@Valid @PathVariable UUID productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.ok(true);
     }
+    //삭제 롤백
     @Operation(summary = "상품 삭제정보 롤백 ", description = "상품 삭제정보 롤백")
-    @PatchMapping("rollbackProducts/{productId}")
+    @PatchMapping("/rollbackProducts/{productId}")
     public ResponseEntity<Boolean> rollbackProducts(@Valid @PathVariable UUID productId) {
         productService.rollbackDeleteProduct(productId);
         return ResponseEntity.ok(true);
     }
+
+    //비활성
+    @Operation(summary = "상품 정보 숨기기 ", description = "상품 삭제정보 숨기기")
+    @PatchMapping("/hiddenProducts/{productId}")
+    public ResponseEntity<Boolean> hiddenProducts(@Valid @PathVariable UUID productId) {
+        productService.hiddenProducts(productId);
+        return ResponseEntity.ok(true);
+    }
+
+
+    //재고 감소
+    @Operation(summary = "해당 상품 재고 감소", description = "주문이 들어왔을 때 해당 상품의 재고를 n만큼 감소시킨다")
+    @PatchMapping("/minusProductsQuan/{productId}")
+    public ResponseEntity<Boolean> minusProducts(@Valid @PathVariable UUID productId, int amount) {
+        productService.minusProducts(productId,amount);
+        return ResponseEntity.ok(true);
+    }
+
+    //재고 추가
+    @Operation(summary = "해당 상품 재고 추가", description = "주문이 들어왔을 때 해당 상품의 재고를 n만큼 추가시킨다")
+    @PatchMapping("/plusProductsQuan/{productId}")
+    public ResponseEntity<Boolean> plusProducts(@Valid @PathVariable UUID productId, int amount) {
+        productService.plusProducts(productId,amount);
+        return ResponseEntity.ok(true);
+    }
+
 
 }
