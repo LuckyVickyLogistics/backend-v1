@@ -17,7 +17,7 @@ spring:
 
   data:
     redis:
-      host: redis
+      host: localhost
       port: 6379
       timeout: 6000
 
@@ -25,6 +25,9 @@ spring:
     secret: ""
     access-token-expiration: 1800000 # 30m
     refresh-token-expiration: 604800000 # 7d
+
+  profiles:
+    active: local
 
 #eureka:
 #  client:
