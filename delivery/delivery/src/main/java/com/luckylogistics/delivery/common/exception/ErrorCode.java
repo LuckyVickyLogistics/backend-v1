@@ -27,11 +27,17 @@ public enum ErrorCode {
     DELIVERY_DELETED(HttpStatus.BAD_REQUEST, "DD-002", "삭제된 배송입니다"),
     DUPLICATE_DELIVERY(HttpStatus.CONFLICT, "DD-003", "이미 배송이 생성된 주문입니다"),
     FORBIDDEN_DELIVERY_READ(HttpStatus.FORBIDDEN, "DD-004", "해당 배송을 조회할 권한이 없습니다"),
+    FORBIDDEN_DELIVERY_MODIFY(HttpStatus.FORBIDDEN, "DD-005", "해당 배송을 수정할 권한이 없습니다"),
+    FORBIDDEN_DELIVERY_DELETE(HttpStatus.FORBIDDEN, "DD-006", "해당 배송을 삭제할 권한이 없습니다"),
+    FORBIDDEN_NOT_HUB_DELIVERY(HttpStatus.FORBIDDEN, "DD-007", "담당 허브의 배송이 아닙니다"),
+    FORBIDDEN_NOT_COMPANY_DELIVERY(HttpStatus.FORBIDDEN, "DD-008", "담당 배송이 아닙니다"),
+    FORBIDDEN_NOT_ASSIGNED_ROUTE(HttpStatus.FORBIDDEN, "DD-009", "배정된 경로가 아닙니다"),
 
     // DeliveryRoute
     DELIVERY_ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "DR-001", "배송 경로를 찾을 수 없습니다"),
     DELIVERY_ROUTE_DELETED(HttpStatus.BAD_REQUEST, "DR-002", "삭제된 배송 경로입니다"),
-
+    FORBIDDEN_ROUTE_READ(HttpStatus.FORBIDDEN, "DR-003", "해당 배송 경로를 조회할 권한이 없습니다"),
+    FORBIDDEN_ROUTE_MODIFY(HttpStatus.FORBIDDEN, "DR-004", "해당 배송 경로를 수정할 권한이 없습니다"),
 
     // Hub
     HUB_MANAGER_FORBIDDEN(HttpStatus.FORBIDDEN, "H-001","허브 관리자는 다른 허브의 데이터를 조회할 수 없습니다"),
