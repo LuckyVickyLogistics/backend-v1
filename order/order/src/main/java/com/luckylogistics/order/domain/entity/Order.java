@@ -82,6 +82,10 @@ public class Order {
     }
 
     public void update(int quantity, String request){
+        if (this.status == OrderStatus.DELETED) {
+            throw new BusinessException(ExceptionCode.ORDER_ALREADY_DELETED);
+        }
+
         if (quantity <= 0) {
             throw new BusinessException(ExceptionCode.ORDER_QUANTITY_ERROR);
         }

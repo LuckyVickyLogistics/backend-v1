@@ -2,6 +2,11 @@ package com.luckylogistics.order.application.service;
 
 import java.util.UUID;
 
+import com.luckylogistics.order.application.dto.OrderRequest;
+import com.luckylogistics.order.application.dto.OrderUpdateRequest;
+import com.luckylogistics.order.application.dto.OrderUpdateResponse;
+import com.luckylogistics.order.common.exception.BusinessException;
+import com.luckylogistics.order.common.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,4 +27,35 @@ public class OrderService {
 		orderRepository.save(order);
 	}
 
+    //update
+    @Transactional
+    public OrderUpdateResponse updateOrder(UUID orderId, OrderUpdateRequest orderUpdateRequest) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow( () -> new BusinessException(ExceptionCode.ORDER_ID_ERROR));
+
+        order.update(orderUpdateRequest.Quantity(), orderUpdateRequest.request());
+
+        return new OrderUpdateResponse(
+                order.getOrderId(),
+                order.getQuantity(),
+                order.getRequest()
+        );
+
+    }
+
+    //delete
+    public void deleteOrder(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow( () -> new BusinessException(ExceptionCode.ORDER_ID_ERROR));
+
+        order.delete();
+    }
+
+    //rollback
+    public void rollbackDeleteOrder(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow( () -> new BusinessException(ExceptionCode.ORDER_ID_ERROR));
+
+        order.rollbackDelete();
+    }
 }
