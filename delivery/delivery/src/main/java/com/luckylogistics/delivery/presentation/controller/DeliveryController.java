@@ -1,8 +1,6 @@
 package com.luckylogistics.delivery.presentation.controller;
 
-import com.luckylogistics.delivery.application.dto.CreateDeliveryRequest;
-import com.luckylogistics.delivery.application.dto.CreateDeliveryResponse;
-import com.luckylogistics.delivery.application.dto.DeliveryResponse;
+import com.luckylogistics.delivery.application.dto.*;
 import com.luckylogistics.delivery.application.service.DeliveryService;
 import com.luckylogistics.delivery.common.enums.UserRole;
 import com.luckylogistics.delivery.common.response.ApiResponse;
@@ -44,5 +42,17 @@ public class DeliveryController {
     ) {
         DeliveryResponse response = deliveryService.getDelivery(deliveryId, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(response, "배송이 조회되었습니다"));
+    }
+
+    @PatchMapping("/{deliveryId}/status")
+    public ResponseEntity<ApiResponse<UpdateDeliveryResponse>> updateDeliveryStatus(
+            @PathVariable UUID deliveryId,
+            @Valid @RequestBody UpdateDeliveryStatusRequest request,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
+    ) {
+        UpdateDeliveryResponse response = deliveryService.updateDeliveryStatus(
+                deliveryId, request, currentUserId, currentUserRole);
+        return ResponseEntity.ok(ApiResponse.success(response, "배송 상태가 변경되었습니다"));
     }
 }
