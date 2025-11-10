@@ -1,7 +1,5 @@
 package com.luckylogistics.product.common.exception;
 
-import com.luckylogistics.product.application.dto.ErrorResponse;
-
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

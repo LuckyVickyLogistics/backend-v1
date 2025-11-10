@@ -1,7 +1,6 @@
-package com.luckylogistics.product.application.dto;
+package com.luckylogistics.product.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.luckylogistics.product.common.exception.ExceptionCode;
 import org.springframework.http.ResponseEntity;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
