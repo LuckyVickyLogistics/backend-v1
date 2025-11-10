@@ -1,4 +1,4 @@
 package com.luckylogistics.order.infrastructure.client;
 
-public class DeliveryFeignClient {
+public interface DeliveryFeignClient {
 }
