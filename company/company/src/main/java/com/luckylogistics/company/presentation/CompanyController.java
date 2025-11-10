@@ -3,6 +3,8 @@ package com.luckylogistics.company.presentation;
 import com.luckylogistics.company.application.CompanyService;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
+import com.luckylogistics.company.common.response.ApiResponse;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -27,39 +29,39 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping
-    public ResponseEntity<List<CompanyResponse>> getCompanies(
+    public ResponseEntity<ApiResponse<List<CompanyResponse>>> getCompanies(
         @RequestParam(required = false) String name) {
         List<CompanyResponse> result = companyService.getCompanies(name);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(ApiResponse.success(result, "업체 목록이 조회되었습니다"));
     }
 
     @GetMapping("/{companyId}")
-    public ResponseEntity<CompanyResponse> getCompany(@PathVariable(name = "companyId") UUID companyId) {
+    public ResponseEntity<ApiResponse<CompanyResponse>> getCompany(@PathVariable(name = "companyId") UUID companyId) {
         CompanyResponse result = companyService.getCompany(companyId);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(ApiResponse.success(result, "업체가 조회되었습니다"));
     }
 
     @PostMapping
-    public ResponseEntity<CompanyResponse> createCompany(
-        @RequestBody CompanyRequest companyRequest) {
+    public ResponseEntity<ApiResponse<CompanyResponse>> createCompany(
+        @Valid @RequestBody CompanyRequest companyRequest) {
         CompanyResponse result = companyService.createCompany(companyRequest);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(ApiResponse.success(result, "업체가 생성되었습니다"));
     }
 
     @PatchMapping("/{companyId}")
-    public ResponseEntity<Void> updateCompany(
+    public ResponseEntity<ApiResponse<Void>> updateCompany(
         @PathVariable(name = "companyId") UUID companyId,
-        @RequestBody CompanyRequest companyRequest) {
+        @Valid @RequestBody CompanyRequest companyRequest) {
         companyService.updateCompany(companyId, companyRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "업체가 수정되었습니다."));
     }
 
     @DeleteMapping("/{companyId}")
-    public ResponseEntity<Void> deleteCompany(
+    public ResponseEntity<ApiResponse<Void>> deleteCompany(
         @RequestHeader Long userId, //todo: 더 알아보기
         @PathVariable(name = "companyId") UUID companyId) {
         companyService.deleteCompany(userId, companyId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "업체가 삭제되었습니다"));
     }
 
 }
