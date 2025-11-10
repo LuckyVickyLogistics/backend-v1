@@ -39,6 +39,7 @@ public class Company extends BaseEntity {
     private UUID hubId;
 
     public static Company create(String name, String address, CompanyType type, UUID hubId) {
+        validate(name, address, type);
         return Company.builder()
             .name(name)
             .address(address)
@@ -52,5 +53,11 @@ public class Company extends BaseEntity {
         this.address = address;
         this.type = type;
         this.hubId = hubId;
+    }
+
+    public static void validate(String name, String address, CompanyType type) {
+        if (name == null || name.isBlank()){ throw new IllegalArgumentException("Company name cannot be blank"); }
+        if (address == null || address.isBlank()){ throw new IllegalArgumentException("Company address cannot be blank"); }
+        if (type == null) { throw new IllegalArgumentException("Company type cannot be null"); }
     }
 }
