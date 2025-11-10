@@ -144,4 +144,11 @@ public class DeliveryRoute extends BaseEntity {
 
         this.status = newStatus;
     }
+
+    public boolean isRelatedToHub(UUID hubId) {
+        if (hubId == null) {
+            return false;
+        }
+        return departureHubId.equals(hubId) || arrivalHubId.equals(hubId);
+    }
 }
