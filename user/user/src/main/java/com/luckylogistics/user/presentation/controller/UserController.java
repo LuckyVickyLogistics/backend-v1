@@ -28,8 +28,8 @@ public class UserController {
 		SignupCommand command = SignupCommand.builder()
 			.username(request.username())
 			.password(request.password())
-			.role(request.role())
 			.slackId(request.slackId())
+			.role(request.role())
 			.organizationType(request.organizationType())
 			.build();
 

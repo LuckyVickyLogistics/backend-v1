@@ -29,12 +29,12 @@ public class UserService {
 		SignupCommand encodedCommand = SignupCommand.builder()
 			.username(command.username())
 			.password(encodedPassword)
+			.slackId(command.slackId())
 			.role(command.role())
 			.organizationType(command.organizationType())
-			.slackId(command.slackId())
 			.build();
 
-		User user = User.createPendingUser(command);
+		User user = User.createPendingUser(encodedCommand);
 		return userRepository.save(user).getUserId();
 	}
 }
