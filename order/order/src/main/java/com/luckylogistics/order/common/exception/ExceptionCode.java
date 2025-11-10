@@ -1,4 +1,4 @@
-package com.luckylogistics.product.common.exception;
+package com.luckylogistics.order.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +35,15 @@ public enum ExceptionCode {
     QUANTITY_AMOUNT_ERROR("P-16", "추가 및 삭제하려고 하는 상품 개수는 총 수량을 넘길 수 없습니다",HttpStatus.BAD_REQUEST),
     QUANTITY_PLUS_EXCEED("P-17", "추가한 수량의 합이 총 수량을 초과합니다.", HttpStatus.BAD_REQUEST),
     QUANTITY_PLUS_NONZERO("P-18", "추가할 재고를 1개 이상 선택해야 합니다",HttpStatus.BAD_REQUEST),
+
+    //ORDER (OR01)
+    ORDER_SUPPLY_ERROR("OR-1", "해당 업체를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    ORDER_QUANTITY_ERROR("OR-2", "주문 수량은 1개 이상이어야 합니다.",HttpStatus.BAD_REQUEST),
+    ORDER_CUSTOMER_ERROR("OR-3", "고객 업체를 찾을 수 없습니다. 다시 입력해주세요", HttpStatus.NOT_FOUND),
+    ORDER_PRODUCT_ERROR("OR-4", "해당 상품을 찾을 수 없습니다. 다시 입력해주세요",HttpStatus.NOT_FOUND),
+    ORDER_REQUEST_ERROR("OR-5","요청사항이 제대로 입력되지 않았습니다.",HttpStatus.NOT_FOUND),
+    ORDER_DELIVERY_ERROR("OR-6", "배송 ID를 찾지 못했습니다", HttpStatus.NOT_FOUND),
+    ORDER_ID_ERROR("OR-7", "주문ID를 찾지 못했습니다." ,HttpStatus.NOT_FOUND),
     ;
 
     private final String code;
