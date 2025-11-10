@@ -1,7 +1,6 @@
 package com.luckylogistics.delivery.application.dto;
 
 import com.luckylogistics.delivery.domain.model.Delivery;
-import com.luckylogistics.delivery.domain.model.DeliveryRoute;
 import com.luckylogistics.delivery.domain.model.DeliveryStatus;
 import lombok.Builder;
 
@@ -28,7 +27,7 @@ public record DeliveryResponse(
         LocalDateTime updatedAt,
         List<DeliveryRouteResponse> routes
 ) {
-    public static DeliveryResponse from(Delivery delivery, List<DeliveryRoute> routes) {
+    public static DeliveryResponse from(Delivery delivery) {
         return DeliveryResponse.builder()
                 .deliveryId(delivery.getDeliveryId())
                 .orderId(delivery.getOrderId())
@@ -41,7 +40,7 @@ public record DeliveryResponse(
                 .companyDeliveryManagerId(delivery.getCompanyDeliveryManager().getDeliveryManagerId())
                 .createdAt(delivery.getCreatedAt())
                 .updatedAt(delivery.getUpdatedAt())
-                .routes(routes.stream()
+                .routes(delivery.getRoutes().stream()
                         .map(DeliveryRouteResponse::from)
                         .collect(Collectors.toList()))
                 .build();

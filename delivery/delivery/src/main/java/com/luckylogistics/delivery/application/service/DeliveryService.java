@@ -6,7 +6,6 @@ import com.luckylogistics.delivery.common.exception.BusinessException;
 import com.luckylogistics.delivery.common.exception.ErrorCode;
 import com.luckylogistics.delivery.domain.model.*;
 import com.luckylogistics.delivery.domain.repository.DeliveryRepository;
-import com.luckylogistics.delivery.domain.repository.DeliveryRouteRepository;
 import com.luckylogistics.delivery.domain.service.DeliveryDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
-    private final DeliveryRouteRepository deliveryRouteRepository;
     private final DeliveryDomainService domainService;
 
     private final HubService hubService;
@@ -92,12 +90,10 @@ public class DeliveryService {
     }
 
     public DeliveryResponse getDelivery(UUID deliveryId, Long currentUserId, UserRole currentUserRole) {
-        Delivery delivery = findDeliveryById(deliveryId);
+        Delivery delivery = findDeliveryByIdWithRoutes(deliveryId);
         validateReadPermission(delivery, currentUserId, currentUserRole);
 
-        List<DeliveryRoute> routes = deliveryRouteRepository.findByDeliveryIdOrderBySequence(deliveryId);
-
-        return DeliveryResponse.from(delivery, routes);
+        return DeliveryResponse.from(delivery);
     }
 
     private Delivery findDeliveryById(UUID id) {
@@ -105,21 +101,36 @@ public class DeliveryService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
     }
 
-    private void validateReadPermission(Delivery delivery, Long currentUserId, UserRole currentUserRole) {
-        if (currentUserRole.isMaster() || currentUserRole.isCompanyManager()) {
-            return;
-        }
+    private Delivery findDeliveryByIdWithRoutes(UUID id) {
+        return deliveryRepository.findByIdWithRoutes(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
+    }
 
+    private void validateReadPermission(Delivery delivery, Long currentUserId, UserRole currentUserRole) {
+        if (currentUserRole == null) throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_READ);
+
+        // 마스터 / 업체 관리자: 항상 허용
+        if (currentUserRole.isMaster() || currentUserRole.isCompanyManager()) return;
+
+        // 허브 관리자: 배송의 출발/도착 허브, 경로에 포함된 모든 허브 관리자는 접근 가능
         if (currentUserRole.isHubManager()) {
             UUID userHubId = hubService.getUserHubId(currentUserId);
-            if (!delivery.isRelatedToHub(userHubId)) {
-                throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_READ);
-            }
+            boolean permitted =
+                    delivery.isRelatedToHub(userHubId) ||
+                            delivery.getRoutes().stream().anyMatch(r -> r.isRelatedToHub(userHubId));
+
+            if (!permitted) throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_READ);
             return;
         }
 
+        // 배송 담당자: 업체 배송담당자, 어떤 경로의 허브 배송담당자도 허용
         if (currentUserRole.isDeliveryManager()) {
-            if (!delivery.isAssignedTo(currentUserId)) {
+            boolean isCompanyDeliveryManager = delivery.isAssignedTo(currentUserId);
+            boolean isAnyHubRouteManager = delivery.getRoutes().stream()
+                    .anyMatch(r -> r.getHubDeliveryManager() != null
+                            && currentUserId.equals(r.getHubDeliveryManager().getDeliveryManagerId()));
+
+            if (!(isCompanyDeliveryManager || isAnyHubRouteManager)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_READ);
             }
             return;
@@ -185,7 +196,7 @@ public class DeliveryService {
     public void deleteDelivery(UUID deliveryId, Long currentUserId, UserRole currentUserRole) {
         log.info("[Delivery] 배송 삭제. deliveryId: {}", deliveryId);
 
-        Delivery delivery = findDeliveryById(deliveryId);
+        Delivery delivery = findDeliveryByIdWithRoutes(deliveryId);
         validateDeletePermission(delivery, currentUserId, currentUserRole);
 
         delivery.delete(currentUserId);

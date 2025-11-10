@@ -28,6 +28,11 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     }
 
     @Override
+    public Optional<Delivery> findByIdWithRoutes(UUID id) {
+        return jpaRepository.findByIdWithRoutes(id);
+    }
+
+    @Override
     public boolean existsByOrderId(UUID orderId) {
         return jpaRepository.existsByOrderIdAndDeletedAtIsNull(orderId);
     }
