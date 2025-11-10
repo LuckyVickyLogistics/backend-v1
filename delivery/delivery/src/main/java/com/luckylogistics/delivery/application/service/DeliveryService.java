@@ -145,6 +145,10 @@ public class DeliveryService {
     }
 
     private void validateStatusChangePermission(Delivery delivery, Long currentUserId, UserRole currentUserRole) {
+        if (currentUserRole == null) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
+        }
+
         // 마스터 관리자: 허용
         if (currentUserRole.isMaster()) return;
 
@@ -159,6 +163,7 @@ public class DeliveryService {
             if (!delivery.isArrivalHub(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
             }
+            return;
         }
 
         // 배송 담당자: 본인에게 할당된 배송만 상태 변경 가능
@@ -166,6 +171,9 @@ public class DeliveryService {
             if (!delivery.isAssignedTo(currentUserId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
             }
+            return;
         }
+
+        throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
     }
 }
