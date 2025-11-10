@@ -96,4 +96,17 @@ public class Delivery extends BaseEntity {
         this.status.validateTransition(newStatus);
         this.status = newStatus;
     }
+
+    // 속한 허브인지
+    public boolean isRelatedToHub(UUID hubId) {
+        if (hubId == null) {
+            return false;
+        }
+        return departureHubId.equals(hubId) || arrivalHubId.equals(hubId);
+    }
+
+    // 업체 배송 담당자 인지
+    public boolean isAssignedTo(Long userId) {
+        return this.companyDeliveryManager.getDeliveryManagerId().equals(userId);
+    }
 }
