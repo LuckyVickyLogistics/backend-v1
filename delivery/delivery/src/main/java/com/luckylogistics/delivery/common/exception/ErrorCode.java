@@ -26,6 +26,7 @@ public enum ErrorCode {
     DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "DD-001", "배송을 찾을 수 없습니다"),
     DELIVERY_DELETED(HttpStatus.BAD_REQUEST, "DD-002", "삭제된 배송입니다"),
     DUPLICATE_DELIVERY(HttpStatus.CONFLICT, "DD-003", "이미 배송이 생성된 주문입니다"),
+    FORBIDDEN_DELIVERY_READ(HttpStatus.FORBIDDEN, "DD-004", "해당 배송을 조회할 권한이 없습니다"),
 
     // DeliveryRoute
     DELIVERY_ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "DR-001", "배송 경로를 찾을 수 없습니다"),
