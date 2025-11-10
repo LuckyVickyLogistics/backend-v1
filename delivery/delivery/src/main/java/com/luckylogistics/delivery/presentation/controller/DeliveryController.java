@@ -37,12 +37,12 @@ public class DeliveryController {
     }
 
     @GetMapping("/{deliveryId}")
-    public ResponseEntity<DeliveryResponse> getDelivery(
+    public ResponseEntity<ApiResponse<DeliveryResponse>> getDelivery(
             @PathVariable UUID deliveryId,
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
         DeliveryResponse response = deliveryService.getDelivery(deliveryId, currentUserId, currentUserRole);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response, "배송이 조회되었습니다"));
     }
 }
