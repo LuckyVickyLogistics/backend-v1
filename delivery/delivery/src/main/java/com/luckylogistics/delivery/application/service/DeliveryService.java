@@ -2,10 +2,6 @@ package com.luckylogistics.delivery.application.service;
 
 import com.luckylogistics.delivery.application.dto.*;
 import com.luckylogistics.delivery.common.enums.UserRole;
-import com.luckylogistics.delivery.application.dto.CreateDeliveryRequest;
-import com.luckylogistics.delivery.application.dto.CreateDeliveryResponse;
-import com.luckylogistics.delivery.application.dto.DeliveryRoutePlan;
-import com.luckylogistics.delivery.application.dto.DeliveryRouteSegment;
 import com.luckylogistics.delivery.common.exception.BusinessException;
 import com.luckylogistics.delivery.common.exception.ErrorCode;
 import com.luckylogistics.delivery.domain.model.*;
@@ -126,5 +122,50 @@ public class DeliveryService {
         }
 
         throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_READ);
+    }
+
+    @Transactional
+    public UpdateDeliveryResponse updateDeliveryStatus(
+            UUID deliveryId,
+            UpdateDeliveryStatusRequest request,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        log.info("[Delivery] 배송 상태 변경. deliveryId: {}, newStatus: {}", deliveryId, request.status());
+
+        // 배송 조회
+        Delivery delivery = findDeliveryById(deliveryId);
+        // 권한 검증 (마스터/해당 허브관리자/업체배송담당자)
+        validateStatusChangePermission(delivery, currentUserId, currentUserRole);
+        // 상태 변경
+        delivery.changeStatus(request.status(), true);
+
+        log.info("[Delivery] 배송 상태 변경 완료. deliveryId: {}", deliveryId);
+        return UpdateDeliveryResponse.from(delivery);
+    }
+
+    private void validateStatusChangePermission(Delivery delivery, Long currentUserId, UserRole currentUserRole) {
+        // 마스터 관리자: 허용
+        if (currentUserRole.isMaster()) return;
+
+        // 회사(발주/수령) 관리자: 배송 상태 변경 불가
+        if (currentUserRole.isCompanyManager()) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
+        }
+
+        // 허브 관리자: 도착 허브 관리자만 허용
+        if (currentUserRole.isHubManager()) {
+            UUID userHubId = hubService.getUserHubId(currentUserId);
+            if (!delivery.isArrivalHub(userHubId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
+            }
+        }
+
+        // 배송 담당자: 본인에게 할당된 배송만 상태 변경 가능
+        if (currentUserRole.isDeliveryManager()) {
+            if (!delivery.isAssignedTo(currentUserId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
+            }
+        }
     }
 }
