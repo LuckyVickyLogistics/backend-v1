@@ -1,11 +1,10 @@
 package com.luckylogistics.slack.presentation.dto;
 
+import com.luckylogistics.slack.application.dto.EmailCheckCommand;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 
-@Builder
 public record SlackCheckInWorkspaceRequest(
 
 	@NotNull(message = "이메일이 입력되지 않았습니다.")
@@ -13,4 +12,11 @@ public record SlackCheckInWorkspaceRequest(
 	String email
 
 ) {
+
+	public static EmailCheckCommand of(SlackCheckInWorkspaceRequest requestDto) {
+		return EmailCheckCommand.builder()
+			.email(requestDto.email())
+			.build();
+	}
+
 }

@@ -1,13 +1,20 @@
 package com.luckylogistics.slack.presentation.dto;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
+import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
 
-@Builder
+import jakarta.validation.constraints.NotNull;
+
 public record SlackStatusUpdateRequest(
 
 	@NotNull(message = "상태가 입력되지 않았습니다.")
 	String status
 
 ) {
+
+	public static StatusUpdateCommand of(SlackStatusUpdateRequest requestDto) {
+		return StatusUpdateCommand.builder()
+			.status(requestDto.status)
+			.build();
+	}
+
 }

@@ -67,9 +67,7 @@ public class SlackController {
 	public ResponseEntity<ApiResponse<SlackCheckInWorkSpaceResponse>> checkInWorkspace(
 		@Valid @RequestBody SlackCheckInWorkspaceRequest requestDto
 	) {
-		EmailCheckCommand command = EmailCheckCommand.builder()
-			.email(requestDto.email())
-			.build();
+		EmailCheckCommand command = SlackCheckInWorkspaceRequest.of(requestDto);
 		SlackEmailCheckResult result = slackService.checkInWorkspace(command);
 		SlackCheckInWorkSpaceResponse responseDto = SlackCheckInWorkSpaceResponse.from(result);
 
@@ -80,9 +78,7 @@ public class SlackController {
 	public ResponseEntity<ApiResponse<Void>> updateStatus(
 		@PathVariable UUID slackMessageId, @Valid @RequestBody SlackStatusUpdateRequest requestDto
 	) {
-		StatusUpdateCommand command = StatusUpdateCommand.builder()
-			.status(requestDto.status())
-			.build();
+		StatusUpdateCommand command = SlackStatusUpdateRequest.of(requestDto);
 		slackService.updateStatus(slackMessageId, command);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지의 상태가 수정되었습니다."));
