@@ -40,7 +40,7 @@ public abstract class BaseEntity {
     private Long deletedBy;
 
     @Column(name = "isDeleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     public void delete(Long deletedBy) {
         this.deletedAt = LocalDateTime.now();

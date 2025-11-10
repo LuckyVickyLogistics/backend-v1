@@ -27,6 +27,4 @@ public class HubJpaEntity extends BaseEntity {
 
     @Column(name = "longitude")
     private Double longitude;
-
-    // JPA 콜백으로 BaseEntity 채우고 싶다면 @PrePersist/@PreUpdate 추가 가능
 }

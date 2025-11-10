@@ -1,65 +1,93 @@
 package com.luckylogistics.hub.application.service;
 
+import com.luckylogistics.hub.application.dto.*;
+import com.luckylogistics.hub.domain.model.Hub;
+import com.luckylogistics.hub.domain.repository.HubRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.UUID;
 
-import com.luckylogistics.hub.application.dto.HubDTO;
-import com.luckylogistics.hub.application.dto.hubCreateCommand;
-import com.luckylogistics.hub.application.dto.hubCreateResult;
-import com.luckylogistics.hub.domain.model.Hub;
-import com.luckylogistics.hub.domain.repository.HubRepository;
-import com.luckylogistics.hub.domain.service.HubDomainService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class HubServiceImpl implements HubService {
 
     private final HubRepository hubRepository;
-    private final HubDomainService hubDomainService;
 
     @Override
-    public hubCreateResult create(hubCreateCommand command) {
-        Hub hub = dto.toDomain();
-        hub = Hub.builder()
-                .hubId(UUID.randomUUID().toString())
-                .name(hub.getName())
-                .address(hub.getAddress())
-                .location(hub.getLocation())
-                .build();
-        hub.markCreated(username);
+    public HubCreateResponse createHub(HubCreateRequest request, Long userId) {
+        Hub hub = Hub.create(
+                request.name(),
+                request.address(),
+                request.latitude(),
+                request.longitude()
+        );
 
-        hubDomainService.validateCreatable(hub);
-        return HubDTO.from(hubRepository.save(hub));
+        Hub saved = hubRepository.save(hub);
+
+        return new HubCreateResponse(
+                saved.getHubId(),
+                saved.getName(),
+                saved.getAddress(),
+                saved.getLatitude(),
+                saved.getLongitude()
+        );
     }
 
     @Override
-    public HubDTO get(String hubId) {
-        Hub hub = hubRepository.findById(hubId)
-                .orElseThrow(() -> new IllegalArgumentException("허브를 찾을 수 없습니다."));
-        return HubDTO.from(hub);
+    @Transactional(readOnly = true)
+    public List<HubResponse> getAllHubs() {
+        return hubRepository.findAllActive()
+                .stream()
+                .map(this::toHubResponse)
+                .toList();
     }
 
     @Override
-    public List<HubDTO> list(int page, int size) {
-        return hubRepository.findAll(page, size).stream().map(HubDTO::from).toList();
+    @Transactional(readOnly = true)
+    public HubResponse getHub(UUID hubId) {
+        Hub hub = hubRepository.findActiveById(hubId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 삭제된 허브입니다."));
+
+        return toHubResponse(hub);
     }
 
     @Override
-    public HubDTO update(String hubId, HubDTO dto, String username) {
-        Hub hub = hubRepository.findById(hubId)
-                .orElseThrow(() -> new IllegalArgumentException("허브를 찾을 수 없습니다."));
-        hub.update(dto.getName(), dto.getAddress(),
-                hub.getLocation().of(dto.getLatitude(), dto.getLongitude()), username);
-        return HubDTO.from(hubRepository.save(hub));
+    public HubResponse updateHub(UUID hubId, HubUpdateRequest request, Long userId) {
+        Hub hub = hubRepository.findActiveById(hubId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 삭제된 허브입니다."));
+
+        hub.update(
+                request.name(),
+                request.address(),
+                request.latitude(),
+                request.longitude(),
+                userId
+        );
+        return toHubResponse(hub);
     }
 
     @Override
-    public void deleteSoft(String hubId, String username) {
-        Hub hub = hubRepository.findById(hubId)
-                .orElseThrow(() -> new IllegalArgumentException("허브를 찾을 수 없습니다."));
-        hub.delete();
-        hubRepository.save(hub);
+    public void deleteHub(UUID hubId, Long userId) {
+        Hub hub = hubRepository.findActiveById(hubId)
+                .orElseThrow(() -> new IllegalArgumentException("이미 삭제되었거나 존재하지 않는 허브입니다."));
+
+        hub.softDelete(userId);
+        // 역시 변경 감지로 업데이트됨 (필요하면 hubRepository.save(hub) 호출해도 됨)
+    }
+
+    private HubResponse toHubResponse(Hub hub) {
+        return new HubResponse(
+                hub.getHubId(),
+                hub.getName(),
+                hub.getAddress(),
+                hub.getLatitude(),
+                hub.getLongitude(),
+                hub.getCreatedAt(),
+                hub.getUpdatedAt()
+        );
     }
 }

@@ -36,8 +36,6 @@ public class Hub extends BaseEntity {
     public static Hub create(String name, String address, Double latitude, Double longitude) {
         validate(name, address, latitude, longitude);
         Hub hub = new Hub();
-        // 직접 생성해도 되고(아래), @UuidGenerator가 있으니 null 두고 persist 시점에 채워지게 해도 됨.
-        hub.hubId = UUID.randomUUID();
         hub.name = name.trim();
         hub.address = address.trim();
         hub.latitude = latitude;
@@ -60,12 +58,18 @@ public class Hub extends BaseEntity {
         this.longitude = longitude;
     }
 
-    public void softDelete(Long deletedBy) { delete(deletedBy); }
+    public void softDelete(Long deletedBy) {
+        delete(deletedBy);
+    }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Hub)) return false;
         return Objects.equals(hubId, ((Hub) o).hubId);
     }
-    @Override public int hashCode() { return Objects.hash(hubId); }
+    @Override
+    public int hashCode() {
+        return Objects.hash(hubId);
+    }
 }

@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record hubCreateCommand(
+public record HubCreateRequest(
         String name,
         String address,
         Double latitude,
