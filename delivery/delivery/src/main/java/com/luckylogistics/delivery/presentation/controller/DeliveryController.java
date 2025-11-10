@@ -55,4 +55,14 @@ public class DeliveryController {
                 deliveryId, request, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(response, "배송 상태가 변경되었습니다"));
     }
+
+    @DeleteMapping("/{deliveryId}")
+    public ResponseEntity<ApiResponse<Void>> deleteDelivery(
+            @PathVariable UUID deliveryId,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
+    ) {
+        deliveryService.deleteDelivery(deliveryId, currentUserId, currentUserRole);
+        return ResponseEntity.ok(ApiResponse.success(null, "배송이 삭제되었습니다"));
+    }
 }
