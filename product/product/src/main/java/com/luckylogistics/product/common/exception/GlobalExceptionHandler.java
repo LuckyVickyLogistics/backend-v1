@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.errorResponse(code);
     }
 
-    // 데이터 뮤결성
+    // 데이터 무결성
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException exception) {
         ExceptionCode code = ExceptionCode.DATA_INTEGRITY_VIOLATION;
