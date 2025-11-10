@@ -19,9 +19,12 @@ public class DeliveryRoute extends BaseEntity {
     @Column(name = "delivery_route_id", nullable = false)
     private UUID deliveryRouteId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_id", nullable = false)
-    private Delivery delivery;
+    /**
+     * 부모가 @JoinColumn(name="delivery_id")로 FK를 관리
+     * 참조 없이 FK 컬럼만 읽기용
+     */
+    @Column(name = "delivery_id", nullable = false, insertable = false, updatable = false)
+    private UUID deliveryId;
 
     @Column(name = "sequence", nullable = false)
     private Integer sequence;
@@ -56,7 +59,6 @@ public class DeliveryRoute extends BaseEntity {
      * 배송 경로 생성
      */
     public static DeliveryRoute create(
-            Delivery delivery,
             Integer sequence,
             UUID departureHubId,
             UUID arrivalHubId,
@@ -64,14 +66,12 @@ public class DeliveryRoute extends BaseEntity {
             Integer estimatedDuration,
             DeliveryManager deliveryManager
     ) {
-        validateDelivery(delivery);
         validateSequence(sequence);
         validateHubIds(departureHubId, arrivalHubId);
         validateEstimatedValues(estimatedDistance, estimatedDuration);
         validateDeliveryManager(deliveryManager);
 
         return DeliveryRoute.builder()
-                .delivery(delivery)
                 .sequence(sequence)
                 .departureHubId(departureHubId)
                 .arrivalHubId(arrivalHubId)
@@ -80,12 +80,6 @@ public class DeliveryRoute extends BaseEntity {
                 .status(DeliveryRouteStatus.HUB_WAITING)
                 .hubDeliveryManager(deliveryManager)
                 .build();
-    }
-
-    private static void validateDelivery(Delivery delivery) {
-        if (delivery == null) {
-            throw new IllegalArgumentException("배송 정보는 필수입니다");
-        }
     }
 
     private static void validateSequence(Integer sequence) {

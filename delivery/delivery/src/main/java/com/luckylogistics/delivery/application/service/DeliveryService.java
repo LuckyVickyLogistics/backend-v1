@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * 배송 서비스
@@ -39,52 +40,55 @@ public class DeliveryService {
     public CreateDeliveryResponse createDelivery(CreateDeliveryRequest request, Long currentUserId) {
         log.info("[Delivery] 배송 생성 시작. orderId: {}", request.orderId());
 
+        // 기본 검증
         if (deliveryRepository.existsByOrderId(request.orderId())) {
             throw new BusinessException(ErrorCode.DUPLICATE_DELIVERY);
         }
-
         orderService.validateOrderExists(request.orderId());
         hubService.validateHubExists(request.departureHubId());
         hubService.validateHubExists(request.arrivalHubId());
 
-        DeliveryRoutePlan deliveryRoutePlan = hubService.getDeliveryRoutePlan(
+        // 경로 계획 가져오기
+        DeliveryRoutePlan plan = hubService.getDeliveryRoutePlan(
                 request.departureHubId(), request.arrivalHubId()
         );
 
+        // 허브 배송 담당자 배정
+        DeliveryManager hubManager = domainService.assignHubDeliveryManager();
+
+        // 배송 경로 생성
+        List<DeliveryRoute> routes = plan.routes().stream()
+                .map(seg -> DeliveryRoute.create(
+                        seg.sequence(),
+                        seg.departureHubId(),
+                        seg.arrivalHubId(),
+                        seg.distanceKm(),
+                        seg.durationMinutes(),
+                        hubManager
+                ))
+                .collect(Collectors.toList());
+
+        // 업체 배송 담당자 배정
         DeliveryManager companyManager = domainService.assignCompanyDeliveryManager(request.arrivalHubId());
 
+        // 배송 생성(경로 리스트 포함) → 부모만 저장하면 자식도 PERSIST
         Delivery delivery = Delivery.create(
                 request.orderId(),
                 request.departureHubId(),
                 request.arrivalHubId(),
                 DeliveryAddress.of(request.deliveryAddress()),
                 Recipient.of(request.recipientName(), request.recipientSlackId()),
-                companyManager
+                companyManager,
+                routes
         );
 
-        Delivery savedDelivery = deliveryRepository.save(delivery);
+        Delivery savedDelivery = deliveryRepository.save(delivery); // cascade로 routes INSERT + FK 주입
 
-        for (DeliveryRouteSegment routeSegment : deliveryRoutePlan.routes()) {
-            DeliveryManager hubManager = domainService.assignHubDeliveryManager();
+        log.info("[Delivery] 배송 생성 완료. deliveryId: {}, routes: {}",
+                savedDelivery.getDeliveryId(), savedDelivery.getRoutes().size());
 
-            DeliveryRoute route = DeliveryRoute.create(
-                    savedDelivery,
-                    routeSegment.sequence(),
-                    routeSegment.departureHubId(),
-                    routeSegment.arrivalHubId(),
-                    routeSegment.distanceKm(),
-                    routeSegment.durationMinutes(),
-                    hubManager
-            );
-
-            deliveryRouteRepository.save(route);
-        }
-
-        List<DeliveryRoute> routes = deliveryRouteRepository.findByDeliveryIdOrderBySequence(savedDelivery.getDeliveryId());
-
-        log.info("[Delivery] 배송 생성 완료. deliveryId: {}, routes: {}", savedDelivery.getDeliveryId(), routes.size());
-
-        return CreateDeliveryResponse.from(savedDelivery, routes);
+        // 응답 반환
+        return CreateDeliveryResponse.from(savedDelivery);
     }
 
     public DeliveryResponse getDelivery(UUID deliveryId, Long currentUserId, UserRole currentUserRole) {

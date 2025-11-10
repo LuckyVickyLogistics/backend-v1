@@ -1,7 +1,6 @@
 package com.luckylogistics.delivery.application.dto;
 
 import com.luckylogistics.delivery.domain.model.Delivery;
-import com.luckylogistics.delivery.domain.model.DeliveryRoute;
 import com.luckylogistics.delivery.domain.model.DeliveryStatus;
 import lombok.Builder;
 
@@ -27,7 +26,7 @@ public record CreateDeliveryResponse(
         LocalDateTime createdAt,
         List<DeliveryRouteResponse> routes
 ) {
-    public static CreateDeliveryResponse from(Delivery delivery, List<DeliveryRoute> routes) {
+    public static CreateDeliveryResponse from(Delivery delivery) {
         return CreateDeliveryResponse.builder()
                 .deliveryId(delivery.getDeliveryId())
                 .orderId(delivery.getOrderId())
@@ -39,7 +38,7 @@ public record CreateDeliveryResponse(
                 .recipientSlackId(delivery.getRecipient().getSlackId())
                 .companyDeliveryManagerId(delivery.getCompanyDeliveryManager().getDeliveryManagerId())
                 .createdAt(delivery.getCreatedAt())
-                .routes(routes.stream()
+                .routes(delivery.getRoutes().stream()
                         .map(DeliveryRouteResponse::from)
                         .collect(Collectors.toList()))
                 .build();

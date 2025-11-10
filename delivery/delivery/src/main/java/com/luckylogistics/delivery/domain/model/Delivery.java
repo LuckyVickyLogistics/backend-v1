@@ -3,7 +3,8 @@ package com.luckylogistics.delivery.domain.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -37,9 +38,21 @@ public class Delivery extends BaseEntity {
     @Embedded
     private Recipient recipient;
 
+    /**
+     * 업체 배송 담당자 (도착 허브 → 최종 목적지)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_delivery_manager_id", nullable = false)
     private DeliveryManager companyDeliveryManager;
+
+    /**
+     * 배송 경로 1:N (단방향, 부모가 FK 관리)
+     * - 생성/갱신 위해 PERSIST, MERGE 사용
+     */
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinColumn(name = "delivery_id", nullable = false, updatable = false)
+    @OrderBy("sequence ASC")
+    private List<DeliveryRoute> routes = new ArrayList<>();
 
     /**
      * 배송 생성
@@ -51,11 +64,19 @@ public class Delivery extends BaseEntity {
             UUID arrivalHubId,
             DeliveryAddress deliveryAddress,
             Recipient recipient,
-            DeliveryManager companyDeliveryManager
+            DeliveryManager companyDeliveryManager,
+            List<DeliveryRoute> routes
     ) {
         validateOrderId(orderId);
         validateHubIds(departureHubId, arrivalHubId);
         validateCompanyDeliveryManager(companyDeliveryManager);
+        validateRoutes(routes);
+
+        // null 제거 + sequence 기준 정렬
+        List<DeliveryRoute> normalizedRoutes = routes.stream()
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(DeliveryRoute::getSequence)) // 연결성 검증은 제외
+                .collect(Collectors.toList());
 
         return Delivery.builder()
                 .orderId(orderId)
@@ -65,6 +86,7 @@ public class Delivery extends BaseEntity {
                 .deliveryAddress(deliveryAddress)
                 .recipient(recipient)
                 .companyDeliveryManager(companyDeliveryManager)
+                .routes(normalizedRoutes)
                 .build();
     }
 
@@ -86,6 +108,12 @@ public class Delivery extends BaseEntity {
     private static void validateCompanyDeliveryManager(DeliveryManager manager) {
         if (manager == null) {
             throw new IllegalArgumentException("업체 배송 담당자는 필수입니다");
+        }
+    }
+
+    private static void validateRoutes(List<DeliveryRoute> routes) {
+        if (routes == null || routes.isEmpty()) {
+            throw new IllegalArgumentException("배송 경로는 최소 1개 이상이어야 합니다.");
         }
     }
 

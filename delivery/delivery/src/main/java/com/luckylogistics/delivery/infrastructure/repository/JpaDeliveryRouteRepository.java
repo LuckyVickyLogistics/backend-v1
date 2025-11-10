@@ -13,7 +13,7 @@ public interface JpaDeliveryRouteRepository extends JpaRepository<DeliveryRoute,
 
     @Query("""
         SELECT dr FROM DeliveryRoute dr
-        WHERE dr.delivery.deliveryId = :deliveryId
+        WHERE dr.deliveryId = :deliveryId
           AND dr.deletedAt IS NULL
         ORDER BY dr.sequence
     """)

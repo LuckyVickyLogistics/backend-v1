@@ -27,7 +27,7 @@ public record DeliveryRouteResponse(
     public static DeliveryRouteResponse from(DeliveryRoute route) {
         return DeliveryRouteResponse.builder()
                 .deliveryRouteId(route.getDeliveryRouteId())
-                .deliveryId(route.getDelivery().getDeliveryId())
+                .deliveryId(route.getDeliveryId())
                 .sequence(route.getSequence())
                 .departureHubId(route.getDepartureHubId())
                 .arrivalHubId(route.getArrivalHubId())
