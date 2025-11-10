@@ -1,4 +1,4 @@
 package com.luckylogistics.order.application.dto;
 
-public record OrderUpdate {
+public record OrderUpdate() {
 }
