@@ -176,4 +176,36 @@ public class DeliveryService {
 
         throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
     }
+
+    @Transactional
+    public void deleteDelivery(UUID deliveryId, Long currentUserId, UserRole currentUserRole) {
+        log.info("[Delivery] 배송 삭제. deliveryId: {}", deliveryId);
+
+        Delivery delivery = findDeliveryById(deliveryId);
+        validateDeletePermission(delivery, currentUserId, currentUserRole);
+
+        delivery.delete(currentUserId);
+
+        log.info("[Delivery] 배송 삭제 완료. deliveryId: {}", deliveryId);
+    }
+
+    private void validateDeletePermission(Delivery delivery, Long currentUserId, UserRole currentUserRole) {
+        if (currentUserRole == null) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_DELETE);
+        }
+
+        // 마스터 관리자: 허용
+        if (currentUserRole.isMaster()) return;
+
+        // 허브 관리자: 본인 허브와 관련된 배송만 삭제 가능
+        if (currentUserRole.isHubManager()) {
+            UUID userHubId = hubService.getUserHubId(currentUserId);
+            if (!delivery.isRelatedToHub(userHubId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_DELETE);
+            }
+            return;
+        }
+        // 업체 담당자, 배송 담당자: 삭제 불가
+        throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_DELETE);
+    }
 }
