@@ -199,7 +199,7 @@ public class DeliveryService {
         Delivery delivery = findDeliveryByIdWithRoutes(deliveryId);
         validateDeletePermission(delivery, currentUserId, currentUserRole);
 
-        delivery.delete(currentUserId);
+        delivery.deleteCascade(currentUserId);
 
         log.info("[Delivery] 배송 삭제 완료. deliveryId: {}", deliveryId);
     }

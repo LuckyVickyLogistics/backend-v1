@@ -184,4 +184,18 @@ public class Delivery extends BaseEntity {
         }
         return this.arrivalHubId.equals(hubId);
     }
+
+    public void deleteCascade(Long deletedBy) {
+        if (isDeleted()) return; // 중복 방지
+
+        // 경로 논리삭제
+        if (routes != null && !routes.isEmpty()) {
+            routes.stream()
+                    .filter(r -> !r.isDeleted())
+                    .forEach(r -> r.delete(deletedBy));
+        }
+
+        // 배송 논리삭제
+        this.delete(deletedBy);
+    }
 }
