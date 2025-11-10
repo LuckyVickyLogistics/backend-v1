@@ -56,8 +56,8 @@ public class Company extends BaseEntity {
     }
 
     public static void validate(String name, String address, CompanyType type) {
-        if (name == null || name.isBlank()){ throw new IllegalArgumentException("Company name cannot be blank"); }
-        if (address == null || address.isBlank()){ throw new IllegalArgumentException("Company address cannot be blank"); }
-        if (type == null) { throw new IllegalArgumentException("Company type cannot be null"); }
+        if (name == null || name.isBlank()){ throw new IllegalArgumentException("이름은 필수 입력 값입니다"); }
+        if (address == null || address.isBlank()){ throw new IllegalArgumentException("주소는 필수 입력 값입니다"); }
+        if (type == null) { throw new IllegalArgumentException("타입은 필수 입력 값입니다"); }
     }
 }
