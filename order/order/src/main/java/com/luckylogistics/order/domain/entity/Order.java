@@ -22,7 +22,7 @@ public class Order {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "delivery_id", nullable = false)
+    @Column(name = "delivery_id")
     private UUID deliveryId;
 
     @Column(name = "supplier_id", nullable = false)
@@ -43,7 +43,7 @@ public class Order {
 
     //내부값 검증
 
-    public static Order create(int quantity, UUID deliveryId, UUID supplierId, UUID customerId, UUID productId, String request) {
+    public static Order create(int quantity, UUID supplierId, UUID customerId, UUID productId, String request) {
 
         if(quantity <= 0) {
             throw new BusinessException(ExceptionCode.ORDER_QUANTITY_ERROR);
@@ -63,7 +63,6 @@ public class Order {
 
         return Order.builder()
                 .quantity(quantity)
-				.deliveryId(deliveryId)
                 .supplierId(supplierId)
                 .customerId(customerId)
                 .productId(productId)

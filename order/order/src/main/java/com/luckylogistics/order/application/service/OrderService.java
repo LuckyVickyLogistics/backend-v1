@@ -18,7 +18,7 @@ public class OrderService {
 
 	@Transactional
 	public void createOrder() {
-		Order order = Order.create(1, UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "REQUEST");
+		Order order = Order.create(1, UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "REQUEST");
 		orderRepository.save(order);
 	}
 
