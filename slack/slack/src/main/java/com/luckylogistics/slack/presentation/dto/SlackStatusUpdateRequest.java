@@ -1,13 +1,12 @@
 package com.luckylogistics.slack.presentation.dto;
 
-import org.jetbrains.annotations.NotNull;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
 public record SlackStatusUpdateRequest(
 
-	@NotNull
+	@NotNull(message = "상태가 입력되지 않았습니다.")
 	String status
 
 ) {

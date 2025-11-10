@@ -11,9 +11,13 @@ import org.springframework.stereotype.Component;
 
 import com.luckylogistics.slack.application.external.SlackClient;
 import com.luckylogistics.slack.application.dto.OrderCreatedResult;
+import com.luckylogistics.slack.common.exception.BusinessException;
+import com.luckylogistics.slack.common.exception.ErrorCode;
 import com.slack.api.Slack;
+import com.slack.api.SlackConfig;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
+import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.model.Attachment;
 import com.slack.api.model.Field;
 
@@ -24,7 +28,9 @@ public class SlackClientImpl implements SlackClient {
 	private final DateTimeFormatter formatter;
 
 	public SlackClientImpl(@Value("${slack.bot.token}") String botToken) {
-		this.client = Slack.getInstance().methods(botToken);
+		SlackConfig config = new SlackConfig();
+		config.setHttpClientCallTimeoutMillis(10000);
+		this.client = Slack.getInstance(config).methods(botToken);
 		formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Seoul"));
 	}
 
@@ -34,14 +40,17 @@ public class SlackClientImpl implements SlackClient {
 			String userId = client.usersLookupByEmail(r -> r.email(receiverEmail)).getUser().getId();
 			String channelId = client.conversationsOpen(r -> r.users(List.of(userId))).getChannel().getId();
 
-			client.chatPostMessage(r -> r
+			ChatPostMessageResponse response = client.chatPostMessage(r -> r
 				.channel(channelId)
 				.text("주문이 생성되었습니다.")
 				.attachments(List.of(createAttachment(command, aiPrompt)))
 			);
-		} catch (IOException | SlackApiException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		} catch(IOException e) {
+			throw new BusinessException(ErrorCode.SLACK_API_TIMEOUT);
+		}catch (NullPointerException e) {
+			throw new BusinessException(ErrorCode.SLACK_API_INVALID_TOKEN);
+		} catch (SlackApiException e) {
+			throw new BusinessException(ErrorCode.SLACK_API_INTERNAL_SERVER_ERROR);
 		}
 	}
 
