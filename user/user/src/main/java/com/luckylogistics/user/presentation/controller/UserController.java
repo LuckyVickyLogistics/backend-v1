@@ -29,6 +29,7 @@ public class UserController {
 			.username(request.username())
 			.password(request.password())
 			.role(request.role())
+			.slackId(request.slackId())
 			.organizationType(request.organizationType())
 			.build();
 

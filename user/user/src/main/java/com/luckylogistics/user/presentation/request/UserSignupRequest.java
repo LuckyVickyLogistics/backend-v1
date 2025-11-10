@@ -12,7 +12,7 @@ public record UserSignupRequest(
 	String username,
 
 	@NotBlank
-	@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*0-9)(?=.*[!@#$%&*])[a-zA-Z0-9!@#$%&*]{8,15}$")
+	@Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%&*])[A-Za-z\\d!@#$%&*]{8,15}$")
 	String password,
 
 	@Email
