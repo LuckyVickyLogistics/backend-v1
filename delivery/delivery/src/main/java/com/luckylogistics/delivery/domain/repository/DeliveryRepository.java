@@ -9,6 +9,8 @@ public interface DeliveryRepository {
 
     Delivery save(Delivery delivery);
 
+    Optional<Delivery> findById(UUID id);
+
     boolean existsByOrderId(UUID orderId);
 
     Optional<Delivery> findLastDeliveryByArrivalHubId(UUID hubId);
