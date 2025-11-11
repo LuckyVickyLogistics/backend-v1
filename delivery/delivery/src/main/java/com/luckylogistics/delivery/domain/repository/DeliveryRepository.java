@@ -14,6 +14,8 @@ public interface DeliveryRepository {
 
     Optional<Delivery> findById(UUID id);
 
+    Optional<Delivery> findByIdWithCompanyManager(UUID id);
+
     Optional<Delivery> findByIdWithRoutes(UUID id);
 
     boolean existsByOrderId(UUID orderId);

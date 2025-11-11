@@ -31,6 +31,11 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     }
 
     @Override
+    public Optional<Delivery> findByIdWithCompanyManager(UUID id) {
+        return jpaRepository.findByIdWithCompanyManager(id);
+    }
+
+    @Override
     public Optional<Delivery> findByIdWithRoutes(UUID id) {
         return jpaRepository.findByIdWithRoutes(id);
     }

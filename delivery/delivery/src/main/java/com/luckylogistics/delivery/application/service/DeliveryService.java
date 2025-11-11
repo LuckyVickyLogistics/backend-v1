@@ -105,6 +105,11 @@ public class DeliveryService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
     }
 
+    private Delivery findDeliveryByIdWithCompanyManager(UUID id) {
+        return deliveryRepository.findByIdWithCompanyManager(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
+    }
+
     private Delivery findDeliveryByIdWithRoutes(UUID id) {
         return deliveryRepository.findByIdWithRoutes(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
@@ -153,7 +158,7 @@ public class DeliveryService {
         log.info("[Delivery] 배송 상태 변경. deliveryId: {}, newStatus: {}", deliveryId, request.status());
 
         // 배송 조회
-        Delivery delivery = findDeliveryById(deliveryId);
+        Delivery delivery = findDeliveryByIdWithCompanyManager(deliveryId);
         // 권한 검증 (마스터/해당 허브관리자/업체배송담당자)
         validateStatusChangePermission(delivery, currentUserId, currentUserRole);
         // 상태 변경

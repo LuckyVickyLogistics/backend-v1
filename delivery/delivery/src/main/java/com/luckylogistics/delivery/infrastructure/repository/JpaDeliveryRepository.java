@@ -15,6 +15,15 @@ public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID> {
 
     Optional<Delivery> findByDeliveryIdAndDeletedAtIsNull(UUID id);
 
+    @Query("""
+        SELECT d
+          FROM Delivery d
+          LEFT JOIN FETCH d.companyDeliveryManager cdm
+         WHERE d.deletedAt IS NULL
+           AND d.deliveryId = :id
+    """)
+    Optional<Delivery> findByIdWithCompanyManager(@Param("id") UUID id);
+
     /**
      * 배송과 배송경로를 함께 조회
      */
