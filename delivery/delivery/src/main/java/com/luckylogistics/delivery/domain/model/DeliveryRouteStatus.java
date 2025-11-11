@@ -55,4 +55,11 @@ public enum DeliveryRouteStatus {
     public boolean isArrived() {
         return this == DeliveryRouteStatus.HUB_ARRIVED;
     }
+
+    /**
+     * 경로 진행 중 여부
+     */
+    public boolean isInTransit() {
+        return this == DeliveryRouteStatus.HUB_MOVING;
+    }
 }
