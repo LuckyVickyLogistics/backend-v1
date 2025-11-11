@@ -29,7 +29,7 @@ public class KafkaConfig {
 
 	@Bean
 	public DefaultErrorHandler errorHandler() {
-		FixedBackOff fixedBackOff = new FixedBackOff(1000L, 2);
+		FixedBackOff fixedBackOff = new FixedBackOff(0, 0);
 		return new DefaultErrorHandler(fixedBackOff);
 	}
 
