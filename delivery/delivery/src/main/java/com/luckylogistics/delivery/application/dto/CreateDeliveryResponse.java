@@ -25,8 +25,8 @@ public record CreateDeliveryResponse(
         String recipientName,
         String recipientSlackId,
         Long companyDeliveryManagerId,
-        LocalTime companyManagerStartTime,
-        LocalTime companyManagerEndTime,
+        LocalTime deliveryManagerStartTime,
+        LocalTime deliveryManagerEndTime,
         LocalDateTime createdAt,
         List<DeliveryRouteResponse> routes
 ) {
@@ -41,8 +41,8 @@ public record CreateDeliveryResponse(
                 .recipientName(delivery.getRecipient().getName())
                 .recipientSlackId(delivery.getRecipient().getSlackId())
                 .companyDeliveryManagerId(delivery.getCompanyDeliveryManager().getDeliveryManagerId())
-                .companyManagerStartTime(delivery.getCompanyDeliveryManager().getStartTime())
-                .companyManagerEndTime(delivery.getCompanyDeliveryManager().getEndTime())
+                .deliveryManagerStartTime(delivery.getCompanyDeliveryManager().getStartTime())
+                .deliveryManagerEndTime(delivery.getCompanyDeliveryManager().getEndTime())
                 .createdAt(delivery.getCreatedAt())
                 .routes(delivery.getRoutes().stream()
                         .map(DeliveryRouteResponse::from)
@@ -65,8 +65,8 @@ public record CreateDeliveryResponse(
                 .recipientName(delivery.getRecipient().getName())
                 .recipientSlackId(delivery.getRecipient().getSlackId())
                 .companyDeliveryManagerId(companyManager.getDeliveryManagerId())
-                .companyManagerStartTime(companyManager.getStartTime())
-                .companyManagerEndTime(companyManager.getEndTime())
+                .deliveryManagerStartTime(companyManager.getStartTime())
+                .deliveryManagerEndTime(companyManager.getEndTime())
                 .createdAt(delivery.getCreatedAt())
                 .routes(routes.stream()
                         .map(DeliveryRouteResponse::from)
