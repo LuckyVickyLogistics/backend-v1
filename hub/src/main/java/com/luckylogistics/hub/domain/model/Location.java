@@ -10,7 +10,7 @@ import lombok.*;
 @EqualsAndHashCode
 @Embeddable
 public class Location {
-    @Column(name = "latitued")
+    @Column(name = "latitude")
     private Double latitude;
 
     @Column(name = "longitude")
