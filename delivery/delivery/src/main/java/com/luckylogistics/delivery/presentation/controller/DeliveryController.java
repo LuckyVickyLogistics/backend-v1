@@ -66,7 +66,7 @@ public class DeliveryController {
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
         deliveryService.deleteDelivery(deliveryId, currentUserId, currentUserRole);
-        return ResponseEntity.ok(ApiResponse.success(null, "배송이 삭제되었습니다"));
+        return ResponseEntity.ok(ApiResponse.success("배송이 삭제되었습니다"));
     }
 
     @GetMapping
