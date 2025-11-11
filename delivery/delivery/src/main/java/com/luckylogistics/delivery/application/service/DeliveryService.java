@@ -4,11 +4,15 @@ import com.luckylogistics.delivery.application.dto.*;
 import com.luckylogistics.delivery.common.enums.UserRole;
 import com.luckylogistics.delivery.common.exception.BusinessException;
 import com.luckylogistics.delivery.common.exception.ErrorCode;
+import com.luckylogistics.delivery.common.util.PageableUtils;
 import com.luckylogistics.delivery.domain.model.*;
 import com.luckylogistics.delivery.domain.repository.DeliveryRepository;
 import com.luckylogistics.delivery.domain.service.DeliveryDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -222,5 +226,53 @@ public class DeliveryService {
         }
         // 업체 담당자, 배송 담당자: 삭제 불가
         throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_DELETE);
+    }
+
+    public Page<DeliverySummaryResponse> getDeliveries(
+            DeliveryStatus status,
+            UUID departureHubId,
+            UUID arrivalHubId,
+            int page,
+            int size,
+            String sortBy,
+            Sort.Direction direction,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        Pageable pageable = PageableUtils.createPageable(page, size, sortBy, direction);
+        Page<Delivery> deliveries = findDeliveries(
+                status, departureHubId, arrivalHubId, currentUserId, currentUserRole, pageable);
+
+        return deliveries.map(DeliverySummaryResponse::from);
+    }
+
+    private Page<Delivery> findDeliveries(
+            DeliveryStatus status,
+            UUID departureHubId,
+            UUID arrivalHubId,
+            Long currentUserId,
+            UserRole currentUserRole,
+            Pageable pageable
+    ) {
+        if (currentUserRole == null) throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_READ);
+
+        // 허브 관리자: 담당 허브 배송 내역 조회
+        if (currentUserRole.isHubManager()) {
+            UUID userHubId = hubService.getUserHubId(currentUserId);
+            return deliveryRepository.searchByHubId(userHubId, pageable);
+        }
+
+        // 배송 관리자: 업체 배송 담당자 / 허브 배송 담당자
+        if (currentUserRole.isDeliveryManager()) {
+            // 먼저 업체 배송 담당자로 조회
+            Page<Delivery> companyDeliveries = deliveryRepository
+                    .searchByCompanyDeliveryManagerUserId(currentUserId, pageable);
+            if (companyDeliveries.hasContent()) {
+                return companyDeliveries;
+            }
+            // 없으면 허브 배송 담당자로 조회
+            return deliveryRepository.searchByHubDeliveryManagerUserId(currentUserId, pageable);
+        }
+        return deliveryRepository.searchDeliveries(status, departureHubId, arrivalHubId, pageable);
     }
 }
