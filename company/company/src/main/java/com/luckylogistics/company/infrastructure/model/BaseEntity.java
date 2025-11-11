@@ -33,8 +33,8 @@ public class BaseEntity {
     private Long deletedBy;
 
     public void delete(Long deletedBy) {
-        deletedAt = LocalDateTime.now();
-        deletedBy = deletedBy;
+        this.deletedAt = LocalDateTime.now();
+        this.deletedBy = deletedBy;
     }
 
 }
