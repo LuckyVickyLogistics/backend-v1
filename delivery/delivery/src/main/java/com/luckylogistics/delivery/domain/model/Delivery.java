@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -76,7 +75,7 @@ public class Delivery extends BaseEntity {
         List<DeliveryRoute> normalizedRoutes = routes.stream()
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(DeliveryRoute::getSequence)) // 연결성 검증은 제외
-                .collect(Collectors.toList());
+                .toList();
 
         return Delivery.builder()
                 .orderId(orderId)

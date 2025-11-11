@@ -8,10 +8,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
- * 배송 응답 DTO
+ * 배송 조회 응답 DTO
  */
 @Builder
 public record DeliveryResponse(
@@ -47,7 +46,7 @@ public record DeliveryResponse(
                 .updatedAt(delivery.getUpdatedAt())
                 .routes(delivery.getRoutes().stream()
                         .map(DeliveryRouteResponse::from)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build();
     }
 }
