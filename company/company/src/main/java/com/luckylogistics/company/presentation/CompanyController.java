@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/companies")
 public class CompanyController {
-    //todo: 인가 처리
 
     private final CompanyService companyService;
+    private final RoleValidator roleValidator;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<CompanyResponse>>> getCompanies(
@@ -43,23 +43,29 @@ public class CompanyController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CompanyResponse>> createCompany(
+        @RequestHeader("X-User-Role") String role,
         @Valid @RequestBody CompanyRequest companyRequest) {
+        roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER");
         CompanyResponse result = companyService.createCompany(companyRequest);
         return ResponseEntity.ok(ApiResponse.success(result, "업체가 생성되었습니다"));
     }
 
     @PatchMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> updateCompany(
+        @RequestHeader("X-User-Role") String role,
         @PathVariable(name = "companyId") UUID companyId,
         @Valid @RequestBody CompanyRequest companyRequest) {
+        roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER", "COMPANY_MANAGER");
         companyService.updateCompany(companyId, companyRequest);
         return ResponseEntity.ok(ApiResponse.success(null, "업체가 수정되었습니다."));
     }
 
     @DeleteMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> deleteCompany(
-        @RequestHeader Long userId, //todo: 더 알아보기
+        @RequestHeader("X-User-Role") String role,
+        @RequestHeader("X-User-UserId") Long userId,
         @PathVariable(name = "companyId") UUID companyId) {
+        roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER");
         companyService.deleteCompany(userId, companyId);
         return ResponseEntity.ok(ApiResponse.success(null, "업체가 삭제되었습니다"));
     }
