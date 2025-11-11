@@ -63,7 +63,7 @@ public class CompanyController {
     @DeleteMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> deleteCompany(
         @RequestHeader("X-User-Role") String role,
-        @RequestHeader("X-User-UserId") Long userId,
+        @RequestHeader("X-User-Id") String userId,
         @PathVariable(name = "companyId") UUID companyId) {
         roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER");
         companyService.deleteCompany(userId, companyId);
