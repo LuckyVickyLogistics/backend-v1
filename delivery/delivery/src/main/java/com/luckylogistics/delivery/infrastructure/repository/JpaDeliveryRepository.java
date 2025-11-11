@@ -36,44 +36,75 @@ public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID> {
      */
     Optional<Delivery> findTopByArrivalHubIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID hubId);
 
+    /**
+     * 마스터/업체 관리자용 검색
+     */
     @Query("""
         SELECT d
           FROM Delivery d
+          JOIN FETCH d.companyDeliveryManager cdm
          WHERE d.deletedAt IS NULL
            AND (:status IS NULL OR d.status = :status)
-           AND (:dep IS NULL OR d.departureHubId = :dep)
-           AND (:arr IS NULL OR d.arrivalHubId = :arr)
+           AND (:departureHubId IS NULL OR d.departureHubId = :departureHubId)
+           AND (:arrivalHubId IS NULL OR d.arrivalHubId = :arrivalHubId)
     """)
     Page<Delivery> searchDeliveries(
             @Param("status") DeliveryStatus status,
-            @Param("dep") UUID departureHubId,
-            @Param("arr") UUID arrivalHubId,
+            @Param("departureHubId") UUID departureHubId,
+            @Param("arrivalHubId") UUID arrivalHubId,
             Pageable pageable
     );
 
+    /**
+     * 허브 관리자용: 출발/도착/경유 허브 확인 + 필터
+     * - d.departureHubId: 출발 허브
+     * - d.arrivalHubId: 도착 허브
+     * - EXISTS (routes): 경유 허브 (DeliveryRoute의 출발/도착 허브)
+     */
     @Query("""
-        SELECT d
-        FROM Delivery d
-        WHERE (d.departureHubId = :hubId OR d.arrivalHubId = :hubId)
-        AND d.deletedAt IS NULL
+        SELECT DISTINCT d
+          FROM Delivery d
+          JOIN FETCH d.companyDeliveryManager cdm
+          LEFT JOIN d.routes r
+        WHERE d.deletedAt IS NULL
+          AND (d.departureHubId = :hubId
+             OR d.arrivalHubId = :hubId
+             OR r.departureHubId = :hubId
+             OR r.arrivalHubId = :hubId)
+          AND (:status IS NULL OR d.status = :status)
+          AND (:departureHubId IS NULL OR d.departureHubId = :departureHubId)
+          AND (:arrivalHubId IS NULL OR d.arrivalHubId = :arrivalHubId)
     """)
-    Page<Delivery> searchByHubId(@Param("hubId") UUID hubId, Pageable pageable);
+    Page<Delivery> searchByHubIdIncludingRoutes(
+            @Param("hubId") UUID hubId,
+            @Param("status") DeliveryStatus status,
+            @Param("departureHubId") UUID departureHubId,
+            @Param("arrivalHubId") UUID arrivalHubId,
+            Pageable pageable
+    );
 
-    @Query("""
-        SELECT d
-        FROM Delivery d
-        JOIN FETCH d.companyDeliveryManager cdm
-        WHERE cdm.deliveryManagerId = :userId
-        AND d.deletedAt IS NULL
+    /**
+     * 배송 담당자용: 업체 배송 담당자 / 허브 배송 담당자 + 필터
+     * - companyDeliveryManager: 업체 배송 담당자
+     * - hubDeliveryManager: 허브 배송 담당자
+     */
+    @Query(value = """
+        SELECT DISTINCT d
+          FROM Delivery d
+          JOIN FETCH d.companyDeliveryManager cdm
+          LEFT JOIN d.routes r
+          LEFT JOIN r.hubDeliveryManager hdm
+         WHERE d.deletedAt IS NULL
+           AND (cdm.deliveryManagerId = :userId OR hdm.deliveryManagerId = :userId)
+           AND (:status IS NULL OR d.status = :status)
+           AND (:departureHubId IS NULL OR d.departureHubId = :departureHubId)
+           AND (:arrivalHubId IS NULL OR d.arrivalHubId = :arrivalHubId)
     """)
-    Page<Delivery> searchByCompanyDeliveryManagerUserId(@Param("userId") Long userId, Pageable pageable);
-
-    @Query("""
-        SELECT d
-        FROM Delivery d
-        JOIN FETCH d.routes dr
-        WHERE dr.hubDeliveryManager.deliveryManagerId = :userId
-        AND d.deletedAt IS NULL
-    """)
-    Page<Delivery> searchByHubDeliveryManagerUserId(@Param("userId") Long userId, Pageable pageable);
+    Page<Delivery> searchByDeliveryManagerUserId(
+            @Param("userId") Long userId,
+            @Param("status") DeliveryStatus status,
+            @Param("departureHubId") UUID departureHubId,
+            @Param("arrivalHubId") UUID arrivalHubId,
+            Pageable pageable
+    );
 }

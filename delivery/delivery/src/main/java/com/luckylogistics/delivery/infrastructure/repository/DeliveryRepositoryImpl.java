@@ -51,17 +51,26 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     }
 
     @Override
-    public Page<Delivery> searchByHubId(UUID hubId, Pageable pageable) {
-        return jpaRepository.searchByHubId(hubId, pageable);
+    public Page<Delivery> searchByHubIdIncludingRoutes(
+            UUID hubId,
+            DeliveryStatus status,
+            UUID departureHubId,
+            UUID arrivalHubId,
+            Pageable pageable
+    ) {
+        return jpaRepository.searchByHubIdIncludingRoutes(
+                hubId, status, departureHubId, arrivalHubId, pageable);
     }
 
     @Override
-    public Page<Delivery> searchByCompanyDeliveryManagerUserId(Long userId, Pageable pageable) {
-        return jpaRepository.searchByCompanyDeliveryManagerUserId(userId, pageable);
-    }
-
-    @Override
-    public Page<Delivery> searchByHubDeliveryManagerUserId(Long userId, Pageable pageable) {
-        return jpaRepository.searchByHubDeliveryManagerUserId(userId, pageable);
+    public Page<Delivery> searchByDeliveryManagerUserId(
+            Long userId,
+            DeliveryStatus status,
+            UUID departureHubId,
+            UUID arrivalHubId,
+            Pageable pageable
+    ) {
+        return jpaRepository.searchByDeliveryManagerUserId(
+                userId, status, departureHubId, arrivalHubId, pageable);
     }
 }

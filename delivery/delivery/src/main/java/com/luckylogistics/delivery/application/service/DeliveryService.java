@@ -254,25 +254,38 @@ public class DeliveryService {
             UserRole currentUserRole,
             Pageable pageable
     ) {
-        if (currentUserRole == null) throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_READ);
+        if (currentUserRole == null) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_SEARCH);
+        }
 
-        // 허브 관리자: 담당 허브 배송 내역 조회
+        if (currentUserId == null) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_SEARCH);
+        }
+
+        // 마스터 / 업체 관리자: 전체 조회 권한 + 필터
+        if (currentUserRole.isMaster() || currentUserRole.isCompanyManager()) {
+            return deliveryRepository.searchDeliveries(
+                    status, departureHubId, arrivalHubId, pageable);
+        }
+
+        // 허브 관리자: 배송 경로에 내 허브가 포함된 배송만 조회 + 필터
         if (currentUserRole.isHubManager()) {
             UUID userHubId = hubService.getUserHubId(currentUserId);
-            return deliveryRepository.searchByHubId(userHubId, pageable);
+            if (userHubId == null) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_SEARCH);
+            }
+            // 출발/도착/경유 허브 모두 확인
+            return deliveryRepository.searchByHubIdIncludingRoutes(
+                    userHubId, status, departureHubId, arrivalHubId, pageable);
         }
 
-        // 배송 관리자: 업체 배송 담당자 / 허브 배송 담당자
+        // 3. 배송 담당자: 내가 담당한 배송만 조회 + 필터
         if (currentUserRole.isDeliveryManager()) {
-            // 먼저 업체 배송 담당자로 조회
-            Page<Delivery> companyDeliveries = deliveryRepository
-                    .searchByCompanyDeliveryManagerUserId(currentUserId, pageable);
-            if (companyDeliveries.hasContent()) {
-                return companyDeliveries;
-            }
-            // 없으면 허브 배송 담당자로 조회
-            return deliveryRepository.searchByHubDeliveryManagerUserId(currentUserId, pageable);
+            // 업체 배송 담당자 / 허브 배송 담당자 통합 조회
+            return deliveryRepository.searchByDeliveryManagerUserId(
+                    currentUserId, status, departureHubId, arrivalHubId, pageable);
         }
-        return deliveryRepository.searchDeliveries(status, departureHubId, arrivalHubId, pageable);
+
+        throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_SEARCH);
     }
 }

@@ -32,6 +32,7 @@ public enum ErrorCode {
     FORBIDDEN_NOT_HUB_DELIVERY(HttpStatus.FORBIDDEN, "DD-007", "담당 허브의 배송이 아닙니다"),
     FORBIDDEN_NOT_COMPANY_DELIVERY(HttpStatus.FORBIDDEN, "DD-008", "담당 배송이 아닙니다"),
     FORBIDDEN_NOT_ASSIGNED_ROUTE(HttpStatus.FORBIDDEN, "DD-009", "배정된 경로가 아닙니다"),
+    FORBIDDEN_DELIVERY_SEARCH(HttpStatus.FORBIDDEN, "DD-010", "해당 배송 목록을 조회할 권한이 없습니다."),
 
     // DeliveryRoute
     DELIVERY_ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "DR-001", "배송 경로를 찾을 수 없습니다"),

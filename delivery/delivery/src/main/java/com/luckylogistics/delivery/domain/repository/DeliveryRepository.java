@@ -22,15 +22,22 @@ public interface DeliveryRepository {
 
     Page<Delivery> searchDeliveries(DeliveryStatus status, UUID departureHubId, UUID arrivalHubId, Pageable pageable);
 
-    Page<Delivery> searchByHubId(UUID hubId, Pageable pageable);
+    // 허브 관리자용: 배송 경로에 해당 허브가 포함된 배송 검색 + 필터
+    //(출발/도착/경유 허브 모두 포함)
+    Page<Delivery> searchByHubIdIncludingRoutes(
+            UUID hubId,
+            DeliveryStatus status,
+            UUID departureHubId,
+            UUID arrivalHubId,
+            Pageable pageable
+    );
 
-    /**
-     * 업체 배송 담당자가 담당하는 배송 조회
-     */
-    Page<Delivery> searchByCompanyDeliveryManagerUserId(Long userId, Pageable pageable);
-
-    /**
-     * 허브 배송 담당자가 담당하는 배송 조회
-     */
-    Page<Delivery> searchByHubDeliveryManagerUserId(Long userId, Pageable pageable);
+    // 배송 담당자용: 업체 배송 담당자 / 허브 배송 담당자 검색 + 필터
+    Page<Delivery> searchByDeliveryManagerUserId(
+            Long userId,
+            DeliveryStatus status,
+            UUID departureHubId,
+            UUID arrivalHubId,
+            Pageable pageable
+    );
 }
