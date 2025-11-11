@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +50,7 @@ public class CompanyController {
         return ResponseEntity.ok(ApiResponse.success(result, "업체가 생성되었습니다"));
     }
 
-    @PatchMapping("/{companyId}")
+    @PutMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> updateCompany(
         @RequestHeader("X-User-Role") String role,
         @PathVariable(name = "companyId") UUID companyId,
