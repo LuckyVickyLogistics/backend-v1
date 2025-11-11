@@ -4,8 +4,11 @@ import com.luckylogistics.delivery.application.dto.*;
 import com.luckylogistics.delivery.application.service.DeliveryService;
 import com.luckylogistics.delivery.common.enums.UserRole;
 import com.luckylogistics.delivery.common.response.ApiResponse;
+import com.luckylogistics.delivery.domain.model.DeliveryStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,5 +67,22 @@ public class DeliveryController {
     ) {
         deliveryService.deleteDelivery(deliveryId, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(null, "배송이 삭제되었습니다"));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<DeliverySummaryResponse>>> getDeliveries(
+            @RequestParam(required = false) DeliveryStatus status,
+            @RequestParam(required = false) UUID departureHubId,
+            @RequestParam(required = false) UUID arrivalHubId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
+    ) {
+        Page<DeliverySummaryResponse> response = deliveryService.getDeliveries(
+                status, departureHubId, arrivalHubId, page, size, sortBy, direction, currentUserId, currentUserRole);
+        return ResponseEntity.ok(ApiResponse.success(response, "배송 목록이 조회되었습니다"));
     }
 }
