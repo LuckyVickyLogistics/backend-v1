@@ -1,5 +1,7 @@
 package com.luckylogistics.product.application.service;
 
+import com.luckylogistics.product.application.dto.MinusRequest;
+import com.luckylogistics.product.application.dto.PlusRequest;
 import com.luckylogistics.product.application.external.CompanyService;
 import com.luckylogistics.product.application.external.HubService;
 import com.luckylogistics.product.common.exception.BusinessException;
@@ -122,18 +124,18 @@ public class ProductService {
 
     //수량 감소
     @Transactional
-    public void minusProducts(UUID productId, int amount) {
+    public void minusProducts(UUID productId, MinusRequest minusRequest) {
         //id 찾기
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new BusinessException(ExceptionCode.PRODUCT_CANNOT_FIND));
-        product.minusQuantity(amount);
+        product.minusQuantity(minusRequest.amount());
     }
     //수량 추가
     @Transactional
-    public void plusProducts(UUID productId, int amount) {
+    public void plusProducts(UUID productId, PlusRequest plusRequest) {
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new BusinessException(ExceptionCode.PRODUCT_CANNOT_FIND));
-        product.plusQuantity(amount);
+        product.plusQuantity(plusRequest.amount());
     }
 
 }

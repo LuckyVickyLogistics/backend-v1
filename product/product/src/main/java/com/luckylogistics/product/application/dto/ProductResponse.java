@@ -22,7 +22,8 @@ public record ProductResponse(
         @Min(value = 0, message = "초기 제품 개수는 0개 이상이어야 합니다.")
         int quantity,
         @NotNull(message = "상태값은 필수입니다.")
-        String status
+        String status,
+        UUID hubId
 ) {
     public static ProductResponse from(Product p) {
         return new ProductResponse(
@@ -31,7 +32,8 @@ public record ProductResponse(
                 p.getPrice(),
                 p.getTotalQuantity(),
                 p.getQuantity().getValue(),
-                p.getStatus().name()
+                p.getStatus().name(),
+                p.getHubId()
         );
     }
 }
