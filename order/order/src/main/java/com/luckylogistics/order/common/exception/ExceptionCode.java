@@ -45,6 +45,7 @@ public enum ExceptionCode {
     ORDER_DELIVERY_ERROR("OR-6", "배송 ID를 찾지 못했습니다", HttpStatus.NOT_FOUND),
     ORDER_ID_ERROR("OR-7", "주문ID를 찾지 못했습니다." ,HttpStatus.NOT_FOUND),
     ORDER_ALREADY_DELETED("0R-8", "삭제된 주문입니다.", HttpStatus.GONE),
+    ORDER_ALREADY_EXIST("OR-9","이미 주문이 존재합니다.",HttpStatus.BAD_REQUEST)
     ;
 
     private final String code;

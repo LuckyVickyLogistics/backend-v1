@@ -3,11 +3,9 @@ package com.luckylogistics.order.infrastructure.client;
 import com.luckylogistics.order.application.dto.MinusRequest;
 import com.luckylogistics.order.application.dto.PlusRequest;
 import com.luckylogistics.order.application.external.ProductService;
+import com.luckylogistics.order.common.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -15,11 +13,11 @@ import java.util.UUID;
 public interface ProductFeignClient {
 
     @GetMapping("/{productId}")
-    boolean isProductIdExists(@PathVariable("productId") UUID productId);
+    ApiResponse<Boolean> isProductIdExists(@PathVariable("productId") UUID productId);
 
-    @PatchMapping("/plusProductsQuan/{productId}")
-    void plusProduct(@PathVariable("productId") UUID productId , @RequestBody PlusRequest plusRequest);
+    @PutMapping("/plusProductsQuan/{productId}")
+    ApiResponse<Void> plusProduct(@PathVariable("productId") UUID productId , @RequestBody PlusRequest plusRequest);
 
-    @PatchMapping("/minusProductsQuan/{productId}")
-    void minusProduct(@PathVariable("productId")  UUID productId, @RequestBody MinusRequest minusRequest);
+    @PutMapping("/minusProductsQuan/{productId}")
+    ApiResponse<Void> minusProduct(@PathVariable("productId")  UUID productId, @RequestBody MinusRequest minusRequest);
 }
