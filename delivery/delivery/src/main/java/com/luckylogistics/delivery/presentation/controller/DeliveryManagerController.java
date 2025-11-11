@@ -60,7 +60,7 @@ public class DeliveryManagerController {
      * 배송 담당자 수정
      * - X-User-Id, X-User-Role: 권한 검증 필요
      */
-    @PatchMapping("/{deliveryManagerId}")
+    @PutMapping("/{deliveryManagerId}")
     public ResponseEntity<ApiResponse<DeliveryManagerResponse>> updateDeliveryManager(
             @PathVariable Long deliveryManagerId,
             @Valid @RequestBody UpdateDeliveryManagerRequest request,

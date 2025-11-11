@@ -47,7 +47,7 @@ public class DeliveryController {
         return ResponseEntity.ok(ApiResponse.success(response, "배송이 조회되었습니다"));
     }
 
-    @PatchMapping("/{deliveryId}/status")
+    @PutMapping("/{deliveryId}/status")
     public ResponseEntity<ApiResponse<UpdateDeliveryResponse>> updateDeliveryStatus(
             @PathVariable UUID deliveryId,
             @Valid @RequestBody UpdateDeliveryStatusRequest request,
