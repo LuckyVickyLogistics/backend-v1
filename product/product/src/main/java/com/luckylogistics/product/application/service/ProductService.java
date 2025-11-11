@@ -83,6 +83,10 @@ public class ProductService {
         return searchProductsByName(keyword);
     }
 
+    //FeignClient용
+    public Boolean checkProduct(UUID productId) {
+        return productRepository.findById(productId).isPresent();
+    }
 
     //전체 조회!
     private List<ProductResponse> getAllProducts() {

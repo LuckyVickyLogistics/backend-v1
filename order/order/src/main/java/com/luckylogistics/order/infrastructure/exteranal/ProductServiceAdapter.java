@@ -17,7 +17,7 @@ public class ProductServiceAdapter implements ProductService {
     private final ProductDummyClient productFeignClient;
 
     @Override
-    public void isProductExists(UUID productId) {
+    public void isProductIdExists(UUID productId) {
         if(!(productFeignClient.isProductExists(productId))){
             throw new RuntimeException("상품 연결정보가 존재하지 않습니다.");
         }

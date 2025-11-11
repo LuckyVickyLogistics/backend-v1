@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface ProductFeignClient {
 
     @GetMapping("/{productId}")
-    boolean isProductExists(@PathVariable("productId") UUID productId);
+    boolean isProductIdExists(@PathVariable("productId") UUID productId);
 
     @PatchMapping("/plusProductsQuan/{productId}")
     void plusProduct(@PathVariable("productId") UUID productId , @RequestBody PlusRequest plusRequest);

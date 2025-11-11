@@ -11,7 +11,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class CompanyServiceAdapter implements CompanyService {
-  //  private final CompanyFeignClient  companyFeignClient;
+  //  private final CompanyFeignClient companyFeignClient;
     private final CompanyDummyClient companyFeignClient;
 
 

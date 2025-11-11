@@ -1,5 +1,6 @@
 package com.luckylogistics.product.presentation.controller;
 
+import brave.Response;
 import com.luckylogistics.product.application.dto.MinusRequest;
 import com.luckylogistics.product.application.dto.PlusRequest;
 import com.luckylogistics.product.application.service.ProductService;
@@ -40,12 +41,18 @@ public class ProductController {
 
     @Operation(summary = "상품 단건 조회", description = "단 한건의 상품 정보를 조회합니다.")
     //단건 조회
-    @GetMapping("/{productId}")
+    @GetMapping("/searchOne/{productId}")
     public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable(name = "productId") UUID productId) {
         ProductResponse result = ProductResponse.from(productService.getProduct(productId));
         return ResponseEntity.ok(ApiResponse.success(result,"상품 단건 조회 결과입니다."));
     }
     //있는지 확인 (FeignClient용)
+    @Operation(summary = "FeignClient용 조회 메서드 ", description = "상품이 존재하는지 확인합니다.")
+    @GetMapping("/{productId}")
+    public ResponseEntity<ApiResponse<Boolean>> isProductIdExists(@PathVariable(name = "productId") UUID productId) {
+        Boolean result = productService.checkProduct(productId);
+        return ResponseEntity.ok(ApiResponse.success(result,"FeignClient : 상품 정상 조회 되었습니다. "));
+    }
 
 
     //전체 조회 및 검색
