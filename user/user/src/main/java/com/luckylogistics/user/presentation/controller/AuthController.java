@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.luckylogistics.user.application.dto.LoginCommand;
 import com.luckylogistics.user.application.dto.TokenResponse;
 import com.luckylogistics.user.application.service.AuthService;
+import com.luckylogistics.user.common.response.ApiResponse;
 import com.luckylogistics.user.infrastructure.jwt.JwtProvider;
 import com.luckylogistics.user.presentation.request.UserLoginRequest;
 
@@ -26,7 +27,7 @@ public class AuthController {
 
 	// 로그인 (AccessToken + RefreshToken 발급)
 	@PostMapping("/login")
-	public ResponseEntity<TokenResponse> login(@Valid @RequestBody UserLoginRequest request) {
+	public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody UserLoginRequest request) {
 
 		LoginCommand command = LoginCommand.builder()
 			.username(request.username())
@@ -35,7 +36,7 @@ public class AuthController {
 
 		TokenResponse tokenResponse = authService.login(command);
 
-		return ResponseEntity.ok(tokenResponse);
+		return ResponseEntity.ok(ApiResponse.success(tokenResponse, "로그인 되었습니다."));
 	}
 
 	// AccessToken 재발급
@@ -48,9 +49,9 @@ public class AuthController {
 
 	// 로그아웃 (RefreshToken 삭제 + AccessToken 블랙리스트 등록)
 	@PostMapping("/logout")
-	public ResponseEntity<?>  logout(HttpServletRequest request) {
+	public ResponseEntity<ApiResponse<?>>  logout(HttpServletRequest request) {
 		String token = jwtProvider.resolveToken(request);
 		authService.logout(token);
-		return ResponseEntity.ok("로그아웃 되었습니다.");
+		return ResponseEntity.ok(ApiResponse.success("로그아웃 되었습니다."));
 	}
 }

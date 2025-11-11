@@ -1,7 +1,5 @@
 package com.luckylogistics.user.presentation.controller;
 
-import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.luckylogistics.user.application.dto.SignupCommand;
 import com.luckylogistics.user.application.service.UserService;
+import com.luckylogistics.user.common.response.ApiResponse;
 import com.luckylogistics.user.presentation.request.UserSignupRequest;
 
 import jakarta.validation.Valid;
@@ -35,6 +34,6 @@ public class UserController {
 
 		Long userId = userService.signup(command);
 
-		return ResponseEntity.ok(Map.of("userId", userId, "message", "회원가입 요청 완료"));
+		return ResponseEntity.ok(ApiResponse.success(userId, "회원가입이 요청 되었습니다."));
 	}
 }
