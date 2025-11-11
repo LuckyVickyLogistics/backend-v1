@@ -18,6 +18,11 @@ public record ApiResponse<T>(
         return new ApiResponse<>(true, message, data, null);
     }
 
+	// 성공 - 데이터 없음
+	public static <T> ApiResponse<T> success(String message) {
+		return new ApiResponse<>(true, message, null, null);
+	}
+
     /**
      * 실패 응답 생성 (에러 코드 + 메시지)
      */

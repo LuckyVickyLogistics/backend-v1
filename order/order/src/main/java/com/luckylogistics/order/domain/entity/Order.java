@@ -1,11 +1,23 @@
 package com.luckylogistics.order.domain.entity;
 
+import java.util.UUID;
+
 import com.luckylogistics.order.common.exception.BusinessException;
 import com.luckylogistics.order.common.exception.ExceptionCode;
-import jakarta.persistence.*;
-import lombok.*;
 
-import java.util.UUID;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "p_orders")
@@ -13,13 +25,13 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Order {
+public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name= "order_id", nullable = false, updatable = false)
     private UUID orderId;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private int quantity;
 
     @Column(name = "delivery_id")
@@ -34,6 +46,9 @@ public class Order {
     @Column(name = "product_id" , nullable = false)
     private UUID productId;
 
+	@Column(name = "delivery_address", nullable = false)
+	private String deliveryAddress;
+
     @Column(name= "request", nullable = false)
     private String request;
 
@@ -43,7 +58,7 @@ public class Order {
 
     //내부값 검증
 
-    public static Order create(int quantity, UUID supplierId, UUID customerId, UUID productId, String request) {
+    public static Order create(int quantity, UUID supplierId, UUID customerId, UUID productId, String deliveryAddress, String request) {
 
         if(quantity <= 0) {
             throw new BusinessException(ExceptionCode.ORDER_QUANTITY_ERROR);
@@ -66,6 +81,7 @@ public class Order {
                 .supplierId(supplierId)
                 .customerId(customerId)
                 .productId(productId)
+				.deliveryAddress(deliveryAddress)
                 .request(request)
                 .status(OrderStatus.ORDERED)
                 .build();

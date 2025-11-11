@@ -1,8 +1,9 @@
 package com.luckylogistics.order.common.exception;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -45,7 +46,8 @@ public enum ExceptionCode {
     ORDER_DELIVERY_ERROR("OR-6", "배송 ID를 찾지 못했습니다", HttpStatus.NOT_FOUND),
     ORDER_ID_ERROR("OR-7", "주문ID를 찾지 못했습니다." ,HttpStatus.NOT_FOUND),
     ORDER_ALREADY_DELETED("0R-8", "삭제된 주문입니다.", HttpStatus.GONE),
-    ORDER_ALREADY_EXIST("OR-9","이미 주문이 존재합니다.",HttpStatus.BAD_REQUEST)
+    ORDER_ALREADY_EXIST("OR-9","이미 주문이 존재합니다.",HttpStatus.BAD_REQUEST),
+	ORDER_QUANTITY_EXCEEDS_STOCK("OR-10", "상품의 총 재고보다 많이 주문할 수 없습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

@@ -3,17 +3,31 @@ package com.luckylogistics.order.application.service;
 import java.util.List;
 import java.util.UUID;
 
-import com.luckylogistics.order.application.dto.*;
-import com.luckylogistics.order.application.external.ProductService;
-import com.luckylogistics.order.common.exception.BusinessException;
-import com.luckylogistics.order.common.exception.ExceptionCode;
-import com.luckylogistics.order.domain.entity.OrderStatus;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.luckylogistics.order.application.dto.CompanyHubResponse;
+import com.luckylogistics.order.application.dto.DeliveryCreateResponse;
+import com.luckylogistics.order.application.dto.HubManagerEmailResponse;
+import com.luckylogistics.order.application.dto.MinusRequest;
+import com.luckylogistics.order.application.dto.OrderRequest;
+import com.luckylogistics.order.application.dto.OrderResponse;
+import com.luckylogistics.order.application.dto.OrderUpdateRequest;
+import com.luckylogistics.order.application.dto.OrderUpdateResponse;
+import com.luckylogistics.order.application.dto.ProductResponse;
+import com.luckylogistics.order.application.dto.UserResponse;
+import com.luckylogistics.order.application.event.OrderKafkaEventPublisher;
+import com.luckylogistics.order.application.external.CompanyService;
+import com.luckylogistics.order.application.external.DeliveryService;
+import com.luckylogistics.order.application.external.HubService;
+import com.luckylogistics.order.application.external.ProductService;
+import com.luckylogistics.order.application.external.UserService;
+import com.luckylogistics.order.common.exception.BusinessException;
+import com.luckylogistics.order.common.exception.ExceptionCode;
 import com.luckylogistics.order.domain.entity.Order;
 import com.luckylogistics.order.domain.repository.OrderRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +36,90 @@ public class OrderService {
 
 	private final OrderRepository orderRepository;
     private final ProductService productService;
+	private final UserService userService;
+	private final CompanyService companyService;
+	private final DeliveryService deliveryService;
+	private final HubService hubService;
+	private final OrderKafkaEventPublisher kafkaEventPublisher;
 
 	@Transactional
-	public void createOrder() {
-		Order order = Order.create(1, UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "REQUEST");
+	public void createOrder(OrderRequest requestDto) {
+		// 상품 조회
+		ProductResponse productResponse = validateAndGetProduct(requestDto.productId(), requestDto.quantity());
+
+		// 로그인한 사람의 username, slackId, 소속 업체 ID 조회
+		UserResponse userResponse = getUserInfo();
+
+		// 주문 생성
+		Order order = Order.create(
+			requestDto.quantity(),
+			productResponse.departureCompanyId(), // 공급업체 ID
+			userResponse.companyId(),// 주문한 사용자 소속 업체 ID (수령업체)
+			requestDto.productId(),
+			requestDto.deliveryAddress(),
+			requestDto.request()
+		);
 		orderRepository.save(order);
+
+		// 상품 재고 차감
+		decreaseProductStock(requestDto);
+
+		// 업체 담당 허브 (출발허브) 조회
+		CompanyHubResponse companyHubResponse = getCompanyHub(userResponse.companyId());
+
+		// 배송 생성
+		// TODO: 배송 경로에서 포함된 ID를 통해 허브 서비스에서 허브의 이름을 받아와야함
+		DeliveryCreateResponse deliveryCreateResponse = createDelivery(order, productResponse, companyHubResponse, userResponse);
+
+		// 출발 허브 관리자 슬랙 이메일 조회
+		HubManagerEmailResponse hubManagerEmailResponse = getHubManagerEmail(companyHubResponse.arrivalHubId());
+
+		// 카프카 이벤트 발송
+		publishEvent(order, productResponse, userResponse, deliveryCreateResponse, hubManagerEmailResponse);
+	}
+
+	private ProductResponse validateAndGetProduct(UUID productId, int quantity) {
+		ProductResponse response = productService.getProductById(productId);
+		if (response.quantity() < quantity) {
+			throw new BusinessException(ExceptionCode.ORDER_QUANTITY_EXCEEDS_STOCK);
+		}
+		return response;
+	}
+
+	private UserResponse getUserInfo() {
+		 return userService.getUserCompany(); // 수령 업체 ID가 들어 있음
+	}
+
+	private void decreaseProductStock(OrderRequest requestDto) {
+		productService.minusProduct(requestDto.productId(), new MinusRequest(requestDto.quantity()));
+	}
+
+	private CompanyHubResponse getCompanyHub(UUID companyId) {
+		return companyService.getCompanyHub(companyId);
+	}
+
+	private DeliveryCreateResponse createDelivery(Order order, ProductResponse productResponse, CompanyHubResponse companyHubResponse, UserResponse userResponse) {
+		return deliveryService.createDelivery(
+			order, productResponse.departureHubId(), companyHubResponse.arrivalHubId(), userResponse.username(), userResponse.slackId()
+		);
+	}
+
+	private HubManagerEmailResponse getHubManagerEmail(UUID hubId) {
+		return hubService.getHubManagerEmail(hubId);
+	}
+
+	private void publishEvent(
+		Order order, ProductResponse productResponse, UserResponse userResponse,
+		DeliveryCreateResponse deliveryCreateResponse, HubManagerEmailResponse hubManagerEmailResponse
+	) {
+		kafkaEventPublisher.publish(
+			order.getOrderId(), userResponse.username(), userResponse.slackId(), order.getCreatedAt(),
+			productResponse.productName(), productResponse.quantity(), order.getRequest(),
+			deliveryCreateResponse.startPoint(), deliveryCreateResponse.waypoints(), deliveryCreateResponse.endPoint(),
+			deliveryCreateResponse.deliveryManagerName(), deliveryCreateResponse.deliveryManagerSlackId(),
+			deliveryCreateResponse.deliveryManagerWorkingStartTime(), deliveryCreateResponse.deliveryManagerWorkingEndTime(),
+			hubManagerEmailResponse.slackId()
+		);
 	}
 
     //update

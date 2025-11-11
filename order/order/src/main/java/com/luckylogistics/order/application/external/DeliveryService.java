@@ -2,6 +2,9 @@ package com.luckylogistics.order.application.external;
 
 import java.util.UUID;
 
+import com.luckylogistics.order.application.dto.DeliveryCreateResponse;
+import com.luckylogistics.order.domain.entity.Order;
+
 public interface DeliveryService {
     //주문 생성
     // 배송 생성
@@ -12,6 +15,6 @@ public interface DeliveryService {
 
     void isDeliveryExists(UUID deliveryId);
 
-
+	DeliveryCreateResponse createDelivery(Order order, UUID departureHubId, UUID arrivalHubId, String recipientName, String recipientSlackId);
 
 }
