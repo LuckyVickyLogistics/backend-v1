@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: ai
+              uri: lb://AI
+              predicates:
+                - Path=/api/v1/ais/**
+            - id: company
+              uri: lb://COMPANY
+              predicates:
+                - Path=/api/v1/companies/**
+            - id: delivery
+              uri: lb://DELIVERY
+              predicates:
+                - Path=/api/v1/deliveries/**
+            - id: hub
+              uri: lb://HUB
+              predicates:
+                - Path=/api/v1/hubs/**
+            - id: order
+              uri: lb://ORDER
+              predicates:
+                - Path=/api/v1/orders/**
+            - id: product
+              uri: lb://PRODUCT
+              predicates:
+                - Path=/api/v1/products/**
+            - id: slack
+              uri: lb://SLACK
+              predicates:
+                - Path=/api/v1/slacks/**
+            - id: user
+              uri: lb://USER
+              predicates:
+                - Path=/api/v1/auth/**, /api/v1/users/**
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:19095/eureka/
+
+jwt:
+  secret: ""
