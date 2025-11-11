@@ -22,14 +22,14 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> signup(@Valid @RequestBody UserSignupRequest request) {
+	public ResponseEntity<ApiResponse<?>> signup(@Valid @RequestBody UserSignupRequest request) {
 
 		SignupCommand command = SignupCommand.builder()
 			.username(request.username())
 			.password(request.password())
 			.slackId(request.slackId())
-			.role(request.role())
 			.organizationType(request.organizationType())
+			.organizationName(request.organizationName())
 			.build();
 
 		Long userId = userService.signup(command);

@@ -56,14 +56,21 @@ public class User extends BaseEntity {
 	@Column(name = "organization_type")
 	private OrganizationType organizationType;
 
+	@Column(name = "organization_id")
+	private UUID organizationId;
+
+	@Column(name = "organization_name")
+	private String organizationName;
+
 	public static User createPendingUser(SignupCommand command) {
 		return User.builder()
 			.username(command.username())
 			.password(command.password())
-			.role(UserRole.from(command.role()))
 			.status(Status.PENDING)
 			.slackId(command.slackId())
-			.organizationType(OrganizationType.from(command.organizationType()))
+			.organizationType(command.organizationType())
+			.organizationId(command.organizationId())
+			.organizationName(command.organizationName())
 			.build();
 	}
 

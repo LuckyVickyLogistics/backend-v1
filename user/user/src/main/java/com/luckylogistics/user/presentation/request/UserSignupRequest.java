@@ -1,5 +1,7 @@
 package com.luckylogistics.user.presentation.request;
 
+import com.luckylogistics.user.domain.model.OrganizationType;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,9 +23,9 @@ public record UserSignupRequest(
 	@Email(message = "올바른 이메일 형식이어야 합니다.")
 	String slackId,
 
-	@NotNull
-	String role,
+	@NotNull(message = "소속된 곳의 유형(HUB 또는 COMPANY)이 필요합니다.")
+	OrganizationType organizationType,
 
-	@NotNull
-	String organizationType
+	@NotNull(message = "소속된 곳의 이름이 필요합니다.")
+	String organizationName
 ) {}
