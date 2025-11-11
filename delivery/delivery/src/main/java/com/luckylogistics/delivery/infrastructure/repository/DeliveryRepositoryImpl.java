@@ -1,8 +1,11 @@
 package com.luckylogistics.delivery.infrastructure.repository;
 
 import com.luckylogistics.delivery.domain.model.Delivery;
+import com.luckylogistics.delivery.domain.model.DeliveryStatus;
 import com.luckylogistics.delivery.domain.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,5 +43,25 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public Optional<Delivery> findLastDeliveryByArrivalHubId(UUID hubId) {
         return jpaRepository.findTopByArrivalHubIdAndDeletedAtIsNullOrderByCreatedAtDesc(hubId);
+    }
+
+    @Override
+    public Page<Delivery> searchDeliveries(DeliveryStatus status, UUID departureHubId, UUID arrivalHubId, Pageable pageable) {
+        return jpaRepository.searchDeliveries(status, departureHubId, arrivalHubId, pageable);
+    }
+
+    @Override
+    public Page<Delivery> searchByHubId(UUID hubId, Pageable pageable) {
+        return jpaRepository.searchByHubId(hubId, pageable);
+    }
+
+    @Override
+    public Page<Delivery> searchByCompanyDeliveryManagerUserId(Long userId, Pageable pageable) {
+        return jpaRepository.searchByCompanyDeliveryManagerUserId(userId, pageable);
+    }
+
+    @Override
+    public Page<Delivery> searchByHubDeliveryManagerUserId(Long userId, Pageable pageable) {
+        return jpaRepository.searchByHubDeliveryManagerUserId(userId, pageable);
     }
 }
