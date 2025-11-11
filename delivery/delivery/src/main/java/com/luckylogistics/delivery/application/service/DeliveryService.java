@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * 배송 서비스
@@ -68,7 +67,7 @@ public class DeliveryService {
                         seg.durationMinutes(),
                         hubManager
                 ))
-                .collect(Collectors.toList());
+                .toList();
 
         // 업체 배송 담당자 배정
         DeliveryManager companyManager = domainService.assignCompanyDeliveryManager(request.arrivalHubId());
@@ -90,7 +89,7 @@ public class DeliveryService {
                 savedDelivery.getDeliveryId(), savedDelivery.getRoutes().size());
 
         // 응답 반환
-        return CreateDeliveryResponse.from(savedDelivery);
+        return CreateDeliveryResponse.of(savedDelivery, companyManager, routes);
     }
 
     public DeliveryResponse getDelivery(UUID deliveryId, Long currentUserId, UserRole currentUserRole) {
