@@ -33,7 +33,7 @@ public class Company extends BaseEntity {
 
     @Column(name = "address", nullable = false)
     private String address;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 10)
     private CompanyType type;
