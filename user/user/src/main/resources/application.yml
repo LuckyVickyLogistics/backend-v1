@@ -9,9 +9,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_schema: users
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/luckylogistics
+    url: jdbc:postgresql://localhost:5432/luckylogistics?currentSchema=users
     username: luckyvicky
     password: luckyvicky
 
