@@ -1,5 +1,7 @@
 package com.luckylogistics.user.domain.model;
 
+import java.util.UUID;
+
 import com.luckylogistics.user.application.dto.SignupCommand;
 
 import jakarta.persistence.Column;
@@ -9,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,6 +31,9 @@ public class User extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id", nullable = false, unique = true)
 	private Long userId;
+
+	@Column(name = "identifier",nullable = false, unique = true, columnDefinition = "uuid")
+	private UUID identifier;
 
 	@Column(name = "username", nullable = false, unique = true, length = 100)
 	private String username;
@@ -59,6 +65,13 @@ public class User extends BaseEntity {
 			.slackId(command.slackId())
 			.organizationType(OrganizationType.from(command.organizationType()))
 			.build();
+	}
+
+	@PrePersist
+	protected void prePersist() {
+		if (this.identifier == null) {
+			this.identifier = UUID.randomUUID();
+		}
 	}
 
 	public void approve() {

@@ -3,6 +3,7 @@ package com.luckylogistics.user.infrastructure.jwt;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -35,9 +36,14 @@ public class JwtProvider {
 		return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String generateAccessToken(String username, String role) {
+	public Long getRefreshTokenValidity() {
+		return refreshTokenValidity;
+	}
+
+	public String generateAccessToken(String identifier, String username, String role) {
 		return Jwts.builder()
-			.setSubject(username)
+			.setSubject(identifier)
+			.claim("username", username)
 			.claim("role", role)
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
@@ -45,9 +51,9 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public String generateRefreshToken(String username) {
+	public String generateRefreshToken(String identifier) {
 		return Jwts.builder()
-			.setSubject(username)
+			.setSubject(identifier)
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -69,13 +75,24 @@ public class JwtProvider {
 		return false;
 	}
 
+	public UUID getIdentifierFromToken(String token) {
+		return UUID.fromString(
+			Jwts.parserBuilder()
+				.setSigningKey(getSigningKey())
+				.build()
+				.parseClaimsJws(token)
+				.getBody()
+				.getSubject()
+		);
+	}
+
 	public String getUsernameFromToken(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(getSigningKey())
 			.build()
 			.parseClaimsJws(token)
 			.getBody()
-			.getSubject();
+			.get("username", String.class);
 	}
 
 	public String getRoleFromToken(String token) {

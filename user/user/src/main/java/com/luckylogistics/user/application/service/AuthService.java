@@ -1,5 +1,7 @@
 package com.luckylogistics.user.application.service;
 
+import java.util.UUID;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +29,26 @@ public class AuthService {
 		User user = userRepository.findByUsername(command.username())
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
+/*		if (user.getStatus() != Status.APPROVED) {
+			throw new IllegalArgumentException("승인되지 않은 사용자입니다.");
+		}*/
+
 		if (!passwordEncoder.matches(command.password(), user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 
-		String accessToken = jwtProvider.generateAccessToken(user.getUsername(), user.getRole().name());
-		String refreshToken = jwtProvider.generateRefreshToken(user.getUsername());
+		String accessToken = jwtProvider.generateAccessToken(
+			user.getIdentifier().toString(),
+			user.getUsername(),
+			user.getRole().toString()
+		);
+		String refreshToken = jwtProvider.generateRefreshToken(user.getIdentifier().toString());
 
-		redisRepository.saveRefreshToken(user.getUsername(), refreshToken, 7 * 24 * 60 * 60 * 1000L);
+		redisRepository.saveRefreshToken(
+			user.getIdentifier().toString(),
+			refreshToken,
+			jwtProvider.getRefreshTokenValidity()
+		);
 
 		return new TokenResponse(accessToken, refreshToken);
 	}
@@ -48,23 +62,29 @@ public class AuthService {
 			throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
 		}
 
-		String username = jwtProvider.getUsernameFromToken(refreshToken);
-		String savedToken = redisRepository.getRefreshToken(username);
+		UUID identifier = jwtProvider.getIdentifierFromToken(refreshToken);
+		String savedToken = redisRepository.getRefreshToken(identifier.toString());
 
 		if (!refreshToken.equals(savedToken)) {
 			throw new IllegalArgumentException("만료되었거나 로그아웃된 토큰입니다.");
 		}
 
-		String newAccessToken = jwtProvider.generateAccessToken(username, "USER");
+		User user = userRepository.findByIdentifier(identifier)
+			.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+		String newAccessToken = jwtProvider.generateAccessToken(
+			user.getIdentifier().toString(),
+			user.getUsername(),
+			user.getRole().toString()
+		);
 		return new TokenResponse(newAccessToken, refreshToken);
 	}
 
 	public void logout(String accessToken) {
-		String username = jwtProvider.getUsernameFromToken(accessToken);
-		redisRepository.deleteRefreshToken(username);
+		UUID identifier = jwtProvider.getIdentifierFromToken(accessToken);
+		redisRepository.deleteRefreshToken(identifier.toString());
 
 		Long expiration = jwtProvider.getRemainingMillis(accessToken);
-
 		redisRepository.blacklistAccessToken(accessToken, expiration);
 	}
 }
