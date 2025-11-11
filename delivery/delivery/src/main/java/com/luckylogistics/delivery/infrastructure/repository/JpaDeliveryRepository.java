@@ -21,6 +21,7 @@ public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID> {
     @Query("""
         SELECT DISTINCT d
         FROM Delivery d
+        LEFT JOIN FETCH d.companyDeliveryManager cdm
         LEFT JOIN FETCH d.routes r
         LEFT JOIN FETCH r.hubDeliveryManager m
         WHERE d.deliveryId = :id

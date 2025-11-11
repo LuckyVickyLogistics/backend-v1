@@ -5,6 +5,7 @@ import com.luckylogistics.delivery.domain.model.DeliveryStatus;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,6 +24,8 @@ public record DeliveryResponse(
         String recipientName,
         String recipientSlackId,
         Long companyDeliveryManagerId,
+        LocalTime workStartTime,
+        LocalTime workEndTime,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         List<DeliveryRouteResponse> routes
@@ -38,6 +41,8 @@ public record DeliveryResponse(
                 .recipientName(delivery.getRecipient().getName())
                 .recipientSlackId(delivery.getRecipient().getSlackId())
                 .companyDeliveryManagerId(delivery.getCompanyDeliveryManager().getDeliveryManagerId())
+                .workStartTime(delivery.getCompanyDeliveryManager().getStartTime())
+                .workEndTime(delivery.getCompanyDeliveryManager().getEndTime())
                 .createdAt(delivery.getCreatedAt())
                 .updatedAt(delivery.getUpdatedAt())
                 .routes(delivery.getRoutes().stream()
