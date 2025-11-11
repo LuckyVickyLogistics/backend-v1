@@ -98,7 +98,7 @@ public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID> {
      * - companyDeliveryManager: 업체 배송 담당자
      * - hubDeliveryManager: 허브 배송 담당자
      */
-    @Query(value = """
+    @Query("""
         SELECT DISTINCT d
           FROM Delivery d
           JOIN FETCH d.companyDeliveryManager cdm
