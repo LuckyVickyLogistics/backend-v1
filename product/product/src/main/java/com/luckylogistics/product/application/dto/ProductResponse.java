@@ -1,9 +1,7 @@
 package com.luckylogistics.product.application.dto;
 
 import com.luckylogistics.product.domain.entity.Product;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
 
 import java.util.UUID;
 
@@ -14,7 +12,8 @@ import java.util.UUID;
             int totalQuantity,
             int quantity,
             String status,
-            UUID hubId
+            UUID hubId,
+            UUID companyId
     ) {
     public static ProductResponse from(Product p) {
         return new ProductResponse(
@@ -24,7 +23,8 @@ import java.util.UUID;
                 p.getTotalQuantity(),
                 p.getQuantity().getValue(),
                 p.getStatus().name(),
-                p.getHubId()
+                p.getHubId(),
+                p.getCompanyId()
         );
     }
 }
