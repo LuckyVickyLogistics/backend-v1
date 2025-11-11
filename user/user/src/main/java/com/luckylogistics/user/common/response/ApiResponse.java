@@ -24,9 +24,4 @@ public record ApiResponse<T> (
 	public static <T> ApiResponse<T> failure(ErrorCode errorCode) {
 		return new ApiResponse<>(false, errorCode.getMessage(), null, errorCode.getCode());
 	}
-
-	// 실패 응답 - 에러 코드 + 메시지
-	public static <T> ApiResponse<T> failure(ErrorCode errorCode, String message) {
-		return new ApiResponse<>(false, errorCode.getMessage(), null, errorCode.getCode());
-	}
 }
