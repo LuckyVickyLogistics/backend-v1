@@ -3,6 +3,8 @@ package com.luckylogistics.company.domain.entity;
 import com.luckylogistics.company.infrastructure.model.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,7 +33,7 @@ public class Company extends BaseEntity {
 
     @Column(name = "address", nullable = false)
     private String address;
-
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 10)
     private CompanyType type;
