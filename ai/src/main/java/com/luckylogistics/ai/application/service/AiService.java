@@ -1,8 +1,10 @@
 package com.luckylogistics.ai.application.service;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +19,11 @@ import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
 import com.luckylogistics.ai.application.external.AiPromptGenerator;
 import com.luckylogistics.ai.common.exception.BusinessException;
 import com.luckylogistics.ai.common.exception.ErrorCode;
+import com.luckylogistics.ai.common.util.PageableUtils;
 import com.luckylogistics.ai.domain.entity.AiPrompt;
 import com.luckylogistics.ai.domain.repository.AiRepository;
+import com.luckylogistics.ai.domain.vo.Status;
 
-import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,8 +53,12 @@ public class AiService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<AiPromptReadResult> getAllPrompts() {
-		return aiRepository.findAllByDeletedAtIsNull().stream().map(AiPromptReadResult::from).toList();
+	public Page<AiPromptReadResult> getAllPrompts(
+		Status status, int page, int size, String sortBy, Sort.Direction direction
+	) {
+		Pageable pageable = PageableUtils.createPageable(page, size, sortBy, direction);
+
+		return aiRepository.findAllByStatusAndDeletedAtIsNull(status, pageable).map(AiPromptReadResult::from);
 	}
 
 	@Transactional(readOnly = true)
