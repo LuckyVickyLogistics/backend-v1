@@ -6,8 +6,11 @@ import com.luckylogistics.delivery.application.dto.UpdateDeliveryRouteStatusRequ
 import com.luckylogistics.delivery.application.service.DeliveryRouteService;
 import com.luckylogistics.delivery.common.enums.UserRole;
 import com.luckylogistics.delivery.common.response.ApiResponse;
+import com.luckylogistics.delivery.domain.model.DeliveryRouteStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,5 +49,24 @@ public class DeliveryRouteController {
         );
 
         return ResponseEntity.ok(ApiResponse.success(response, "배송 경로가 조회되었습니다"));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<DeliveryRouteResponse>>> getDeliveryRoutesByManager(
+            @RequestParam(required = false) Long deliveryManagerId,
+            @RequestParam(required = false) DeliveryRouteStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
+    ) {
+        Page<DeliveryRouteResponse> response = deliveryRouteService.getDeliveryRoutesByManager(
+                deliveryManagerId, status,
+                page, size, sortBy, direction,
+                currentUserId, currentUserRole
+        );
+        return ResponseEntity.ok(ApiResponse.success(response, "배송 경로 목록이 조회되었습니다"));
     }
 }
