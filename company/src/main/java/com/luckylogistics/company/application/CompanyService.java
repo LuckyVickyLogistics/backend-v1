@@ -60,9 +60,9 @@ public class CompanyService {
     }
 
     @Transactional
-    public void deleteCompany(String userId, UUID companyId) {
+    public void deleteCompany(Long userId, UUID companyId) {
         Company company = companyRepository.findById(companyId)
             .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
-        company.delete(Long.valueOf(userId));
+        company.delete(userId);
     }
 }

@@ -1,5 +1,6 @@
 package com.luckylogistics.company.presentation;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.company.application.CompanyService;
 import com.luckylogistics.company.application.dto.CompanyRequest;
@@ -40,7 +41,7 @@ public class CompanyController {
     @Operation(summary = "업체 생성", description = "업체를 생성합니다.")
     @PostMapping
     public ResponseEntity<ApiResponse<CompanyResponse>> createCompany(
-        @RequestHeader("X-User-Role") String role,
+        @RequestHeader("X-User-Role") UserRole role,
         @Valid @RequestBody CompanyRequest companyRequest) {
         roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER");
         CompanyResponse result = companyService.createCompany(companyRequest);
@@ -50,7 +51,7 @@ public class CompanyController {
     @Operation(summary = "업체 수정", description = "업체를 수정합니다.")
     @PutMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> updateCompany(
-        @RequestHeader("X-User-Role") String role,
+        @RequestHeader("X-User-Role") UserRole role,
         @PathVariable(name = "companyId") UUID companyId,
         @Valid @RequestBody CompanyRequest companyRequest) {
         roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER", "COMPANY_MANAGER");
@@ -61,10 +62,10 @@ public class CompanyController {
     @Operation(summary = "업체 삭제", description = "업체를 삭제합니다.")
     @DeleteMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> deleteCompany(
-        @RequestHeader("X-User-Role") String role,
-        @RequestHeader("X-User-Id") String userId,
+        @RequestHeader("X-User-Role") UserRole role,
+        @RequestHeader("X-User-Id") Long userId,
         @PathVariable(name = "companyId") UUID companyId) {
-        roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER");
+        roleValidator.validate(role, UserRole.MASTER_ADMIN, UserRole.HUB_MANAGER);
         companyService.deleteCompany(userId, companyId);
         return ResponseEntity.ok(ApiResponse.success(null, "업체가 삭제되었습니다"));
     }
