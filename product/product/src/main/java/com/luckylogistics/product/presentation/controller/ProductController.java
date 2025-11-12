@@ -30,8 +30,9 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct(
             @Valid @RequestBody ProductRequest productRequest,
-            @RequestHeader("X-User-Id") Long currentUserId) {
-        ProductResponse result = productService.createProduct(productRequest,currentUserId);
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole) {
+        ProductResponse result = productService.createProduct(productRequest,currentUserId,currentUserRole);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(result,"상품이 생성되었습니다."));
     }
 
@@ -42,7 +43,7 @@ public class ProductController {
             @RequestBody ProductRequest productRequest,
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole) {
-        ProductResponse result = productService.updateProduct(productId, productRequest);
+        ProductResponse result = productService.updateProduct(productId, productRequest,currentUserId,currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(result,"상품 수정이 완료되었습니다."));
     }
 
@@ -53,7 +54,7 @@ public class ProductController {
             @PathVariable(name = "productId") UUID productId,
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole) {
-        ProductResponse result = ProductResponse.from(productService.getProduct(productId));
+        ProductResponse result = ProductResponse.from(productService.getProduct(productId,currentUserId,currentUserRole));
         return ResponseEntity.ok(ApiResponse.success(result,"상품 단건 조회 결과입니다."));
     }
 //    //있는지 확인 (FeignClient용)
@@ -73,7 +74,7 @@ public class ProductController {
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
-        List<ProductResponse> list = productService.allOrSearchProducts(productName);
+        List<ProductResponse> list = productService.allOrSearchProducts(productName,currentUserId,currentUserRole);
        return ResponseEntity.ok(ApiResponse.success(list,"상품 조회 결과입니다."));
 
     }
@@ -85,7 +86,7 @@ public class ProductController {
             @Valid @PathVariable UUID productId,
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole) {
-        productService.deleteProduct(productId);
+        productService.deleteProduct(productId,currentUserId,currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(null,"상품이 삭제되었습니다."));
     }
     //삭제 롤백
@@ -95,7 +96,7 @@ public class ProductController {
             @Valid @PathVariable UUID productId,
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole) {
-        productService.rollbackDeleteProduct(productId);
+        productService.rollbackDeleteProduct(productId,currentUserId,currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(null,"상품이 삭제가 롤백되었습니다."));
     }
 
@@ -106,7 +107,7 @@ public class ProductController {
             @Valid @PathVariable UUID productId,
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole) {
-        productService.hiddenProducts(productId);
+        productService.hiddenProducts(productId,currentUserId,currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(null,"상품이 비활성화 처리되었습니다."));
 
     }
@@ -120,7 +121,7 @@ public class ProductController {
             @RequestBody MinusRequest request,
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole) {
-        productService.minusProducts(productId,request);
+        productService.minusProducts(productId,request,currentUserId,currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(null,"상품이 차감되었습니다."));
 
     }
@@ -133,7 +134,7 @@ public class ProductController {
             @RequestBody PlusRequest request,
             @RequestHeader("X-User-Id") Long currentUserId,
             @RequestHeader("X-User-Role") UserRole currentUserRole) {
-        productService.plusProducts(productId,request);
+        productService.plusProducts(productId,request,currentUserId,currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(null,"상품 재고가 늘어났습니다.."));
     }
 

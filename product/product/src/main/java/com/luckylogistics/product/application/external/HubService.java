@@ -8,4 +8,5 @@ public interface HubService {
    // void isHubExists(UUID hubId);
 
      HubResponse getHub(UUID hubId);
+     HubResponse getHubByUserId(Long userId);
 }

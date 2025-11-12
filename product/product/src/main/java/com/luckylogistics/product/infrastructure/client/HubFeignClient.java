@@ -10,6 +10,9 @@ import java.util.UUID;
 
 @FeignClient(name = "hub")
 public interface HubFeignClient {
-   @GetMapping("/{hubId}")
+    @GetMapping("/api/v1/hubs/{hubId}")
    ApiResponse<HubResponse> getHub(@PathVariable("hubId") UUID hubId);
+
+    @GetMapping("/api/v1/hubs/manager/{userId}/hub")
+   ApiResponse<HubResponse> getHubByUserId(Long userId);
 }

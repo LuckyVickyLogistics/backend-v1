@@ -10,6 +10,22 @@ public interface ProductRepository {
     Optional<Product> findById(UUID id);
     List<Product> findAll();
     boolean existsByProductName(String productName);
-    //Keyword 검색
+
+    //단건조회(허브 제한)
+    Optional<Product> findByProductIdAndHubId(UUID productId, UUID hubId);
+
+    //단건조회(업체 제한)
+    Optional<Product> findByProductIdAndCompanyId(UUID productId, UUID companyId);
+
+    //Keyword 검색 (마스터용)
     List<Product> findByProductNameContainingIgnoreCase(String keyword);
+
+    //전체조회(KeyWord 검색 - 허브 제한)
+    List<Product> findByHubIdAndProductNameContainingIgnoreCase(UUID hubId, String keyword);
+    List<Product> findByCompanyIdAndProductNameContainingIgnoreCase(UUID companyId, String keyword);
+
+
+    //전체 조회
+    List<Product> findByHubId(UUID hubId);
+    List<Product> findByCompanyId(UUID companyId);
 }

@@ -10,6 +10,9 @@ import java.util.UUID;
 
 @FeignClient(name = "company")
 public interface CompanyFeignClient {
-    @GetMapping("/{companyId}")
+    @GetMapping("/api/v1/companies/{companyId}")
     ApiResponse<CompanyResponse> getCompany(@PathVariable("companyId") UUID companyId);
+
+    @GetMapping("/api/v1/companies/{userId}")
+    ApiResponse<CompanyResponse> getCompanyUserId(@PathVariable("userId") Long userId);
 }

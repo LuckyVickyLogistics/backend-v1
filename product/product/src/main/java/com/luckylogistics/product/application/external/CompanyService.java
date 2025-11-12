@@ -6,4 +6,5 @@ import java.util.UUID;
 
 public interface CompanyService {
     CompanyResponse getCompany(UUID companyId);
+    CompanyResponse getCompanyUserId(Long userId);
 }

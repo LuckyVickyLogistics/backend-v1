@@ -22,5 +22,9 @@ public class CompanyServiceAdapter implements CompanyService {
         return response.data();
     }
 
+    public CompanyResponse getCompanyUserId(Long userId) {
+        ApiResponse<CompanyResponse> response = companyFeignClient.getCompanyUserId(userId);
+        return response.data();
+    }
 
 }
