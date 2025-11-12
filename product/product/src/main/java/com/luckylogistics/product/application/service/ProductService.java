@@ -30,10 +30,10 @@ public class ProductService {
     //상품 생성
     @Transactional
     //request에 이미 정보가 있어서 갖고온다.
-    public ProductResponse createProduct(ProductRequest productRequest) {
+    public ProductResponse createProduct(ProductRequest productRequest, Long currentUserId) {
         //허브 ID와 업체 ID를 체크한다.
-        hubService.isHubExists(productRequest.hubId());
-        companyService.isCompanyExists(productRequest.companyId());
+        hubService.getHub(productRequest.hubId());
+        companyService.getCompany(productRequest.companyId());
 
         //초기 수량 세팅, null값 들어오면 0을 리턴( Wrapper 클래스라 null값이 가능) , 아니면 그냥 initialQuantity 값 사용하기
         Quantity quantity = new Quantity(productRequest.initialQuantity() == null ? 0 : productRequest.initialQuantity());
@@ -53,8 +53,8 @@ public class ProductService {
     //상품 정보 수정
     @Transactional
     public ProductResponse updateProduct(UUID productId, ProductRequest productRequest) {
-        hubService.isHubExists(productRequest.hubId());
-        companyService.isCompanyExists(productRequest.companyId());
+        hubService.getHub(productRequest.hubId());
+        companyService.getCompany(productRequest.companyId());
 
         Product product = productRepository.findById(productId)
                 .orElseThrow( () -> new BusinessException(ErrorCode.PRODUCT_CANNOT_FIND));

@@ -62,7 +62,7 @@ public class OrderController {
     //주문 단건을 조회함
     @Operation(summary ="주문 단건 조회", description = "주문 단건을 조회한다.")
     @GetMapping("/searchOne/{orderId}")
-    public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(@PathVariable("orderId") UUID orderId){
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrder(@PathVariable("orderId") UUID orderId){
         OrderResponse result = OrderResponse.from(orderService.getOrderById(orderId));
         return ResponseEntity.ok(ApiResponse.success(result,"주문 단건 조회 결과입니다."));
     }
