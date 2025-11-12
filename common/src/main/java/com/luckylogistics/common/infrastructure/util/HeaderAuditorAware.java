@@ -1,4 +1,4 @@
-package com.luckylogistics.common.infrastructure.config;
+package com.luckylogistics.common.infrastructure.util;
 
 import java.util.Optional;
 import org.springframework.data.domain.AuditorAware;
