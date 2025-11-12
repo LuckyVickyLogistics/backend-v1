@@ -92,7 +92,7 @@ public class DeliveryRouteService {
 
         // 허브 관리자: 담당 허브의 경로만 변경 가능
         if (currentUserRole.isHubManager()) {
-            UUID userHubId = hubService.getUserHubId(currentUserId);
+            UUID userHubId = hubService.getHubByUserId(currentUserId);
             if (!route.isRelatedToHub(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN_NOT_HUB_ROUTE);
             }
@@ -145,7 +145,7 @@ public class DeliveryRouteService {
 
         // 허브 관리자: 담당 허브의 경로만 조회 가능
         if (currentUserRole.isHubManager()) {
-            UUID userHubId = hubService.getUserHubId(currentUserId);
+            UUID userHubId = hubService.getHubByUserId(currentUserId);
 
             if (route != null && !route.isRelatedToHub(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN_NOT_HUB_ROUTE);

@@ -1,6 +1,7 @@
 package com.luckylogistics.delivery.common.exception;
 
 import com.luckylogistics.delivery.common.response.ApiResponse;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -83,6 +84,9 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
+    /**
+     * 잘못된 파라미터 타입 매핑 예외 처리
+     */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse<?>> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
         if ("X-User-Role".equalsIgnoreCase(e.getName())) {
@@ -93,5 +97,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(ApiResponse.error(ErrorCode.BAD_REQUEST, e.getMessage()));
+    }
+
+    /**
+     * FeignClient 통신 예외 처리
+     */
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ApiResponse<Void>> handleFeign(FeignException e) {
+        int status = e.status();
+        log.error("[Feign] status={} message={}", status, e.getMessage());
+
+        return ResponseEntity
+                .status(status)
+                .body(ApiResponse.error(ErrorCode.FEIGN_ERROR, e.getMessage()));
     }
 }

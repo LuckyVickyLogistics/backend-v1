@@ -35,7 +35,7 @@ public record HubRoutePlanResponse(
 
     public void validate() {
         if (routes.isEmpty())
-            throw new IllegalArgumentException("[HubClient] routes는 비어 있을 수 없습니다.");
+            throw new IllegalArgumentException("[HubClient] routes가 유효하지 않습니다.");
 
         if (totalDistance == null || totalDistance.compareTo(BigDecimal.ZERO) <= 0)
             throw new IllegalArgumentException("[HubClient] totalDistance는 0보다 커야 합니다.");
