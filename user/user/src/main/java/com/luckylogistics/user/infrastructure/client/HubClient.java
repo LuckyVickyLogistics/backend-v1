@@ -1,16 +1,21 @@
 package com.luckylogistics.user.infrastructure.client;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.luckylogistics.user.common.response.ApiResponse;
+
 @FeignClient(name = "hub")
 public interface HubClient {
 
-	@GetMapping("/api/v1/hubs/{hub_name}")
-	HubResponse getHubByName(@PathVariable("name") String name);
+	@GetMapping("/api/v1/hubs/{hubId}")
+	ApiResponse<HubResponse> getHubById(@PathVariable UUID hubId);
 
-	record HubResponse(UUID id, String name) {}
+	@GetMapping("/api/v1/hubs")
+	ApiResponse<List<HubResponse>> getAllHubs();
+
 }

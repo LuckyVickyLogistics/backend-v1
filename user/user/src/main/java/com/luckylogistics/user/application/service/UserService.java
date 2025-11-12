@@ -1,7 +1,6 @@
 package com.luckylogistics.user.application.service;
 
-import java.util.UUID;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,11 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.luckylogistics.user.application.dto.SignupCommand;
 import com.luckylogistics.user.common.exception.BusinessException;
 import com.luckylogistics.user.common.exception.ErrorCode;
+import com.luckylogistics.user.common.response.ApiResponse;
 import com.luckylogistics.user.domain.model.OrganizationType;
 import com.luckylogistics.user.domain.model.User;
 import com.luckylogistics.user.domain.repository.UserRepository;
 import com.luckylogistics.user.infrastructure.client.CompanyClient;
+import com.luckylogistics.user.infrastructure.client.CompanyResponse;
 import com.luckylogistics.user.infrastructure.client.HubClient;
+import com.luckylogistics.user.infrastructure.client.HubResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,15 +36,18 @@ public class UserService {
 			throw new BusinessException(ErrorCode.DUPLICATE_USER);
 		}
 
-		// TODO: 연동 시 확인하고 수정
 		// 외부 컨텍스트 조회
-		UUID organizationId;
-		if (command.organizationType() == OrganizationType.HUB) {
-			HubClient.HubResponse hub = hubClient.getHubByName(command.organizationName());
-			organizationId = hub.id();
-		} else {
-			CompanyClient.CompanyResponse company = companyClient.getCompanyByName(command.organizationName());
-			organizationId = company.id();
+		if (command.organizationType().equals(OrganizationType.HUB)) {
+			ApiResponse<HubResponse> response = hubClient.getHubById(command.organizationId());
+
+			if (response == null || response.data() == null)
+				throw new IllegalArgumentException("존재하지 않는 허브.");
+
+		} else if (command.organizationType().equals(OrganizationType.COMPANY)) {
+			ResponseEntity<CompanyResponse> response = companyClient.getCompany(command.organizationId());
+
+			if (response == null)
+				throw new IllegalArgumentException("존재하지 않는 허브.");
 		}
 
 		// 비밀번호 암호화
@@ -53,7 +58,8 @@ public class UserService {
 			.password(encodedPassword)
 			.slackId(command.slackId())
 			.organizationType(command.organizationType())
-			.organizationName(command.organizationName())
+			.organizationId(command.organizationId())
+			//.organizationName(command.organizationName())
 			.build();
 
 		User user = User.createPendingUser(encodedCommand);

@@ -29,7 +29,7 @@ public class UserController {
 			.password(request.password())
 			.slackId(request.slackId())
 			.organizationType(request.organizationType())
-			.organizationName(request.organizationName())
+			//.organizationName(request.organizationName())
 			.build();
 
 		Long userId = userService.signup(command);

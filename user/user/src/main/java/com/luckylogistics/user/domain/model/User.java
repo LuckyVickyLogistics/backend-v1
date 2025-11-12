@@ -42,7 +42,7 @@ public class User extends BaseEntity {
 	private String password;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "role", nullable = false)
+	@Column(name = "role")
 	private UserRole role;
 
 	@Enumerated(EnumType.STRING)
@@ -59,8 +59,8 @@ public class User extends BaseEntity {
 	@Column(name = "organization_id")
 	private UUID organizationId;
 
-	@Column(name = "organization_name")
-	private String organizationName;
+	//@Column(name = "organization_name")
+	//private String organizationName;
 
 	public static User createPendingUser(SignupCommand command) {
 		return User.builder()
@@ -70,7 +70,7 @@ public class User extends BaseEntity {
 			.slackId(command.slackId())
 			.organizationType(command.organizationType())
 			.organizationId(command.organizationId())
-			.organizationName(command.organizationName())
+			//.organizationName(command.organizationName())
 			.build();
 	}
 

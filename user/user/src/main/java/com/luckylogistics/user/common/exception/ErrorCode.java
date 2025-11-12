@@ -22,6 +22,7 @@ public enum ErrorCode {
 	INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "U-003", "비밀번호가 일치하지 않습니다."),
 	UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "U-004", "인증이 필요합니다."),
 	FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "U-005", "접근 권한이 없습니다."),
+	ALREADY_PROCESSED_USER(HttpStatus.CONFLICT, "U-002", "이미 처리된 회원입니다."),
 
 	// Auth
 	REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "A-001", "리프레시 토큰이 만료되었습니다."),
