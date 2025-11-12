@@ -1,3 +1,6 @@
+server:
+  port: 19098
+
 spring:
   application:
     name: user
@@ -30,7 +33,12 @@ spring:
   profiles:
     active: local
 
-#eureka:
-#  client:
-#    service-url:
-#      defaultZone: http://localhost:19090/eureka/
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+#  instance:
+#    hostname: localhost
+#    prefer-ip-address: true
