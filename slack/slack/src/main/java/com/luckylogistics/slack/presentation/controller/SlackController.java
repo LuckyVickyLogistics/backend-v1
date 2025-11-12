@@ -25,17 +25,21 @@ import com.luckylogistics.slack.presentation.dto.SlackDetailResponse;
 import com.luckylogistics.slack.presentation.dto.SlackStatusUpdateRequest;
 import com.luckylogistics.slack.presentation.dto.SlackSummaryResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/slack-messages")
 @RequiredArgsConstructor
+@Tag(name = "Slack API")
 public class SlackController {
 
 	private final SlackService slackService;
 
 	// TODO: 페이징 및 검색 구현
+	@Operation(summary = "슬랙 메시지 목록 조회", description = "마스터 관리자만 사용 가능합니다.")
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<SlackSummaryResponse>>> getAllMessages() {
 		List<SlackMessageResult> resultList = slackService.getAllMessages();
@@ -46,6 +50,7 @@ public class SlackController {
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지 목록이 조회되었습니다.", responseDtoList));
 	}
 
+	@Operation(summary = "슬랙 메시지 조회", description = "마스터 관리자만 사용 가능합니다.")
 	@GetMapping("/{slackMessageId}")
 	public ResponseEntity<ApiResponse<SlackDetailResponse>> getMessage(@PathVariable UUID slackMessageId) {
 		SlackMessageResult result = slackService.getMessage(slackMessageId);
@@ -54,6 +59,7 @@ public class SlackController {
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지가 조회되었습니다.", responseDto));
 	}
 
+	@Operation(summary = "슬랙 워크스페이스 가입 여부 확인", description = "모두 사용 가능합니다.")
 	@GetMapping("/workspaces")
 	public ResponseEntity<ApiResponse<SlackCheckInWorkSpaceResponse>> checkInWorkspace(
 		@Valid @RequestBody SlackCheckInWorkspaceRequest requestDto
@@ -65,6 +71,7 @@ public class SlackController {
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 워크스페이스 가입 여부가 확인되었습니다.", responseDto));
 	}
 
+	@Operation(summary = "슬랙 메시지 상태 수정", description = "마스터 관리자만 사용 가능합니다.")
 	@PutMapping("/{slackMessageId}/status")
 	public ResponseEntity<ApiResponse<Void>> updateStatus(
 		@PathVariable UUID slackMessageId, @Valid @RequestBody SlackStatusUpdateRequest requestDto
@@ -75,6 +82,7 @@ public class SlackController {
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지의 상태가 수정되었습니다."));
 	}
 
+	@Operation(summary = "슬랙 메시지 삭제", description = "마스터 관리자만 사용 가능합니다.")
 	@DeleteMapping("/{slackMessageId}")
 	public ResponseEntity<ApiResponse<Void>> deleteMessage(@PathVariable UUID slackMessageId) {
 		slackService.deleteMessage(slackMessageId);
