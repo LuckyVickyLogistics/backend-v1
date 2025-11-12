@@ -1,9 +1,12 @@
 package com.luckylogistics.slack.application.service;
 
+import java.time.Instant;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,18 +14,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.luckylogistics.slack.application.dto.EmailCheckCommand;
-import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
-import com.luckylogistics.slack.application.event.SlackKafkaEventPublisher;
-import com.luckylogistics.slack.application.external.AiServiceClient;
-import com.luckylogistics.slack.application.external.SlackClient;
 import com.luckylogistics.slack.application.dto.AiPromptCreatedResult;
+import com.luckylogistics.slack.application.dto.EmailCheckCommand;
 import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 import com.luckylogistics.slack.application.dto.SlackEmailCheckResult;
 import com.luckylogistics.slack.application.dto.SlackMessageResult;
+import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
+import com.luckylogistics.slack.application.external.AiServiceClient;
+import com.luckylogistics.slack.application.external.SlackClient;
+import com.luckylogistics.slack.common.exception.BusinessException;
+import com.luckylogistics.slack.common.exception.ErrorCode;
+import com.luckylogistics.slack.common.util.PageableUtils;
 import com.luckylogistics.slack.domain.entity.SlackMessage;
 import com.luckylogistics.slack.domain.repository.SlackRepository;
-import com.luckylogistics.slack.infrastructure.external.kafka.event.OrderCreatedEvent;
+import com.luckylogistics.slack.domain.vo.Status;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,43 +38,46 @@ import lombok.extern.slf4j.Slf4j;
 public class SlackService {
 
 	private final SlackRepository slackRepository;
-	private final SlackKafkaEventPublisher slackEventPublisher;
 	private final SlackClient slackClient;
 	private final AiServiceClient aiServiceClient;
 
 	private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-	// TODO: 실제로는 application 계층에서 infrastructure 계층을 참조하면 안됨
-	public void publish(OrderCreatedEvent requestDto) {
-		slackEventPublisher.publish(requestDto);
-	}
-
-	@Transactional
+	// @Transactional
 	public void sendMessage(OrderCreatedResult result, String receiverEmail, LocalTime startTime, LocalTime endTIme) {
 		SlackMessage slackMessage = SlackMessage.builder().receiverEmail(receiverEmail).content(toJson(result)).build();
 		slackRepository.save(slackMessage);
 		log.info("슬랙 메시지 발송 상태 - {}", slackMessage.getStatus().getDescription());
 
-		String aiPrompt = generateAiPrompt(result, startTime, endTIme);
-		if (sendMessage(result, receiverEmail, aiPrompt)) {
+		try {
+			Instant aiPrompt = generateAiPrompt(result, startTime, endTIme);
+			slackClient.sendMessage(result, receiverEmail, aiPrompt);
 			slackMessage.updateStatus("SUCCESS");
-		} else {
+		} catch (Exception e) {
 			slackMessage.updateStatus("RETRY");
+			throw e;
+		} finally {
+			slackRepository.save(slackMessage);
+			log.info("슬랙 메시지 발송 상태 - {}", slackMessage.getStatus().getDescription());
 		}
-		log.info("슬랙 메시지 발송 상태 - {}", slackMessage.getStatus().getDescription());
 	}
 
 	@Transactional(readOnly = true)
-	public List<SlackMessageResult> getAllMessages() {
-		return slackRepository.findAll().stream().map(SlackMessageResult::from).toList();
+	public Page<SlackMessageResult> getAllMessages(
+		String receiverEmail, Status status, int page, int size, String sortBy, Sort.Direction direction
+	) {
+		Pageable pageable = PageableUtils.createPageable(page, size, sortBy, direction);
+
+		return slackRepository.findAllByReceiverEmailAndStatusAndDeletedAtIsNull(receiverEmail, status, pageable)
+			.map(SlackMessageResult::from);
 	}
 
 	@Transactional(readOnly = true)
 	public SlackMessageResult getMessage(UUID slackMessageId) {
 		return slackRepository.findById(slackMessageId)
 			.map(SlackMessageResult::from)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 슬랙 메시지를 찾을 수 없습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.SLACK_MESSAGE_NOT_FOUND));
 	}
 
 	@Transactional(readOnly = true)
@@ -80,7 +88,7 @@ public class SlackService {
 	@Transactional
 	public void updateStatus(UUID slackMessageId, StatusUpdateCommand command) {
 		SlackMessage slackMessage = slackRepository.findById(slackMessageId)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 슬랙 메시지를 찾을 수 없습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.SLACK_MESSAGE_NOT_FOUND));
 		slackMessage.updateStatus(command.status());
 	}
 
@@ -88,34 +96,25 @@ public class SlackService {
 	@Transactional
 	public void deleteMessage(UUID slackMessageId) {
 		SlackMessage slackMessage = slackRepository.findById(slackMessageId)
-			.orElseThrow(() -> new IllegalArgumentException("일치하는 슬랙 메시지를 찾을 수 없습니다."));
+			.orElseThrow(() -> new BusinessException(ErrorCode.SLACK_MESSAGE_NOT_FOUND));
 		slackMessage.softDelete(1L);
-	}
-
-	private String generateAiPrompt(OrderCreatedResult result, LocalTime startTime, LocalTime endTIme) {
-		try {
-			AiPromptCreatedResult aiResult = aiServiceClient.generateAiPrompt(result, startTime, endTIme);
-			return aiResult.responseContent();
-		} catch (Exception e) {
-			log.warn("AI 프롬프트 생성 실패");
-			throw new RuntimeException("AI 프롬프트 생성 실패");
-		}
-	}
-
-	private boolean sendMessage(OrderCreatedResult orderResult, String receiverEmail, String aiPrompt) {
-		try {
-			slackClient.sendMessage(orderResult, receiverEmail, aiPrompt);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
 	}
 
 	private String toJson(Object obj) {
 		try {
 			return mapper.writeValueAsString(obj);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("JSON 형식으로 변환할 수 없습니다.", e);
+			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+		}
+	}
+
+	private Instant generateAiPrompt(OrderCreatedResult result, LocalTime startTime, LocalTime endTIme) {
+		try {
+			AiPromptCreatedResult aiResult = aiServiceClient.generateAiPrompt(result, startTime, endTIme);
+			return aiResult.responseContent();
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+			throw e;
 		}
 	}
 

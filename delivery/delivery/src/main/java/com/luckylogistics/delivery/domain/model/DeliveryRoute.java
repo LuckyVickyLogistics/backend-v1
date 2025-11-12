@@ -115,6 +115,36 @@ public class DeliveryRoute extends BaseEntity {
         }
     }
 
+    /**
+     * 경로 상태 변경
+     */
+    public void changeStatus(DeliveryRouteStatus newStatus, BigDecimal actualDistance, Integer actualDuration) {
+        // 상태 값 검증
+        validateStatus(newStatus);
+
+        // 동일 상태면 무시
+        if (this.status == newStatus) return;
+
+        // 상태 전환 규칙 검증
+        this.status.validateTransition(newStatus);
+
+        // 도착 시, 실제 값 검증 및
+        if (newStatus.isArrived()) {
+            validateActualValues(actualDistance, actualDuration);
+            this.actualDistance = actualDistance;
+            this.actualDuration = actualDuration;
+        }
+
+        // 상태 변경
+        this.status = newStatus;
+    }
+
+    private static void validateStatus(DeliveryRouteStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("변경할 배송 경로 상태는 필수입니다.");
+        }
+    }
+
     private void validateActualValues(BigDecimal distance, Integer duration) {
         if (distance == null || distance.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("실제 거리는 0보다 커야 합니다");
@@ -124,21 +154,12 @@ public class DeliveryRoute extends BaseEntity {
         }
     }
 
-    /**
-     * 경로 상태 변경
-     */
-    public void changeStatus(DeliveryRouteStatus newStatus, BigDecimal actualDistance, Integer actualDuration) {
-        this.status.validateTransition(newStatus);
-
-        if (newStatus.isArrived()) {
-            validateActualValues(actualDistance, actualDuration);
-            this.actualDistance = actualDistance;
-            this.actualDuration = actualDuration;
-        }
-
-        this.status = newStatus;
+    // 허브 배송 담당자 인지
+    public boolean isAssignedTo(Long deliveryManagerId) {
+        return this.hubDeliveryManager.getDeliveryManagerId().equals(deliveryManagerId);
     }
 
+    // 속한 허브인지
     public boolean isRelatedToHub(UUID hubId) {
         if (hubId == null) {
             return false;

@@ -3,6 +3,8 @@ package com.luckylogistics.company.application;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
 import com.luckylogistics.company.application.external.HubService;
+import com.luckylogistics.company.common.exception.BusinessException;
+import com.luckylogistics.company.common.exception.ErrorCode;
 import com.luckylogistics.company.domain.CompanyDomainService;
 import com.luckylogistics.company.domain.CompanyRepository;
 import com.luckylogistics.company.domain.entity.Company;
@@ -37,7 +39,7 @@ public class CompanyService {
 
     public CompanyResponse getCompany(UUID companyId) {
         Company company = companyRepository.findById(companyId)
-            .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
         return CompanyResponse.from(company);
     }
 
@@ -53,14 +55,14 @@ public class CompanyService {
     public void updateCompany(UUID companyId, CompanyRequest request) {
         hubService.isHubExists(request.hubId());
         Company company = companyRepository.findById(companyId)
-            .orElseThrow(() -> new IllegalArgumentException("Company not found"));
+            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
         company.update(request.name(), request.address(), request.type(), request.hubId());
     }
 
     @Transactional
-    public void deleteCompany(Long userId, UUID companyId) {
+    public void deleteCompany(String userId, UUID companyId) {
         Company company = companyRepository.findById(companyId)
-            .orElseThrow(() -> new IllegalArgumentException("Company not found"));
-        company.delete(userId);
+            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+        company.delete(Long.valueOf(userId));
     }
 }

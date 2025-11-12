@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -99,7 +100,7 @@ public class DeliveryService {
         return DeliveryResponse.from(delivery);
     }
 
-    private Delivery findDeliveryById(UUID id) {
+    public Delivery findDeliveryById(UUID id) {
         return deliveryRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
     }
@@ -291,5 +292,26 @@ public class DeliveryService {
         }
 
         throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_SEARCH);
+    }
+
+    public List<DeliveryRouteResponse> getDeliveryRoutes(
+            UUID deliveryId,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        log.info("[Delivery] 배송 경로 목록 조회. deliveryId: {}, userId: {}", deliveryId, currentUserId);
+
+        // 배송 + 경로를 Fetch Join으로 한 번에 조회
+        Delivery delivery = findDeliveryByIdWithRoutes(deliveryId);
+
+        // 조회 권한 검증
+        validateReadPermission(delivery, currentUserId, currentUserRole);
+
+        // 응답 반환
+        return delivery.getRoutes().stream()
+                .filter(route -> route.getDeletedAt() == null)                  // 논리삭제 제외 (필요 시)
+                .sorted(Comparator.comparing(DeliveryRoute::getSequence))       // 일관된 순서
+                .map(DeliveryRouteResponse::from)                               // 엔티티 → DTO
+                .toList();
     }
 }
