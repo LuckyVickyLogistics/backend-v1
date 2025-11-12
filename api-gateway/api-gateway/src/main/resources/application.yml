@@ -9,7 +9,7 @@ spring:
             - id: ai
               uri: lb://AI
               predicates:
-                - Path=/api/v1/ais/**
+                - Path=/api/v1/ai-prompts/**
             - id: company
               uri: lb://COMPANY
               predicates:
@@ -17,7 +17,7 @@ spring:
             - id: delivery
               uri: lb://DELIVERY
               predicates:
-                - Path=/api/v1/deliveries/**
+                - Path=/api/v1/deliveries/**, /api/v1/delivery-managers/**, /api/v1/delivery-routes/**
             - id: hub
               uri: lb://HUB
               predicates:
@@ -33,7 +33,7 @@ spring:
             - id: slack
               uri: lb://SLACK
               predicates:
-                - Path=/api/v1/slacks/**
+                - Path=/api/v1/slack-messages/**
             - id: user
               uri: lb://USER
               predicates:
