@@ -10,7 +10,6 @@ public interface ProductService {
     void isProductIdExists(UUID productId);
     void plusProduct(UUID productId, PlusRequest plusRequest);
     void minusProduct(UUID productId, MinusRequest minusRequest);
-    void isProductExists(UUID productId);
 
 	ProductResponse getProductById(UUID productId);
 }

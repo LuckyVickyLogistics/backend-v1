@@ -2,6 +2,7 @@ package com.luckylogistics.order.infrastructure.exteranal;
 
 import java.util.UUID;
 
+import com.luckylogistics.order.infrastructure.client.ProductFeignClient;
 import org.springframework.stereotype.Component;
 
 import com.luckylogistics.order.application.dto.MinusRequest;
@@ -21,8 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductServiceAdapter implements ProductService {
 
-	// private final ProductFeignClient productFeignClient;
-    private final ProductDummyClient productFeignClient;
+	 private final ProductFeignClient productFeignClient;
+    //private final ProductDummyClient productFeignClient;
 
 	@Override
 	public ProductResponse getProductById(UUID productId) {
@@ -36,7 +37,7 @@ public class ProductServiceAdapter implements ProductService {
 
     @Override
     public void isProductIdExists(UUID productId) {
-        if(!(productFeignClient.isProductExists(productId))){
+        if(!(productFeignClient.isProductIdExists(productId).data())){
             throw new RuntimeException("상품 연결정보가 존재하지 않습니다.");
         }
     }
@@ -51,11 +52,6 @@ public class ProductServiceAdapter implements ProductService {
         productFeignClient.minusProduct(productId, minusRequest);
     }
 
-    public void isProductExists(UUID productId) {
-        if(!(productFeignClient.isProductExists(productId))){
-            throw new RuntimeException("상품 연결정보가 존재하지 않습니다.");
-        }
-    }
 
 
 
