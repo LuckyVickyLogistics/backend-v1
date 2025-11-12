@@ -3,6 +3,8 @@ package com.luckylogistics.ai.presentation.dto;
 import java.time.LocalTime;
 import java.util.List;
 
+import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -33,4 +35,18 @@ public record AiPromptCreatedRequest(
 	LocalTime deliveryManagerEndTime
 
 ) {
+
+	public static AiPromptCreatedCommand of(AiPromptCreatedRequest requestDto) {
+		return AiPromptCreatedCommand.builder()
+			.productName(requestDto.productName())
+			.quantity(requestDto.quantity())
+			.request(requestDto.request())
+			.startPoint(requestDto.startPoint())
+			.waypoints(requestDto.waypoints())
+			.endPoint(requestDto.endPoint())
+			.deliveryManagerStartTime(requestDto.deliveryManagerStartTime())
+			.deliveryManagerEndTime(requestDto.deliveryManagerEndTime())
+			.build();
+	}
+
 }

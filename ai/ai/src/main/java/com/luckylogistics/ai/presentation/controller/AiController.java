@@ -40,7 +40,7 @@ public class AiController {
 	public ResponseEntity<ApiResponse<AiPromptCreatedResponse>> createAiPrompt(
 		@Valid @RequestBody AiPromptCreatedRequest requestDto
 	) {
-		AiPromptCreatedCommand command = AiPromptCreatedCommand.from(requestDto);
+		AiPromptCreatedCommand command = AiPromptCreatedRequest.of(requestDto);
 		AiPromptResult result = aiService.createAiPrompt(command);
 		AiPromptCreatedResponse responseDto = AiPromptCreatedResponse.from(result);
 
@@ -68,7 +68,7 @@ public class AiController {
 	public ResponseEntity<ApiResponse<Void>> updateStatus(
 		@PathVariable UUID aiPromptId, @Valid @RequestBody AiPromptStatusUpdateRequest requestDto
 	) {
-		StatusUpdateCommand command = StatusUpdateCommand.from(requestDto);
+		StatusUpdateCommand command = AiPromptStatusUpdateRequest.of(requestDto);
 		aiService.updateStatus(aiPromptId, command);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("AI 프롬프트의 상태가 수정되었습니다."));

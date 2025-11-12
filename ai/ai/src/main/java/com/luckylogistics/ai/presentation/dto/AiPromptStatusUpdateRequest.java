@@ -1,5 +1,7 @@
 package com.luckylogistics.ai.presentation.dto;
 
+import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
+
 import jakarta.validation.constraints.NotNull;
 
 public record AiPromptStatusUpdateRequest(
@@ -8,4 +10,9 @@ public record AiPromptStatusUpdateRequest(
 	String status
 
 ) {
+
+	public static StatusUpdateCommand of(AiPromptStatusUpdateRequest requestDto) {
+		return StatusUpdateCommand.builder().status(requestDto.status()).build();
+	}
+
 }
