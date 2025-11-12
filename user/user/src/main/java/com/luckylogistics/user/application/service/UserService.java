@@ -10,11 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.luckylogistics.user.application.dto.SignupCommand;
 import com.luckylogistics.user.application.dto.UserDeactiveCommand;
+import com.luckylogistics.user.application.dto.UserResponse;
 import com.luckylogistics.user.application.dto.UserUpdateCommand;
 import com.luckylogistics.user.common.exception.BusinessException;
 import com.luckylogistics.user.common.exception.ErrorCode;
 import com.luckylogistics.user.common.response.ApiResponse;
 import com.luckylogistics.user.domain.model.OrganizationType;
+import com.luckylogistics.user.domain.model.Status;
 import com.luckylogistics.user.domain.model.User;
 import com.luckylogistics.user.domain.repository.UserRepository;
 import com.luckylogistics.user.infrastructure.client.CompanyClient;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
 	private final UserRepository userRepository;
@@ -39,8 +42,7 @@ public class UserService {
 	private final CompanyClient companyClient;
 	private final JwtProvider jwtProvider;
 
-	@Transactional
-	public Long signup(SignupCommand command) {
+	public UserResponse signup(SignupCommand command) {
 
 		// username(로그인 id) 중복확인
 		if (userRepository.existsByUsername(command.username())) {
@@ -74,57 +76,74 @@ public class UserService {
 			.build();
 
 		User user = User.createPendingUser(encodedCommand);
-		return userRepository.save(user).getUserId();
+		User savedUser = userRepository.save(user);
+
+		return UserResponse.from(savedUser);
 	}
 
-	public void updateStatus(Long userId, UserStatusUpdateRequest request) {
+	// 회원가입 요청 처리 (master, hub)
+	public UserResponse updateStatus(Long userId, UserStatusUpdateRequest request) {
 
+		// 유저가 존재하는지 확인
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-		switch (request.status().toUpperCase()) {
-			case "APPROVED" -> {
+		// 이미 처리된 회원인지 확인
+		if (user.getStatus().equals(Status.PENDING)) {
+			throw new BusinessException(ErrorCode.ALREADY_PROCESSED_USER);
+		}
+
+		// 상태별 처리
+		switch (request.status()) {
+			case APPROVED -> {
+				// 승인 시 role 값 필요
 				if (request.role() == null) {
 					throw new BusinessException(ErrorCode.USER_ROLE_REQUIRED);
 				}
 				user.approve(request.role());
+
 			}
-			case "REJECTED" -> {
-				user.reject();
-			}
+
+			case REJECTED -> user.reject();
+
 			default -> throw new BusinessException(ErrorCode.INVALID_USER_STATUS);
 		}
+
+		return UserResponse.from(user);
 	}
 
 	// 내 정보 조회
-	public UserDetailResponse getMyInfo(HttpServletRequest request) {
+	public UserResponse getMyInfo(HttpServletRequest request) {
 		String token = jwtProvider.resolveToken(request);
 		UUID identifier = jwtProvider.getIdentifierFromToken(token);
 
 		User user = userRepository.findByIdentifier(identifier)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-		return UserDetailResponse.from(user);
+		return UserResponse.from(user);
 	}
 
 	// 내 정보 수정
-	public void updateUser(UserUpdateCommand command) {
+	public UserResponse updateUser(UserUpdateCommand command) {
 		User user = userRepository.findById(command.userId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
 		user.updateInfo(command.slackId());
+
+		return UserResponse.from(user);
 	}
 
 
-	// 전체 회원 조회
+	// 전체 회원 조회 (master)
 	public List<UserListResponse> getAllUsers() {
-		return userRepository.findAll().stream()
+		// 활성화 상태의 회원 목록 조회
+		return userRepository.findAllByIsDeletedFalse().stream()
 			.map(UserListResponse::from)
 			.toList();
 	}
 
 
-	// 회원 상세 조회
+	// 회원 상세 조회 (master)
 	public UserDetailResponse getUserById(Long userId) {
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
@@ -132,16 +151,17 @@ public class UserService {
 		return UserDetailResponse.from(user);
 	}
 
-	// 회원 비활성화
-	public void deactiveUser(UserDeactiveCommand command) {
+	// 회원 비활성화 (master)
+	public void deactiveUser(UserDeactiveCommand command, HttpServletRequest request) {
 		User user = userRepository.findById(command.userId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
 
 		if (user.isDeleted() == true) {
 			throw new BusinessException(ErrorCode.ALREADY_PROCESSED_USER);
 		}
 
-		user.markDeleted("");
+		user.markDeleted(user.getUserId().toString());
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.luckylogistics.user.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +12,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean existsByUsername(String username);
 	Optional<User> findByUsername(String username);
 	Optional<User> findByIdentifier(UUID identifier);
+	List<User> findAllByIsDeletedFalse();
 }
