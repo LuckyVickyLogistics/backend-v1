@@ -1,0 +1,12 @@
+server:
+  port: 19093
+
+spring:
+  application:
+    name: delivery
+
+  profiles:
+    include:
+      - datasource
+      - eureka
+      - zipkin

@@ -1,0 +1,13 @@
+server:
+  port: 19091
+
+spring:
+  application:
+    name: ai
+
+  profiles:
+    include:
+      - datasource
+      - eureka
+      - gemini
+      - zipkin
