@@ -1,8 +1,11 @@
 package com.luckylogistics.delivery.infrastructure.repository;
 
 import com.luckylogistics.delivery.domain.model.DeliveryRoute;
+import com.luckylogistics.delivery.domain.model.DeliveryRouteStatus;
 import com.luckylogistics.delivery.domain.repository.DeliveryRouteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,5 +39,14 @@ public class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
     @Override
     public Optional<DeliveryRoute> findByIdWithManager(UUID deliveryRouteId) {
         return jpaRepository.findByIdWithManager(deliveryRouteId);
+    }
+
+    @Override
+    public Page<DeliveryRoute> searchByHubDeliveryManagerIdAndStatus(
+            Long deliveryManagerId,
+            DeliveryRouteStatus status,
+            Pageable pageable
+    ) {
+        return jpaRepository.searchByHubDeliveryManagerIdAndStatus(deliveryManagerId, status, pageable);
     }
 }
