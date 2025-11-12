@@ -1,0 +1,15 @@
+rootProject.name = 'backend-v1'
+
+include 'ai', 'api-gateway', 'common', 'company', 'delivery', 'eureka-server', 'hub', 'order', 'product', 'slack', 'user'
+
+project(':ai').projectDir = file('ai')
+project(':api-gateway').projectDir = file('api-gateway')
+project(':common').projectDir = file('common')
+project(':company').projectDir = file('company')
+project(':delivery').projectDir = file('delivery')
+project(':eureka-server').projectDir = file('eureka-server')
+project(':hub').projectDir = file('hub')
+project(':order').projectDir = file('order')
+project(':product').projectDir = file('product')
+project(':slack').projectDir = file('slack')
+project(':user').projectDir = file('user')
