@@ -197,4 +197,28 @@ public class Delivery extends BaseEntity {
         // 배송 논리삭제
         this.delete(deletedBy);
     }
+
+    /**
+     * 경로 상태에 따라 배송 전체 상태 자동 동기화
+     */
+    public void syncStatusFromRoutes() {
+        if (routes == null || routes.isEmpty()) return;
+
+        // 모든 경로가 완료되었는지 확인
+        boolean allRoutesArrived = routes.stream()
+                .allMatch(route -> route.getStatus().isArrived());
+
+        // 진행 중인 경로가 있는지 확인 (HUB_MOVING 상태인 경로가 하나라도 있으면 진행 중)
+        boolean anyRouteInTransit = routes.stream()
+                .anyMatch(route -> route.getStatus().isInTransit());
+
+        // 상태 자동 전환
+        if (allRoutesArrived && this.status.isHubMoving()) {
+            // 모든 경로 완료 → HUB_ARRIVED
+            this.status = DeliveryStatus.HUB_ARRIVED;
+        } else if (anyRouteInTransit && this.status.isHubWaiting()) {
+            // 첫 경로 시작 → HUB_MOVING
+            this.status = DeliveryStatus.HUB_MOVING;
+        }
+    }
 }
