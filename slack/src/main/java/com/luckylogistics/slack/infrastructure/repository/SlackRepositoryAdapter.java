@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.luckylogistics.slack.domain.entity.SlackMessage;
 import com.luckylogistics.slack.domain.repository.SlackRepository;
+import com.luckylogistics.slack.domain.vo.Status;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,4 +35,10 @@ public class SlackRepositoryAdapter implements SlackRepository {
 		return jpaSlackRepository.findById(slackMessageId);
 	}
 
+	@Override
+	public Page<SlackMessage> findAllByReceiverEmailAndStatusAndDeletedAtIsNull(
+		String receiverEmail, Status status, Pageable pageable
+	) {
+		return jpaSlackRepository.findAllByReceiverEmailAndStatusAndDeletedAtIsNull(receiverEmail, status, pageable);
+	}
 }

@@ -10,7 +10,7 @@ import com.luckylogistics.slack.infrastructure.external.client.dto.AiPromptRespo
 @FeignClient(name = "ai")
 public interface AiServiceFeignClient {
 
-	@PostMapping("/api/v1/ai-prompts")
+	@PostMapping
 	ApiResponse<AiPromptResponse> generateAiPrompt(AiPromptRequest requestDto);
 
 }
