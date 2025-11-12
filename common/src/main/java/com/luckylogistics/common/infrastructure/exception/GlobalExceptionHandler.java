@@ -1,6 +1,7 @@
 package com.luckylogistics.common.infrastructure.exception;
 
 import com.luckylogistics.common.infrastructure.response.ApiResponse;
+import feign.FeignException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -91,6 +92,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .badRequest()
             .body(ApiResponse.error(ErrorCode.BAD_REQUEST, e.getMessage()));
+    }
+    /**
+     * FeignClient 통신 예외 처리
+     */
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ApiResponse<Void>> handleFeign(FeignException e) {
+        int status = e.status();
+        log.error("[Feign] status={} message={}", status, e.getMessage());
+
+        return ResponseEntity
+            .status(status)
+            .body(ApiResponse.error(ErrorCode.FEIGN_ERROR, e.getMessage()));
     }
 
 }
