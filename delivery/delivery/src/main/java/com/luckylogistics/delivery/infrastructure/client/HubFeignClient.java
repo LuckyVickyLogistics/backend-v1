@@ -1,5 +1,6 @@
 package com.luckylogistics.delivery.infrastructure.client;
 
+import com.luckylogistics.delivery.common.response.ApiResponse;
 import com.luckylogistics.delivery.infrastructure.client.dto.HubResponse;
 import com.luckylogistics.delivery.infrastructure.client.dto.HubRoutePlanResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -7,21 +8,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-// TODO: Hub Service 연동
-@FeignClient(name = "hub")
+@FeignClient(name = "hub", path = "/api/v1/hubs")
 public interface HubFeignClient {
 
-    /**
-     * 허브 단건 조회
-     */
-    @GetMapping("/api/v1/hubs/{hubId}")
-    HubResponse getHub(@PathVariable("hubId") UUID hubId);
+    // 허브 단건 조회
+    @GetMapping("/{hubId}")
+    ApiResponse<HubResponse> getHub(@PathVariable("hubId") UUID hubId);
 
-    /**
-     * 배송 경로 조회
-     */
-    @GetMapping("/api/v1/hub-routes")
-    HubRoutePlanResponse getRoutePlan(
+    // 사용자 id로 담당 허브 조회
+    @GetMapping("/manager/{userId}/hub")
+    ApiResponse<HubResponse> getHubByUserId(@PathVariable("userId") Long userId);
+
+    // 배송 경로 조회
+    @GetMapping("/routes")
+    ApiResponse<HubRoutePlanResponse> getHubRoutePlan(
             @RequestParam("from") UUID departureHubId,
             @RequestParam("to") UUID arrivalHubId
     );

@@ -123,7 +123,7 @@ public class DeliveryService {
 
         // 허브 관리자: 배송의 출발/도착 허브, 경로에 포함된 모든 허브 관리자는 접근 가능
         if (currentUserRole.isHubManager()) {
-            UUID userHubId = hubService.getUserHubId(currentUserId);
+            UUID userHubId = hubService.getHubByUserId(currentUserId);
             boolean permitted =
                     delivery.isRelatedToHub(userHubId) ||
                             delivery.getRoutes().stream().anyMatch(r -> r.isRelatedToHub(userHubId));
@@ -183,7 +183,7 @@ public class DeliveryService {
 
         // 허브 관리자: 도착 허브 관리자만 허용
         if (currentUserRole.isHubManager()) {
-            UUID userHubId = hubService.getUserHubId(currentUserId);
+            UUID userHubId = hubService.getHubByUserId(currentUserId);
             if (!delivery.isArrivalHub(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MODIFY);
             }
@@ -223,7 +223,7 @@ public class DeliveryService {
 
         // 허브 관리자: 본인 허브와 관련된 배송만 삭제 가능
         if (currentUserRole.isHubManager()) {
-            UUID userHubId = hubService.getUserHubId(currentUserId);
+            UUID userHubId = hubService.getHubByUserId(currentUserId);
             if (!delivery.isRelatedToHub(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_DELETE);
             }
@@ -275,7 +275,7 @@ public class DeliveryService {
 
         // 허브 관리자: 배송 경로에 내 허브가 포함된 배송만 조회 + 필터
         if (currentUserRole.isHubManager()) {
-            UUID userHubId = hubService.getUserHubId(currentUserId);
+            UUID userHubId = hubService.getHubByUserId(currentUserId);
             if (userHubId == null) {
                 throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_SEARCH);
             }
