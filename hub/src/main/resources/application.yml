@@ -8,6 +8,8 @@ spring:
   profiles:
     include:
       - datasource
+      - eureka
+      - zipkin
 
   jackson:
     time-zone: Asia/Seoul
