@@ -3,8 +3,6 @@ package com.luckylogistics.company.application;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
 import com.luckylogistics.company.application.external.HubService;
-import com.luckylogistics.company.common.exception.BusinessException;
-import com.luckylogistics.company.common.exception.ErrorCode;
 import com.luckylogistics.company.domain.CompanyDomainService;
 import com.luckylogistics.company.domain.CompanyRepository;
 import com.luckylogistics.company.domain.entity.Company;
