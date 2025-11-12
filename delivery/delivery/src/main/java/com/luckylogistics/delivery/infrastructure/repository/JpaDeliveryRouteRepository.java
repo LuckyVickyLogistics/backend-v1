@@ -23,4 +23,12 @@ public interface JpaDeliveryRouteRepository extends JpaRepository<DeliveryRoute,
      * 마지막 배송 경로 조회 (허브 배송 담당자 배정용)
      */
     Optional<DeliveryRoute> findTopByDeletedAtIsNullOrderByCreatedAtDesc();
+
+    @Query("""
+        SELECT dr FROM DeliveryRoute dr
+        JOIN FETCH dr.hubDeliveryManager
+        WHERE dr.deliveryRouteId = :id
+        AND dr.deletedAt IS NULL
+    """)
+    Optional<DeliveryRoute> findByIdWithManager(@Param("id") UUID id);
 }

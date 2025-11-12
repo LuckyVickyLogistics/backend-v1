@@ -32,4 +32,9 @@ public class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
     public Optional<DeliveryRoute> findLastDeliveryRoute() {
         return jpaRepository.findTopByDeletedAtIsNullOrderByCreatedAtDesc();
     }
+
+    @Override
+    public Optional<DeliveryRoute> findByIdWithManager(UUID deliveryRouteId) {
+        return jpaRepository.findByIdWithManager(deliveryRouteId);
+    }
 }
