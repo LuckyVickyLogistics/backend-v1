@@ -3,8 +3,7 @@ package com.luckylogistics.order.presentation.controller;
 import java.util.List;
 import java.util.UUID;
 
-import com.luckylogistics.order.common.enums.UserRole;
-import com.luckylogistics.order.infrastructure.client.dto.GetUserClientResponse;
+import com.luckylogistics.common.enums.UserRole;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -3,7 +3,7 @@ package com.luckylogistics.order.application.dto;
 import lombok.AccessLevel;
 import lombok.Builder;
 
-@Builder(access = AccessLevel.PRIVATE)
+@Builder
 public record HubManagerEmailResponse(
 
 	String slackId

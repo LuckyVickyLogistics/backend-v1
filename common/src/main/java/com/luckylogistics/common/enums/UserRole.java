@@ -1,4 +1,4 @@
-package com.luckylogistics.order.common.enums;
+package com.luckylogistics.common.enums;
 
 public enum UserRole {
     MASTER_ADMIN , // 마스터 관리자

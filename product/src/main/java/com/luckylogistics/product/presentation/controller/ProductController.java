@@ -6,7 +6,7 @@ import com.luckylogistics.product.application.dto.PlusRequest;
 import com.luckylogistics.product.application.service.ProductService;
 import com.luckylogistics.product.application.dto.ProductRequest;
 import com.luckylogistics.product.application.dto.ProductResponse;
-import com.luckylogistics.product.common.enums.UserRole;
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.product.common.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

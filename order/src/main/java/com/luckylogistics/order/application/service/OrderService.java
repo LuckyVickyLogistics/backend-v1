@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import com.luckylogistics.order.application.dto.*;
-import com.luckylogistics.order.common.enums.UserRole;
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.order.domain.entity.OrderStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

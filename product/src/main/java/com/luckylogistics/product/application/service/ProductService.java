@@ -4,7 +4,7 @@ import com.luckylogistics.product.application.dto.MinusRequest;
 import com.luckylogistics.product.application.dto.PlusRequest;
 import com.luckylogistics.product.application.external.CompanyService;
 import com.luckylogistics.product.application.external.HubService;
-import com.luckylogistics.product.common.enums.UserRole;
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.product.common.exception.BusinessException;
 import com.luckylogistics.product.common.exception.ErrorCode;
 import com.luckylogistics.product.domain.entity.Product;
