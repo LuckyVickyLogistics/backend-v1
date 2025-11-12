@@ -1,15 +1,23 @@
 package com.luckylogistics.order.infrastructure.client.dto;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.luckylogistics.order.application.dto.UserResponse;
 
 public record GetUserClientResponse(
 
-	// TODO: 나머지 필드 추가
+	Long userId,
+	UUID identifier,
 	String username,
 	String slackId,
-	UUID organizationId
+	UserRole role,
+	OrganizationType organizationType,
+	UUID organizationId,
+	Status status,
+	boolean isDeleted,
+	LocalDateTime createdAt,
+	LocalDateTime updatedAt
 
 ) {
 
@@ -19,6 +27,24 @@ public record GetUserClientResponse(
 			.slackId(response.slackId)
 			.companyId(response.organizationId)
 			.build();
+	}
+
+	public enum UserRole {
+		MASTER_ADMIN,
+		HUB_MANAGER,
+		DELIVERY_MANAGER,
+		COMPANY_MANAGER;
+	}
+
+	public enum OrganizationType {
+		HUB,
+		COMPANY;
+	}
+
+	public enum Status {
+		PENDING,
+		APPROVED,
+		REJECTED
 	}
 
 }
