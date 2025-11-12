@@ -4,10 +4,7 @@ import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.company.application.CompanyService;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
-<<<<<<< HEAD:company/src/main/java/com/luckylogistics/company/presentation/CompanyController.java
-=======
-import com.luckylogistics.company.common.response.ApiResponse;
->>>>>>> 0142e986fcb15532a6e616cfb2de124f068f7952:company/company/src/main/java/com/luckylogistics/company/presentation/CompanyController.java
+
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;

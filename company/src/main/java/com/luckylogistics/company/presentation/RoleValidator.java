@@ -1,12 +1,7 @@
 package com.luckylogistics.company.presentation;
 
-<<<<<<< HEAD:company/src/main/java/com/luckylogistics/company/presentation/RoleValidator.java
 import com.luckylogistics.common.infrastructure.exception.BusinessException;
 import com.luckylogistics.common.infrastructure.exception.ErrorCode;
-=======
-import com.luckylogistics.company.common.exception.BusinessException;
-import com.luckylogistics.company.common.exception.ErrorCode;
->>>>>>> 0142e986fcb15532a6e616cfb2de124f068f7952:company/company/src/main/java/com/luckylogistics/company/presentation/RoleValidator.java
 import java.util.Arrays;
 import org.springframework.stereotype.Component;
 
@@ -19,11 +14,6 @@ public class RoleValidator {
         if (!authorized) {
             throw new BusinessException(ErrorCode.INVALID_HEADER_USER_ROLE);
         }
-<<<<<<< HEAD:company/src/main/java/com/luckylogistics/company/presentation/RoleValidator.java
-=======
-
-
->>>>>>> 0142e986fcb15532a6e616cfb2de124f068f7952:company/company/src/main/java/com/luckylogistics/company/presentation/RoleValidator.java
     }
 
     public final class Roles {
