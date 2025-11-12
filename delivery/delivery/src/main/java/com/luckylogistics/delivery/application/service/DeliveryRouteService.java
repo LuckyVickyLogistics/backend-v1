@@ -1,5 +1,6 @@
 package com.luckylogistics.delivery.application.service;
 
+import com.luckylogistics.delivery.application.dto.DeliveryRouteResponse;
 import com.luckylogistics.delivery.application.dto.UpdateDeliveryRouteResponse;
 import com.luckylogistics.delivery.application.dto.UpdateDeliveryRouteStatusRequest;
 import com.luckylogistics.delivery.common.enums.UserRole;
@@ -105,5 +106,71 @@ public class DeliveryRouteService {
         }
 
         throw new BusinessException(ErrorCode.FORBIDDEN_ROUTE_MODIFY);
+    }
+
+    public DeliveryRouteResponse getDeliveryRoute(
+            UUID routeId,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        log.info("[DeliveryRoute] 배송 경로 조회. routeId: {}, userId: {}", routeId, currentUserId);
+
+        // 배송 경로 조회
+        DeliveryRoute route = findDeliveryRouteByIdWithManager(routeId);
+        // 배송 조회
+        Delivery delivery = findDeliveryById(route.getDeliveryId());
+        // 조회 권한 검증
+        validateReadPermission(delivery, route, currentUserId, currentUserRole);
+        // 응답 반환
+        return DeliveryRouteResponse.from(route);
+    }
+
+    /**
+     * 조회 권한 검증
+     */
+    private void validateReadPermission(
+            Delivery delivery,
+            DeliveryRoute route,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        if (currentUserRole == null) throw new BusinessException(ErrorCode.FORBIDDEN_ROUTE_READ);
+
+        // 마스터, 업체 관리자: 모든 경로 조회 가능
+        if (currentUserRole.isMaster() || currentUserRole.isCompanyManager()) {
+            return;
+        }
+
+        // 허브 관리자: 담당 허브의 경로만 조회 가능
+        if (currentUserRole.isHubManager()) {
+            UUID userHubId = hubService.getUserHubId(currentUserId);
+
+            if (route != null && !route.isRelatedToHub(userHubId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_NOT_HUB_ROUTE);
+            }
+
+            if (!delivery.isRelatedToHub(userHubId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_NOT_HUB_DELIVERY);
+            }
+            return;
+        }
+
+        // 배송 담당자: 본인이 담당하는 배송의 경로만 조회 가능
+        if (currentUserRole.isDeliveryManager()) {
+            boolean isCompanyManager = delivery.getCompanyDeliveryManager()
+                    .getDeliveryManagerId().equals(currentUserId);
+
+            boolean isRouteManager = route != null && route.isAssignedTo(currentUserId);
+
+            boolean isAnyRouteManager = delivery.getRoutes().stream()
+                    .anyMatch(r -> r.isAssignedTo(currentUserId));
+
+            if (!isCompanyManager && !isRouteManager && !isAnyRouteManager) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_NOT_ASSIGNED_ROUTE);
+            }
+            return;
+        }
+
+        throw new BusinessException(ErrorCode.FORBIDDEN_ROUTE_READ);
     }
 }
