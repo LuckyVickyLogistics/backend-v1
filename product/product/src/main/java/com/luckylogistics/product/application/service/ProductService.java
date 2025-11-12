@@ -46,17 +46,17 @@ public class ProductService {
         //업체 -> user_id 가 들어가있어서
         //hub -> currentUserId 를 getHubByUserId 를 쓰면 HUBID 가 나옴 -> 위에서 사용한 productRequest.hubID();
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager()) {
             if (!productRequest.hubId().equals(hubService.getHubByUserId(currentUserId).hubId())) {
                 throw new BusinessException(ErrorCode.PRODUCT_HUB_MANAGER_ERROR);
             }
         }
-        if(currentUserRole == UserRole.COMPANY_MANAGER){
+        if(currentUserRole.isCompanyManager()){
             if (!productRequest.hubId().equals(companyService.getCompany(productRequest.companyId()).hubId())) {
                 throw new BusinessException(ErrorCode.PRODCUT_COMP_MANAGER_ERROR);
             }
         }
-        if(currentUserRole == UserRole.DELIVERY_MANAGER) {
+        if(currentUserRole.isDeliveryManager()) {
             throw new BusinessException(ErrorCode.FORBIDDEN);
         }
 
@@ -84,13 +84,13 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow( () -> new BusinessException(ErrorCode.PRODUCT_CANNOT_FIND));
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager()) {
             if (!productRequest.hubId().equals(hubService.getHubByUserId(currentUserId).hubId())) {
                 throw new BusinessException(ErrorCode.PRODUCT_HUB_MANAGER_ERROR);
             }
         }
 
-        if(currentUserRole == UserRole.DELIVERY_MANAGER || currentUserRole == UserRole.COMPANY_MANAGER) {
+        if(currentUserRole.isDeliveryManager() || currentUserRole.isCompanyManager()) {
             throw new BusinessException(ErrorCode.FORBIDDEN);
         }
 
@@ -109,12 +109,12 @@ public class ProductService {
         Product product =  productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_READ_FAIL));
 
-        if(currentUserRole == UserRole.MASTER_ADMIN ) {
+        if(currentUserRole.isMaster() ) {
             return product;
         }
 
         //허브 관리자 + 배송 관리자 (자기 허브꺼만 볼 수 있음)
-        if(currentUserRole == UserRole.HUB_MANAGER || currentUserRole ==UserRole.DELIVERY_MANAGER ){
+        if(currentUserRole.isHubManager() || currentUserRole.isDeliveryManager()){
             UUID userHubId = hubService.getHubByUserId(currentUserId).hubId();
             if (!product.getHubId().equals(userHubId)) {  //가진 hubId와 조회한 hubId가 다르다면,
                 throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -124,7 +124,7 @@ public class ProductService {
         }
 
         //userId company랑 맞춰줘야 함
-        if (currentUserRole == UserRole.COMPANY_MANAGER) {
+        if (currentUserRole.isCompanyManager()) {
             UUID userCompanyId  = companyService.getCompanyUserId(currentUserId).companyId();
             if ((!product.getCompanyId().equals(userCompanyId))) {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -140,7 +140,7 @@ public class ProductService {
       boolean hasKeyword = (keyword != null && !keyword.isBlank());
 
       //Master
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
+        if (currentUserRole.isMaster()){
             if(!hasKeyword) {
                 return getAllProducts();
             }
@@ -148,7 +148,7 @@ public class ProductService {
         }
 
         //HUB,DELIVERY 본인 허브만
-        if (currentUserRole == UserRole.HUB_MANAGER || currentUserRole == UserRole.DELIVERY_MANAGER) {
+        if (currentUserRole.isHubManager() || currentUserRole.isDeliveryManager()) {
             UUID userHubId = hubService.getHubByUserId(currentUserId).hubId();
             if(!hasKeyword) {
                 return getAllProductsByHub(userHubId);
@@ -157,7 +157,7 @@ public class ProductService {
         }
 
         // COMPANY_MANAGER: 본인 업체만
-        if (currentUserRole == UserRole.COMPANY_MANAGER) {
+        if (currentUserRole.isCompanyManager()) {
             UUID userCompanyId = companyService.getCompanyUserId(currentUserId).companyId();
             if (!hasKeyword) {
                 return getAllProductsByCompany(userCompanyId);
@@ -216,12 +216,12 @@ public class ProductService {
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CANNOT_FIND));
 
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
+        if (currentUserRole.isMaster()) {
             product.delete();
             return;
         }
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager() ) {
             UUID userHubId = hubService.getHubByUserId(currentUserId).hubId();
             if (!product.getHubId().equals(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -238,12 +238,12 @@ public class ProductService {
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CANNOT_FIND));
 
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
+        if (currentUserRole.isMaster()) {
             product.rollbackDelete();
             return;
         }
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager() ) {
             UUID userHubId = hubService.getHubByUserId(currentUserId).hubId();
             if (!product.getHubId().equals(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -261,12 +261,12 @@ public class ProductService {
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CANNOT_FIND));
 
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
+        if (currentUserRole.isMaster()) {
             product.hidden();
             return;
         }
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager() ) {
             UUID userHubId = hubService.getHubByUserId(currentUserId).hubId();
             if (!product.getHubId().equals(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -284,12 +284,12 @@ public class ProductService {
         //id 찾기
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CANNOT_FIND));
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
+        if (currentUserRole.isMaster()) {
             product.minusQuantity(minusRequest.amount());
             return;
         }
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager()) {
             UUID userHubId = hubService.getHubByUserId(currentUserId).hubId();
             if (!product.getHubId().equals(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
@@ -306,12 +306,12 @@ public class ProductService {
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_CANNOT_FIND));
 
-        if (currentUserRole == UserRole.MASTER_ADMIN) {
+        if (currentUserRole.isMaster()) {
             product.minusQuantity(plusRequest.amount());
             return;
         }
 
-        if (currentUserRole == UserRole.HUB_MANAGER) {
+        if (currentUserRole.isHubManager()) {
             UUID userHubId = hubService.getHubByUserId(currentUserId).hubId();
             if (!product.getHubId().equals(userHubId)) {
                 throw new BusinessException(ErrorCode.FORBIDDEN);
