@@ -32,7 +32,6 @@ public class Hub extends BaseEntity {
     @Column(name = "longitude")
     private Double longitude;
 
-    // 팀 컨벤션: 엔티티 팩토리
     public static Hub create(String name, String address, Double latitude, Double longitude) {
         validate(name, address, latitude, longitude);
         Hub hub = new Hub();
