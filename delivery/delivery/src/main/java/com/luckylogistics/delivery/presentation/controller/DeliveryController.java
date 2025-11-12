@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -84,5 +85,23 @@ public class DeliveryController {
         Page<DeliverySummaryResponse> response = deliveryService.getDeliveries(
                 status, departureHubId, arrivalHubId, page, size, sortBy, direction, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(response, "배송 목록이 조회되었습니다"));
+    }
+
+    /**
+     * 3.1 배송 경로 목록 조회
+     */
+    @GetMapping("/{deliveryId}/routes")
+    public ResponseEntity<ApiResponse<List<DeliveryRouteResponse>>> getDeliveryRoutes(
+            @PathVariable UUID deliveryId,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
+    ) {
+        List<DeliveryRouteResponse> response = deliveryService.getDeliveryRoutes(
+                deliveryId,
+                currentUserId,
+                currentUserRole
+        );
+
+        return ResponseEntity.ok(ApiResponse.success(response, "특정 배송의 모든 경로가 조회되었습니다"));
     }
 }
