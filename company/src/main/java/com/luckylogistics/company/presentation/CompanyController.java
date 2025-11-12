@@ -1,9 +1,9 @@
 package com.luckylogistics.company.presentation;
 
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.company.application.CompanyService;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
-import com.luckylogistics.company.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;

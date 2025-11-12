@@ -1,7 +1,7 @@
 package com.luckylogistics.company.domain.entity;
 
-import com.luckylogistics.company.common.exception.BusinessException;
-import com.luckylogistics.company.common.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 
 public enum CompanyType {
     SUPPLIER, CUSTOMER;

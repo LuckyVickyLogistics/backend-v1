@@ -1,7 +1,7 @@
 package com.luckylogistics.company.presentation;
 
-import com.luckylogistics.company.common.exception.BusinessException;
-import com.luckylogistics.company.common.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import java.util.Arrays;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +14,6 @@ public class RoleValidator {
         if (!authorized) {
             throw new BusinessException(ErrorCode.INVALID_HEADER_USER_ROLE);
         }
-
-
     }
 
     public final class Roles {

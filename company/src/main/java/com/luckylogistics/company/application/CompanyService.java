@@ -1,5 +1,7 @@
 package com.luckylogistics.company.application;
 
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
 import com.luckylogistics.company.application.external.HubService;
