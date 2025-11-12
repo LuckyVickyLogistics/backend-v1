@@ -15,7 +15,7 @@ import com.luckylogistics.order.application.external.HubService;
 import com.luckylogistics.order.application.external.ProductService;
 import com.luckylogistics.order.application.external.UserService;
 import com.luckylogistics.order.common.exception.BusinessException;
-import com.luckylogistics.order.common.exception.ExceptionCode;
+import com.luckylogistics.order.common.exception.ErrorCode;
 import com.luckylogistics.order.domain.entity.Order;
 import com.luckylogistics.order.domain.repository.OrderRepository;
 
@@ -74,7 +74,7 @@ public class OrderService {
 	private ProductResponse validateAndGetProduct(UUID productId, int quantity) {
 		ProductResponse response = productService.getProductById(productId);
 		if (response.quantity() < quantity) {
-			throw new BusinessException(ExceptionCode.ORDER_QUANTITY_EXCEEDS_STOCK);
+			throw new BusinessException(ErrorCode.ORDER_QUANTITY_EXCEEDS_STOCK);
 		}
 		return response;
 	}
@@ -119,7 +119,7 @@ public class OrderService {
     @Transactional
     public OrderUpdateResponse updateOrder(UUID orderId, OrderUpdateRequest orderUpdateRequest) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow( () -> new BusinessException(ExceptionCode.ORDER_ID_ERROR));
+                .orElseThrow( () -> new BusinessException(ErrorCode.ORDER_ID_ERROR));
 
         //주문 변경 시 재고의 변경을 감지해야 함
         int before = order.getQuantity();
@@ -156,17 +156,17 @@ public class OrderService {
     //단건 조회
     public Order getOrderById(UUID orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new BusinessException(ExceptionCode.ORDER_ID_ERROR));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_ID_ERROR));
     }
 
     //delete
     @Transactional
     public void deleteOrder(UUID orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow( () -> new BusinessException(ExceptionCode.ORDER_ID_ERROR));
+                .orElseThrow( () -> new BusinessException(ErrorCode.ORDER_ID_ERROR));
 
         if (order.getStatus() == OrderStatus.DELETED) {
-            throw new BusinessException(ExceptionCode.ORDER_ALREADY_DELETED);
+            throw new BusinessException(ErrorCode.ORDER_ALREADY_DELETED);
         }
         else {
             //가진만큼 재고에 더해야함.
@@ -181,10 +181,10 @@ public class OrderService {
     @Transactional
     public void rollbackDeleteOrder(UUID orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow( () -> new BusinessException(ExceptionCode.ORDER_ID_ERROR));
+                .orElseThrow( () -> new BusinessException(ErrorCode.ORDER_ID_ERROR));
 
         if(order.getStatus() == OrderStatus.ORDERED) {
-            throw new BusinessException(ExceptionCode.ORDER_ALREADY_EXIST);
+            throw new BusinessException(ErrorCode.ORDER_ALREADY_EXIST);
         }
         //롤백하면 재고 차감해야 함
         else {

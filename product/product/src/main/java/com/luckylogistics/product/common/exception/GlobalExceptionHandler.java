@@ -1,117 +1,96 @@
 package com.luckylogistics.product.common.exception;
 
-import jakarta.validation.ConstraintViolationException;
+import com.luckylogistics.product.common.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-//import org.springframework.security.access.AccessDeniedException; 시큐리티 문제로 추후 작업 예정
-//import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.BindException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingPathVariableException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    //비즈니스 예외 처리
-
+    /**
+            * 비즈니스 규칙 위반 예외 처리
+     */
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException exception){
-        ExceptionCode code = exception.getExceptionCode();
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
+        log.error("BusinessException: {}", e.getMessage());
+        ErrorCode errorCode = e.getErrorCode();
 
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
-        return ErrorResponse.errorResponse(code);
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(ApiResponse.error(errorCode));
     }
 
     /**
-    // 인증/인가
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException exception) {
-        ExceptionCode code = ExceptionCode.FORBIDDEN;
+     * 입력 검증 실패 예외 처리 (Spring Validation)
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(err -> {
+            String field = (err instanceof FieldError fe) ? fe.getField() : err.getObjectName();
+            errors.put(field, err.getDefaultMessage());
+        });
+        log.warn("Validation failed: {}", errors);
 
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
-
-        return ErrorResponse.errorResponse(code);
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponse.error(ErrorCode.INVALID_INPUT_VALUE, errors.toString()));
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException exception) {
-        ExceptionCode code = ExceptionCode.UNAUTHORIZED;
+    /**
+     * 도메인 계층 예외 처리
+     */
+    @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
+    public ResponseEntity<ApiResponse<Void>> handleDomainException(RuntimeException e) {
+        log.warn("DomainException: {}", e.getMessage());
 
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
-
-        return ErrorResponse.errorResponse(code);
-    }
-**/
-    // 입력값 검증
-    @ExceptionHandler({
-            MethodArgumentNotValidException.class,
-            MethodArgumentTypeMismatchException.class,
-            MissingPathVariableException.class,
-            MissingServletRequestParameterException.class,
-            ConstraintViolationException.class,
-            BindException.class
-    })
-    public ResponseEntity<ErrorResponse> handleValidation(Exception exception) {
-        ExceptionCode code = ExceptionCode.INVALID_INPUT;
-
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
-
-        return ErrorResponse.errorResponse(code);
+        return ResponseEntity
+                .status(ErrorCode.DOMAIN_ERROR.getStatus())
+                .body(ApiResponse.error(ErrorCode.DOMAIN_ERROR, e.getMessage()));
     }
 
-    // Http 요청
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleMethodNotSupport(HttpRequestMethodNotSupportedException exception) {
-        ExceptionCode code = ExceptionCode.METHOD_NOT_ALLOWED;
-
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
-
-        return ErrorResponse.errorResponse(code);
-    }
-
+    /**
+     * 요청 본문(JSON) 파싱 실패 예외 처리
+     * - 잘못된 UUID, Enum, 숫자 형식 등 역직렬화 오류 대응
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleJsonParserError(HttpMessageNotReadableException exception) {
-        ExceptionCode code = ExceptionCode.INVALID_INPUT;
-
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
-
-        return ErrorResponse.errorResponse(code);
+    public ResponseEntity<ApiResponse<Void>> handleJsonParseException(HttpMessageNotReadableException e) {
+        log.warn("JSON parse error: {}", e.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponse.error(ErrorCode.INVALID_INPUT_VALUE, "형식을 확인해주세요."));
     }
 
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleMediaTypeNotSupport(HttpMediaTypeNotSupportedException exception) {
-        ExceptionCode code = ExceptionCode.UNSUPPORTED_MEDIA_TYPE;
-
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
-
-        return ErrorResponse.errorResponse(code);
-    }
-
-    // 데이터 무결성
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException exception) {
-        ExceptionCode code = ExceptionCode.DATA_INTEGRITY_VIOLATION;
-
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
-
-        return ErrorResponse.errorResponse(code);
-    }
-
-    // 그 외 예외 처리
+    /**
+     * 서버 내부 오류 예외 처리
+     */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        ExceptionCode code = ExceptionCode.INTERNAL_SERVER_ERROR;
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
+        log.error("Unexpected exception", e);
 
-        log.error("[{}] {}", code.getCode(), code.getMessage(), exception);
+        return ResponseEntity
+                .internalServerError()
+                .body(ApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR));
+    }
 
-        return ErrorResponse.errorResponse(code);
+    @ExceptionHandler(MethodArgumentTypeMismatchException   .class)
+    public ResponseEntity<ApiResponse<?>> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        if ("X-User-Role".equalsIgnoreCase(e.getName())) {
+            return ResponseEntity
+                    .status(ErrorCode.INVALID_HEADER_USER_ROLE.getStatus())
+                    .body(ApiResponse.error(ErrorCode.INVALID_HEADER_USER_ROLE, "value=" + e.getValue()));
+        }
+        return ResponseEntity
+                .badRequest()
+                .body(ApiResponse.error(ErrorCode.BAD_REQUEST, e.getMessage()));
     }
 }

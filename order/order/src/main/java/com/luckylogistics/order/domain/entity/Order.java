@@ -3,7 +3,7 @@ package com.luckylogistics.order.domain.entity;
 import java.util.UUID;
 
 import com.luckylogistics.order.common.exception.BusinessException;
-import com.luckylogistics.order.common.exception.ExceptionCode;
+import com.luckylogistics.order.common.exception.ErrorCode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -61,19 +61,19 @@ public class Order extends BaseEntity {
     public static Order create(int quantity, UUID supplierId, UUID customerId, UUID productId, String deliveryAddress, String request) {
 
         if(quantity <= 0) {
-            throw new BusinessException(ExceptionCode.ORDER_QUANTITY_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_QUANTITY_ERROR);
         }
         if (supplierId == null) {
-            throw new BusinessException(ExceptionCode.ORDER_SUPPLY_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_SUPPLY_ERROR);
         }
         if (customerId == null) {
-            throw new BusinessException(ExceptionCode.ORDER_CUSTOMER_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_CUSTOMER_ERROR);
         }
         if (productId == null) {
-            throw new BusinessException(ExceptionCode.ORDER_PRODUCT_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_PRODUCT_ERROR);
         }
         if (request == null) {
-            throw new BusinessException(ExceptionCode.ORDER_REQUEST_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_REQUEST_ERROR);
         }
 
         return Order.builder()
@@ -89,24 +89,24 @@ public class Order extends BaseEntity {
 
     public void updateDeliveryToOrder(UUID orderId, UUID deliveryId){
         if(deliveryId == null) {
-            throw new BusinessException(ExceptionCode.ORDER_DELIVERY_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_DELIVERY_ERROR);
         }
         if(orderId == null) {
-            throw new BusinessException(ExceptionCode.ORDER_DELIVERY_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_DELIVERY_ERROR);
         }
         this.deliveryId = deliveryId;
     }
 
     public void update(int quantity, String request){
         if (this.status == OrderStatus.DELETED) {
-            throw new BusinessException(ExceptionCode.ORDER_ALREADY_DELETED);
+            throw new BusinessException(ErrorCode.ORDER_ALREADY_DELETED);
         }
 
         if (quantity <= 0) {
-            throw new BusinessException(ExceptionCode.ORDER_QUANTITY_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_QUANTITY_ERROR);
         }
         if (request == null) {
-            throw new BusinessException(ExceptionCode.ORDER_REQUEST_ERROR);
+            throw new BusinessException(ErrorCode.ORDER_REQUEST_ERROR);
         }
         this.quantity = quantity;
         this.request = request;

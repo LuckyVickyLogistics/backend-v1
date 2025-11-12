@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @FeignClient(name = "delivery")
 public interface DeliveryFeignClient {
-    @GetMapping("/{companyId}")
-    boolean isDeliveryIdExists(@PathVariable("deliveryId") UUID deliveryId);
-
+    //단건조회 메소드로 이름 바꿀 필요 있음
+    @GetMapping("/{deliveryId}")
+    boolean getDelivery(@PathVariable("deliveryId") UUID deliveryId);
 }

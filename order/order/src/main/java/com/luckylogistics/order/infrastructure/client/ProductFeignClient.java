@@ -16,8 +16,8 @@ import com.luckylogistics.order.infrastructure.client.dto.GetProductClientRespon
 @FeignClient(name = "product", path = "/api/v1/products")
 public interface ProductFeignClient {
 
-    @GetMapping("/{productId}")
-    ApiResponse<Boolean> isProductIdExists(@PathVariable("productId") UUID productId);
+//    @GetMapping("/{productId}")
+//    ApiResponse<Boolean> isProductIdExists(@PathVariable("productId") UUID productId);
 
     @PutMapping("/plusProductsQuan/{productId}")
     ApiResponse<Void> plusProduct(@PathVariable("productId") UUID productId , @RequestBody PlusRequest plusRequest);
@@ -25,7 +25,7 @@ public interface ProductFeignClient {
     @PutMapping("/minusProductsQuan/{productId}")
     ApiResponse<Void> minusProduct(@PathVariable("productId")  UUID productId, @RequestBody MinusRequest minusRequest);
 
-	@GetMapping("/searchOne/{productId}")
+	@GetMapping("/{productId}")
 	ApiResponse<GetProductClientResponse> getProductById(@PathVariable("productId") UUID productId);
 
 }

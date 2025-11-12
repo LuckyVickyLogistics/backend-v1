@@ -1,7 +1,7 @@
 package com.luckylogistics.order.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.luckylogistics.order.common.exception.ExceptionCode;
+import com.luckylogistics.order.common.exception.ErrorCode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ApiResponse<T>(
@@ -26,11 +26,11 @@ public record ApiResponse<T>(
     /**
      * 실패 응답 생성 (에러 코드 + 메시지)
      */
-    public static <T> ApiResponse<T> error(ExceptionCode exceptionCode) {
-        return new ApiResponse<>(false, exceptionCode.getMessage(), null, exceptionCode.getCode());
+    public static <T> ApiResponse<T> error(ErrorCode errorCode) {
+        return new ApiResponse<>(false, errorCode.getMessage(), null, errorCode.getCode());
     }
 
-    public static <T> ApiResponse<T> error(ExceptionCode errorCode, String message) {
+    public static <T> ApiResponse<T> error(ErrorCode errorCode, String message) {
         return new ApiResponse<>(false, errorCode.getMessage() + " (" + message + ")", null, errorCode.getCode());
     }
 }

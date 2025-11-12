@@ -1,7 +1,7 @@
 package com.luckylogistics.product.domain.vo;
 
 import com.luckylogistics.product.common.exception.BusinessException;
-import com.luckylogistics.product.common.exception.ExceptionCode;
+import com.luckylogistics.product.common.exception.ErrorCode;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,25 +16,25 @@ public class Quantity {
 
     public Quantity(int value) {
         if (value < 0) {
-            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_NONZERO);
+            throw new BusinessException(ErrorCode.PRODUCT_QUANTITY_NONZERO);
         }
         this.value = value;
     }
 
     public Quantity minus(int amount) {
         if (amount <= 0) {
-            throw new BusinessException(ExceptionCode.QUANTITY_MINUS_NONZERO);
+            throw new BusinessException(ErrorCode.QUANTITY_MINUS_NONZERO);
         }
         int finalQuantity  = this.value - amount;
         if (finalQuantity < 0) {
-            throw new BusinessException(ExceptionCode.QUANTITY_MINUS_EXCEED);
+            throw new BusinessException(ErrorCode.QUANTITY_MINUS_EXCEED);
         }
         return new Quantity(finalQuantity);
     }
 
     public Quantity plus(int amount) {
         if (amount <= 0) {
-            throw new BusinessException(ExceptionCode.QUANTITY_PLUS_NONZERO);
+            throw new BusinessException(ErrorCode.QUANTITY_PLUS_NONZERO);
         }
         int finalQuantity  = this.value + amount;
         return new Quantity(finalQuantity);
