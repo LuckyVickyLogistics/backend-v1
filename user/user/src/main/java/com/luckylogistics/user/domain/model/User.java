@@ -1,5 +1,6 @@
 package com.luckylogistics.user.domain.model;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.luckylogistics.user.application.dto.SignupCommand;

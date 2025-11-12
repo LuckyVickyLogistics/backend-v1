@@ -17,7 +17,6 @@ public record UserDetailResponse (
 	OrganizationType organizationType,
 	UUID organizationId,
 	Status status,
-	boolean isDeleted
 	LocalDateTime createdAt,
 	LocalDateTime updatedAt
 ){
@@ -30,7 +29,7 @@ public record UserDetailResponse (
 			user.getRole(),
 			user.getOrganizationType(),
 			user.getOrganizationId(),
-			user.getStatus()
+			user.getStatus(),
 			user.getCreatedAt(),
 			user.getUpdatedAt()
 		);

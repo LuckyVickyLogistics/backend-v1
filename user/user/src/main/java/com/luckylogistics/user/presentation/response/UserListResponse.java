@@ -16,7 +16,7 @@ public record UserListResponse (
 	Status status,
 	OrganizationType organizationType,
 	UUID organizationId,
-	boolean isDeleted
+	boolean deleted
 ) {
 	public static UserListResponse from(User user) {
 		return new UserListResponse(
