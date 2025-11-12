@@ -42,13 +42,13 @@ public class OrderController {
 	}
 
 
-    //FeignClient의 orderId 체크하는 메소드 추가
-    @Operation(summary = "FeignClient 조회 메서드", description = "FeginClient 주문 체크용")
-    @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<Boolean>> isOrderIdExists(@PathVariable(name = "orderId") UUID orderId){
-        Boolean result = orderService.checkOrder(orderId);
-        return ResponseEntity.ok(ApiResponse.success(result,"FeignClient: 주문 정상 조회 되었습니다."));
-    }
+//    //FeignClient의 orderId 체크하는 메소드 추가
+//    @Operation(summary = "FeignClient 조회 메서드", description = "FeginClient 주문 체크용")
+//    @GetMapping("/{orderId}")
+//    public ResponseEntity<ApiResponse<Boolean>> isOrderIdExists(@PathVariable(name = "orderId") UUID orderId){
+//        Boolean result = orderService.checkOrder(orderId);
+//        return ResponseEntity.ok(ApiResponse.success(result,"FeignClient: 주문 정상 조회 되었습니다."));
+//    }
 
 
     //전체 조회, 추후에 권한 추가 필요 (user는 본인, master 는 전부 볼수 있음)
