@@ -1,4 +1,0 @@
-// C:\workspace\backend-v1\settings.gradle
-rootProject.name = "backend-v1"
-include(":hub")
-project(":hub").projectDir = file("hub")   // hub의 실제 경로
