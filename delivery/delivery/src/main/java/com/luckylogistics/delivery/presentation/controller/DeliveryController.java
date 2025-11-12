@@ -87,9 +87,6 @@ public class DeliveryController {
         return ResponseEntity.ok(ApiResponse.success(response, "배송 목록이 조회되었습니다"));
     }
 
-    /**
-     * 3.1 배송 경로 목록 조회
-     */
     @GetMapping("/{deliveryId}/routes")
     public ResponseEntity<ApiResponse<List<DeliveryRouteResponse>>> getDeliveryRoutes(
             @PathVariable UUID deliveryId,

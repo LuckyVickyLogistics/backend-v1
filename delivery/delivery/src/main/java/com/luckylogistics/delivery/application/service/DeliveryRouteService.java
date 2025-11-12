@@ -47,7 +47,7 @@ public class DeliveryRouteService {
         // 요청 검증
         request.validateForArrived();
 
-        // 배송 루트 조회 (DeliveryRoute)
+        // 배송 경로 조회 (DeliveryRoute)
         DeliveryRoute route = findDeliveryRouteByIdWithManager(routeId);
 
         // 배송 경로 상태 변경 권한 검증
