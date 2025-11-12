@@ -15,7 +15,7 @@ public class CompanyRepositoryAdapter implements CompanyRepository {
 
     @Override
     public Optional<Company> findById(UUID companyId){
-        return jpaRepository.findById(companyId);
+        return jpaRepository.findByCompanyIdAndDeletedAtIsNull(companyId);
     }
 
     @Override

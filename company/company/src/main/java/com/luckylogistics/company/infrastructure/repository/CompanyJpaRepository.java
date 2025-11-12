@@ -2,11 +2,14 @@ package com.luckylogistics.company.infrastructure.repository;
 
 import com.luckylogistics.company.domain.entity.Company;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface CompanyJpaRepository extends JpaRepository<Company, UUID> {
+
+    Optional<Company> findByCompanyIdAndDeletedAtIsNull(UUID companyId);
 
     List<Company> findAllByDeletedAtIsNull();
 

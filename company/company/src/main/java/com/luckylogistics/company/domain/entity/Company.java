@@ -1,12 +1,8 @@
 package com.luckylogistics.company.domain.entity;
 
 import com.luckylogistics.company.infrastructure.model.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -32,6 +28,7 @@ public class Company extends BaseEntity {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 10)
     private CompanyType type;
 
@@ -39,6 +36,7 @@ public class Company extends BaseEntity {
     private UUID hubId;
 
     public static Company create(String name, String address, CompanyType type, UUID hubId) {
+        validate(name, address, type);
         return Company.builder()
             .name(name)
             .address(address)
@@ -52,5 +50,12 @@ public class Company extends BaseEntity {
         this.address = address;
         this.type = type;
         this.hubId = hubId;
+    }
+
+    public static void validate(String name, String address, CompanyType type) {
+        if (name == null || name.isBlank()){ throw new IllegalArgumentException("이름은 필수 입력 값입니다"); }
+        if (address == null || address.isBlank()){ throw new IllegalArgumentException("주소는 필수 입력 값입니다"); }
+        if (type == null) { throw new IllegalArgumentException("타입은 필수 입력 값입니다"); }
+        CompanyType.validateCompanyType(type);
     }
 }
