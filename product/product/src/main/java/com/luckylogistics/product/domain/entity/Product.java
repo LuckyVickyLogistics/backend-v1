@@ -1,12 +1,11 @@
 package com.luckylogistics.product.domain.entity;
 
 import com.luckylogistics.product.common.exception.BusinessException;
-import com.luckylogistics.product.common.exception.ExceptionCode;
+import com.luckylogistics.product.common.exception.ErrorCode;
 import com.luckylogistics.product.domain.vo.Quantity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -49,26 +48,26 @@ public class Product extends BaseEntity {
     public static Product create(String productName, UUID companyId, UUID hubId, Quantity quantity, int totalQuantity, int price) {
 
         if (productName == null || productName.isBlank()) {
-            throw new BusinessException(ExceptionCode.PRODUCT_NAME_ERROR);
+            throw new BusinessException(ErrorCode.PRODUCT_NAME_ERROR);
         }
         if (price < 0) {
-            throw new BusinessException(ExceptionCode.PRODUCT_PRICE_ZERO);
+            throw new BusinessException(ErrorCode.PRODUCT_PRICE_ZERO);
         }
         if (companyId == null) {
-            throw new BusinessException(ExceptionCode.PRODUCT_COMPANY_ERROR);
+            throw new BusinessException(ErrorCode.PRODUCT_COMPANY_ERROR);
         }
         if (hubId == null) {
-            throw new BusinessException(ExceptionCode.PRODUCT_HUB_ERROR);
+            throw new BusinessException(ErrorCode.PRODUCT_HUB_ERROR);
         }
         if (totalQuantity < 0) {
-            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_NONZERO);
+            throw new BusinessException(ErrorCode.PRODUCT_QUANTITY_NONZERO);
         }
 
         if (quantity == null) {
             quantity = new Quantity(0);
         }
         if (quantity.getValue() > totalQuantity) {
-            throw new BusinessException(ExceptionCode.PRODUCT_TOTAL_EXCEED);
+            throw new BusinessException(ErrorCode.PRODUCT_TOTAL_EXCEED);
         }
 
         return Product.builder()
@@ -84,19 +83,19 @@ public class Product extends BaseEntity {
 
     public void update(String productName, int price, int totalQuantity, Quantity quantity) {
         if (productName == null || productName.isBlank()) {
-            throw new BusinessException(ExceptionCode.PRODUCT_NAME_UPDATE);
+            throw new BusinessException(ErrorCode.PRODUCT_NAME_UPDATE);
         }
         if (price < 0) {
-            throw new BusinessException(ExceptionCode.PRODUCT_PRICE_UPDATE);
+            throw new BusinessException(ErrorCode.PRODUCT_PRICE_UPDATE);
         }
         if (quantity == null) {
-            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_ZERO_UPDATE);
+            throw new BusinessException(ErrorCode.PRODUCT_QUANTITY_ZERO_UPDATE);
         }
         if (quantity.getValue() > totalQuantity) {
-            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_TOTAL_UPDATE);
+            throw new BusinessException(ErrorCode.PRODUCT_QUANTITY_TOTAL_UPDATE);
         }
         if (totalQuantity < 0) {
-            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_NONZERO);
+            throw new BusinessException(ErrorCode.PRODUCT_QUANTITY_NONZERO);
         }
         this.productName = productName;
         this.price = price;
@@ -116,11 +115,11 @@ public class Product extends BaseEntity {
 
     public void minusQuantity(int amount) {
         if (this.status == ProductStatus.DELETED) {
-            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_DELETED);
+            throw new BusinessException(ErrorCode.PRODUCT_QUANTITY_DELETED);
         }
 
         if (amount > this.totalQuantity) {
-            throw new BusinessException(ExceptionCode.QUANTITY_AMOUNT_ERROR);
+            throw new BusinessException(ErrorCode.QUANTITY_AMOUNT_ERROR);
         }
 
         this.quantity = this.quantity.minus(amount);
@@ -131,17 +130,17 @@ public class Product extends BaseEntity {
 
     public void plusQuantity(int amount) {
         if (this.status == ProductStatus.DELETED) {
-            throw new BusinessException(ExceptionCode.PRODUCT_QUANTITY_DELETED);
+            throw new BusinessException(ErrorCode.PRODUCT_QUANTITY_DELETED);
         }
 
         if (amount > this.totalQuantity) {
-            throw new BusinessException(ExceptionCode.QUANTITY_AMOUNT_ERROR);
+            throw new BusinessException(ErrorCode.QUANTITY_AMOUNT_ERROR);
         }
 
         Quantity plusValue = this.quantity.plus(amount);
 
         if (plusValue.getValue() > this.totalQuantity) {
-            throw new BusinessException(ExceptionCode.QUANTITY_PLUS_EXCEED);
+            throw new BusinessException(ErrorCode.QUANTITY_PLUS_EXCEED);
         }
 
         //더한 값 적용

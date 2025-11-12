@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
-@FeignClient(name = "companyId")
+@FeignClient(name = "company")
 public interface CompanyFeignClient {
     @GetMapping("/{companyId}")
     boolean isCompanyIdExists(@PathVariable("companyId") UUID companyId);
