@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_hub")
+@Table(schema = "hubs", name = "p_hub")
 public class Hub extends BaseEntity {
 
     @Id
