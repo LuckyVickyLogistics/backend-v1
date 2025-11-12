@@ -14,6 +14,7 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "D-003", "권한이 없습니다"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "D-003", "잘못된 요청입니다"),
     INVALID_HEADER_USER_ROLE(HttpStatus.BAD_REQUEST, "D-004", "잘못된 X-User-Role 헤더입니다"),
+    FEIGN_ERROR(HttpStatus.BAD_GATEWAY, "D-500", "외부 서비스 요청 중 오류가 발생했습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "D-999", "서버 오류가 발생했습니다"),
 
     // DeliveryManager
