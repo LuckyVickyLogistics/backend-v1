@@ -1,3 +1,6 @@
+server:
+  port: 19098
+
 spring:
   application:
     name: user
@@ -23,14 +26,19 @@ spring:
       timeout: 6000
 
   jwt:
-    secret: ""
+    secret: ${SECRET_KEY}
     access-token-expiration: 1800000 # 30m
     refresh-token-expiration: 604800000 # 7d
 
   profiles:
     active: local
 
-#eureka:
-#  client:
-#    service-url:
-#      defaultZone: http://localhost:19090/eureka/
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+#  instance:
+#    hostname: localhost
+#    prefer-ip-address: true
