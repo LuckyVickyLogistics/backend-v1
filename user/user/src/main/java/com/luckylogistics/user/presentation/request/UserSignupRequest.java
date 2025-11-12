@@ -1,5 +1,7 @@
 package com.luckylogistics.user.presentation.request;
 
+import java.util.UUID;
+
 import com.luckylogistics.user.domain.model.OrganizationType;
 
 import jakarta.validation.constraints.Email;
@@ -25,6 +27,9 @@ public record UserSignupRequest(
 
 	@NotNull(message = "소속된 곳의 유형(HUB 또는 COMPANY)이 필요합니다.")
 	OrganizationType organizationType,
+
+	@NotNull(message = "소속된 곳의 아이디가 필요합니다.")
+	UUID organizationId,
 
 	@NotNull(message = "소속된 곳의 이름이 필요합니다.")
 	String organizationName

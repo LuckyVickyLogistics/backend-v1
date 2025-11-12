@@ -36,7 +36,7 @@ public class UserController {
 
 	// 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<ApiResponse<UserResponse>> signup(@Valid @RequestBody UserSignupRequest request) {
+	public ResponseEntity<ApiResponse<String>> signup(@Valid @RequestBody UserSignupRequest request) {
 
 		SignupCommand command = SignupCommand.builder()
 			.username(request.username())
@@ -46,9 +46,9 @@ public class UserController {
 			//.organizationName(request.organizationName())
 			.build();
 
-		UserResponse userResponse = userService.signup(command);
+		String userName = userService.signup(command);
 
-		return ResponseEntity.ok(ApiResponse.success(userResponse, "회원가입이 요청 되었습니다."));
+		return ResponseEntity.ok(ApiResponse.success(userName, "회원가입이 요청 되었습니다."));
 	}
 
 	// 회원가입 요청 처리 (master, hub)
