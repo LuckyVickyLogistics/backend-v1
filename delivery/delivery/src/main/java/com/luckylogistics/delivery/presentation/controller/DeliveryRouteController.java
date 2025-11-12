@@ -1,11 +1,10 @@
 package com.luckylogistics.delivery.presentation.controller;
 
-import com.luckylogistics.delivery.application.dto.DeliveryRouteResponse;
 import com.luckylogistics.delivery.application.dto.UpdateDeliveryRouteResponse;
 import com.luckylogistics.delivery.application.dto.UpdateDeliveryRouteStatusRequest;
 import com.luckylogistics.delivery.application.service.DeliveryRouteService;
 import com.luckylogistics.delivery.common.enums.UserRole;
-import com.luckylogistics.delivery.domain.model.DeliveryRoute;
+import com.luckylogistics.delivery.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ public class DeliveryRouteController {
     private final DeliveryRouteService deliveryRouteService;
 
     @PutMapping("/{routeId}/status")
-    public ResponseEntity<UpdateDeliveryRouteResponse> updateDeliveryRouteStatus(
+    public ResponseEntity<ApiResponse<UpdateDeliveryRouteResponse>> updateDeliveryRouteStatus(
             @PathVariable UUID routeId,
             @Valid @RequestBody UpdateDeliveryRouteStatusRequest request,
             @RequestHeader("X-User-Id") Long currentUserId,
@@ -29,6 +28,6 @@ public class DeliveryRouteController {
     ) {
         UpdateDeliveryRouteResponse response = deliveryRouteService.updateDeliveryRouteStatus(
                 routeId, request, currentUserId, currentUserRole);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response, "배송 경로 상태가 변경되었습니다"));
     }
 }
