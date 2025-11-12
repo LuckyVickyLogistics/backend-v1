@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: user
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: users
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/luckylogistics?currentSchema=users
+    username: luckyvicky
+    password: luckyvicky
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 6000
+
+  jwt:
+    secret: ""
+    access-token-expiration: 1800000 # 30m
+    refresh-token-expiration: 604800000 # 7d
+
+  profiles:
+    active: local
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:19090/eureka/

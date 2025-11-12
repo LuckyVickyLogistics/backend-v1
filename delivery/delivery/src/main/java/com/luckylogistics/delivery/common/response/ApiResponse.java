@@ -15,16 +15,18 @@ public record ApiResponse<T>(
         String code
 ) {
 
-    /**
-     * 성공 응답 생성 (데이터 + 메시지)
-     */
+    /** 성공 응답 생성 (데이터 + 메시지) */
+    // 성공 - 데이터 있음
     public static <T> ApiResponse<T> success(T data, String message) {
         return new ApiResponse<>(true, message, data, null);
     }
 
-    /**
-     * 실패 응답 생성 (에러 코드 + 메시지)
-     */
+    // 성공 - 데이터 없음
+    public static <T> ApiResponse<T> success(String message) {
+        return new ApiResponse<>(true, message, null, null);
+    }
+
+    /** 실패 응답 생성 (에러 코드 + 메시지) */
     public static <T> ApiResponse<T> error(ErrorCode errorCode) {
         return new ApiResponse<>(false, errorCode.getMessage(), null, errorCode.getCode());
     }

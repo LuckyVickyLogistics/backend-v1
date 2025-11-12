@@ -10,7 +10,6 @@ import com.luckylogistics.delivery.common.response.ApiResponse;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -60,7 +59,7 @@ public class DeliveryManagerController {
      * 배송 담당자 수정
      * - X-User-Id, X-User-Role: 권한 검증 필요
      */
-    @PatchMapping("/{deliveryManagerId}")
+    @PutMapping("/{deliveryManagerId}")
     public ResponseEntity<ApiResponse<DeliveryManagerResponse>> updateDeliveryManager(
             @PathVariable Long deliveryManagerId,
             @Valid @RequestBody UpdateDeliveryManagerRequest request,
@@ -83,7 +82,7 @@ public class DeliveryManagerController {
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
         deliveryManagerService.deleteDeliveryManager(deliveryManagerId, currentUserId, currentUserRole);
-        return ResponseEntity.ok(ApiResponse.success(null, "배송 담당자가 삭제되었습니다"));
+        return ResponseEntity.ok(ApiResponse.success("배송 담당자가 삭제되었습니다"));
     }
 
     /**
