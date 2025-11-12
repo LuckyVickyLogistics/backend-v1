@@ -5,14 +5,13 @@ import java.time.LocalTime;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.slack.application.dto.AiPromptCreatedResult;
 import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 import com.luckylogistics.slack.application.external.AiServiceClient;
-import com.luckylogistics.slack.common.exception.BusinessException;
-import com.luckylogistics.slack.common.exception.ErrorCode;
-import com.luckylogistics.slack.common.response.ApiResponse;
 import com.luckylogistics.slack.infrastructure.external.client.dto.AiPromptRequest;
 import com.luckylogistics.slack.infrastructure.external.client.dto.AiPromptResponse;
 
