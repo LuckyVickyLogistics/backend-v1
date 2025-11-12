@@ -6,15 +6,22 @@ import com.luckylogistics.delivery.application.dto.UpdateDeliveryRouteStatusRequ
 import com.luckylogistics.delivery.common.enums.UserRole;
 import com.luckylogistics.delivery.common.exception.BusinessException;
 import com.luckylogistics.delivery.common.exception.ErrorCode;
+import com.luckylogistics.delivery.common.util.PageableUtils;
 import com.luckylogistics.delivery.domain.model.Delivery;
 import com.luckylogistics.delivery.domain.model.DeliveryRoute;
+import com.luckylogistics.delivery.domain.model.DeliveryRouteStatus;
+import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
 import com.luckylogistics.delivery.domain.repository.DeliveryRepository;
 import com.luckylogistics.delivery.domain.repository.DeliveryRouteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -25,6 +32,7 @@ public class DeliveryRouteService {
 
     private final DeliveryRouteRepository routeRepository;
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryManagerRepository managerRepository;
     private final HubService hubService;
 
     @Transactional
@@ -172,5 +180,96 @@ public class DeliveryRouteService {
         }
 
         throw new BusinessException(ErrorCode.FORBIDDEN_ROUTE_READ);
+    }
+
+    /**
+     * 배송 담당자별 경로 목록 조회
+     * - MASTER: 모든 담당자의 경로 조회 가능
+     * - COMPANY_MANAGER: 모든 담당자의 경로 조회 가능
+     * - HUB_MANAGER: 모든 담당자의 경로 조회 가능
+     * - DELIVERY_MANAGER: 본인 경로만 조회 가능 (허브배송담당자만 경로 존재)
+     */
+    public Page<DeliveryRouteResponse> getDeliveryRoutesByManager(
+            Long deliveryManagerId,
+            DeliveryRouteStatus status,
+            int page,
+            int size,
+            String sortBy,
+            Sort.Direction direction,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        // 조회 대상 결정
+        Long targetManagerId = determineTargetManagerId(deliveryManagerId, currentUserId, currentUserRole);
+
+        log.info("[DeliveryRoute] 배송 담당자별 경로 조회. targetManagerId: {}, status: {}, userId: {}, role: {}",
+                targetManagerId, status, currentUserId, currentUserRole);
+
+        // 권한 검증
+        validateSearchPermission(targetManagerId, currentUserId, currentUserRole);
+
+        // 전체 조회(null)일 땐 호출하지 않음
+        if (targetManagerId != null) {
+            validateManagerExists(targetManagerId);
+        }
+
+        // 페이징
+        Pageable pageable = PageableUtils.createPageable(page, size, sortBy, direction);
+
+        // 경로 조회
+        Page<DeliveryRoute> routes = routeRepository.searchByHubDeliveryManagerIdAndStatus(
+                targetManagerId, status, pageable
+        );
+
+        return routes.map(DeliveryRouteResponse::from);
+    }
+
+    // 담당자 ID 결정
+    // DELIVERY_MANAGER: null이면 본인 지정
+    private Long determineTargetManagerId(
+            Long deliveryManagerId,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        if (currentUserRole.isDeliveryManager()) {
+            if (deliveryManagerId == null) return currentUserId; // deliveryManagerId가 null이면 본인 조회
+
+            if (!deliveryManagerId.equals(currentUserId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MANAGER_ROUTE);
+            }
+            return deliveryManagerId;
+        }
+        // MASTER / COMPANY_MANAGER / HUB_MANAGER: 전체(null 허용), 특정인 가능
+        return deliveryManagerId;
+    }
+
+    /**
+     * 권한별 접근 검증
+     */
+    private void validateSearchPermission(
+            Long targetManagerId,
+            Long currentUserId,
+            UserRole currentUserRole
+    ) {
+        // 마스터, 업체 관리자, 허브 관리자: 모든 담당자 조회 가능
+        if (currentUserRole.isMaster() || currentUserRole.isCompanyManager() || currentUserRole.isHubManager()) {
+            return;
+        }
+
+        // 배송 담당자: 본인만 조회 가능
+        if (currentUserRole.isDeliveryManager()) {
+            if (!Objects.equals(targetManagerId, currentUserId)) {
+                throw new BusinessException(ErrorCode.FORBIDDEN_DELIVERY_MANAGER_ROUTE);
+            }
+            return;
+        }
+        throw new BusinessException(ErrorCode.FORBIDDEN_ROUTE_SEARCH);
+    }
+
+    // ID로 배송 담당자 조회
+    private void validateManagerExists(Long deliveryManagerId) {
+        if (!managerRepository.existsById(deliveryManagerId)) {
+            throw new BusinessException(ErrorCode.DELIVERY_MANAGER_NOT_FOUND);
+        }
     }
 }
