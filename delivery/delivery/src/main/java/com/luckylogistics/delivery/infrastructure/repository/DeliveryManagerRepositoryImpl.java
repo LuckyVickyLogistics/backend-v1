@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,5 +56,15 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
             UUID hubId
     ) {
         return jpaRepository.findMaxSequenceByTypeAndHubId(type, hubId);
+    }
+
+    @Override
+    public List<DeliveryManager> findCompanyDeliveryManagersByHubId(UUID hubId) {
+        return jpaRepository.findCompanyDeliveryManagersByHubId(hubId);
+    }
+
+    @Override
+    public List<DeliveryManager> findHubDeliveryManagers() {
+        return jpaRepository.findHubDeliveryManagers();
     }
 }

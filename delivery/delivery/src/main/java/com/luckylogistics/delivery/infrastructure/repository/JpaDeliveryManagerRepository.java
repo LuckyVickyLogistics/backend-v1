@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,4 +49,22 @@ public interface JpaDeliveryManagerRepository extends JpaRepository<DeliveryMana
             @Param("type") DeliveryManagerType type,
             @Param("hubId") UUID hubId
     );
+
+    // 허브별 업체 담당자 순서
+    @Query("""
+        SELECT dm FROM DeliveryManager dm
+        WHERE dm.hubId = :hubId
+          AND dm.type = 'COMPANY_DELIVERY'
+          AND dm.deletedAt IS NULL
+        ORDER BY dm.deliverySequence
+    """)
+    List<DeliveryManager> findCompanyDeliveryManagersByHubId(@Param("hubId") UUID hubId);
+
+    @Query("""
+        SELECT dm FROM DeliveryManager dm
+        WHERE dm.type = 'HUB_DELIVERY'
+          AND dm.deletedAt IS NULL
+        ORDER BY dm.deliverySequence
+    """)
+    List<DeliveryManager> findHubDeliveryManagers();
 }

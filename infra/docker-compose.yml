@@ -53,3 +53,15 @@ services:
       - "9411:9411"
     environment:
       STORAGE_TYPE: mem
+
+  redis:
+    image: redis:7.2
+    container_name: redis-luckylogistics
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:

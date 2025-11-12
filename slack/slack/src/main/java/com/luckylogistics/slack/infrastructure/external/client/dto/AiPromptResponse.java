@@ -1,10 +1,12 @@
 package com.luckylogistics.slack.infrastructure.external.client.dto;
 
+import java.time.Instant;
+
 import com.luckylogistics.slack.application.dto.AiPromptCreatedResult;
 
 public record AiPromptResponse(
 
-	String responseContent
+	Instant responseContent
 
 ) {
 
