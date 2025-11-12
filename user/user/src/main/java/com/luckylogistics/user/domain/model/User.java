@@ -3,6 +3,8 @@ package com.luckylogistics.user.domain.model;
 import java.util.UUID;
 
 import com.luckylogistics.user.application.dto.SignupCommand;
+import com.luckylogistics.user.common.exception.BusinessException;
+import com.luckylogistics.user.common.exception.ErrorCode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -81,11 +83,18 @@ public class User extends BaseEntity {
 		}
 	}
 
-	public void approve() {
+	public void approve(UserRole newRole) {
+		if (this.status != Status.PENDING) {
+			throw new BusinessException(ErrorCode.ALREADY_PROCESSED_USER);
+		}
+		this.role = newRole; // 승인 시 권한 설정
 		this.status = Status.APPROVED;
 	}
 
 	public void reject() {
+		if (this.status != Status.PENDING) {
+			throw new BusinessException(ErrorCode.ALREADY_PROCESSED_USER);
+		}
 		this.status = Status.REJECTED;
 	}
 }

@@ -16,6 +16,7 @@ import com.luckylogistics.user.infrastructure.client.CompanyClient;
 import com.luckylogistics.user.infrastructure.client.CompanyResponse;
 import com.luckylogistics.user.infrastructure.client.HubClient;
 import com.luckylogistics.user.infrastructure.client.HubResponse;
+import com.luckylogistics.user.presentation.request.UserStatusUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,13 +42,13 @@ public class UserService {
 			ApiResponse<HubResponse> response = hubClient.getHubById(command.organizationId());
 
 			if (response == null || response.data() == null)
-				throw new IllegalArgumentException("존재하지 않는 허브.");
+				throw new BusinessException(ErrorCode.HUB_NOT_FOUND);
 
 		} else if (command.organizationType().equals(OrganizationType.COMPANY)) {
 			ResponseEntity<CompanyResponse> response = companyClient.getCompany(command.organizationId());
 
 			if (response == null)
-				throw new IllegalArgumentException("존재하지 않는 허브.");
+				throw new BusinessException(ErrorCode.COMPANY_NOT_FOUND);
 		}
 
 		// 비밀번호 암호화
@@ -64,5 +65,24 @@ public class UserService {
 
 		User user = User.createPendingUser(encodedCommand);
 		return userRepository.save(user).getUserId();
+	}
+
+	public void updateStatus(Long userId, UserStatusUpdateRequest request) {
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+		switch (request.status().toUpperCase()) {
+			case "APPROVED" -> {
+				if (request.role() == null) {
+					throw new BusinessException(ErrorCode.USER_ROLE_REQUIRED);
+				}
+				user.approve(request.role());
+			}
+			case "REJECTED" -> {
+				user.reject();
+			}
+			default -> throw new BusinessException(ErrorCode.INVALID_USER_STATUS);
+		}
 	}
 }
