@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 
 @Getter
@@ -40,17 +41,21 @@ public abstract class BaseEntity {
 	@Column(name = "deleted_by", length = 100)
 	private String deletedBy;
 
-/*	비활성화 된 사용자 목록이 필요할 때
 	@Column(name = "isDeleted", nullable = false)
-	protected boolean isDeleted;*/
+	protected boolean isDeleted;
+
+	@PreUpdate
+	protected void onUpdate() {
+		this.updatedAt = LocalDateTime.now();
+	}
 
 	public void markDeleted(String deletedBy) {
 		this.deletedAt = LocalDateTime.now();
 		this.deletedBy = deletedBy;
-		//this.isDeleted = true;
+		this.isDeleted = true;
 	}
 
-	public boolean isDeleted() {
-		return this.deletedAt != null;
-	}
+	// public boolean isDeleted() {
+	// 	return this.deletedAt != null;
+	// }
 }

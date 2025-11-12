@@ -3,6 +3,8 @@ package com.luckylogistics.user.domain.model;
 import java.util.UUID;
 
 import com.luckylogistics.user.application.dto.SignupCommand;
+import com.luckylogistics.user.common.exception.BusinessException;
+import com.luckylogistics.user.common.exception.ErrorCode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +44,7 @@ public class User extends BaseEntity {
 	private String password;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "role", nullable = false)
+	@Column(name = "role")
 	private UserRole role;
 
 	@Enumerated(EnumType.STRING)
@@ -56,14 +58,33 @@ public class User extends BaseEntity {
 	@Column(name = "organization_type")
 	private OrganizationType organizationType;
 
+	@Column(name = "organization_id")
+	private UUID organizationId;
+
+	//@Column(name = "organization_name")
+	//private String organizationName;
+
 	public static User createPendingUser(SignupCommand command) {
 		return User.builder()
 			.username(command.username())
 			.password(command.password())
-			.role(UserRole.from(command.role()))
 			.status(Status.PENDING)
 			.slackId(command.slackId())
-			.organizationType(OrganizationType.from(command.organizationType()))
+			.organizationType(command.organizationType())
+			.organizationId(command.organizationId())
+			//.organizationName(command.organizationName())
+			.build();
+	}
+
+	public static User createMasterAdmin(String username, String password, String slackId) {
+		return User.builder()
+			.username(username)
+			.password(password)
+			.role(UserRole.MASTER_ADMIN)
+			.status(Status.APPROVED)
+			.slackId(slackId)
+			.organizationId(null)
+			.organizationType(null)
 			.build();
 	}
 
@@ -74,11 +95,22 @@ public class User extends BaseEntity {
 		}
 	}
 
-	public void approve() {
+	public void approve(UserRole newRole) {
+		if (this.status != Status.PENDING) {
+			throw new BusinessException(ErrorCode.ALREADY_PROCESSED_USER);
+		}
+		this.role = newRole; // 승인 시 권한 설정
 		this.status = Status.APPROVED;
 	}
 
 	public void reject() {
+		if (this.status != Status.PENDING) {
+			throw new BusinessException(ErrorCode.ALREADY_PROCESSED_USER);
+		}
 		this.status = Status.REJECTED;
+	}
+
+	public void updateInfo(String slackId) {
+		this.slackId = slackId;
 	}
 }
