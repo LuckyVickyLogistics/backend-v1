@@ -9,17 +9,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.luckylogistics.slack.application.dto.EmailCheckCommand;
-import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
 import com.luckylogistics.slack.application.dto.SlackEmailCheckResult;
 import com.luckylogistics.slack.application.dto.SlackMessageResult;
+import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
 import com.luckylogistics.slack.application.service.SlackService;
-import com.luckylogistics.slack.infrastructure.external.kafka.event.OrderCreatedEvent;
 import com.luckylogistics.slack.common.response.ApiResponse;
 import com.luckylogistics.slack.presentation.dto.SlackCheckInWorkSpaceResponse;
 import com.luckylogistics.slack.presentation.dto.SlackCheckInWorkspaceRequest;
@@ -36,13 +34,6 @@ import lombok.RequiredArgsConstructor;
 public class SlackController {
 
 	private final SlackService slackService;
-
-	// TODO: 테스트용 이벤트 생성 메서드로, 주문 서비스 개발 완료 후 삭제
-	@PostMapping("/publish")
-	public ResponseEntity<ApiResponse<Void>> publish(@RequestBody OrderCreatedEvent requestDto) {
-		slackService.publish(requestDto);
-		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("이벤트가 생성되었습니다."));
-	}
 
 	// TODO: 페이징 및 검색 구현
 	@GetMapping

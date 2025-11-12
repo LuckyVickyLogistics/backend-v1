@@ -12,20 +12,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.luckylogistics.slack.application.dto.EmailCheckCommand;
-import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
-import com.luckylogistics.slack.application.event.SlackKafkaEventPublisher;
-import com.luckylogistics.slack.application.external.AiServiceClient;
-import com.luckylogistics.slack.application.external.SlackClient;
 import com.luckylogistics.slack.application.dto.AiPromptCreatedResult;
+import com.luckylogistics.slack.application.dto.EmailCheckCommand;
 import com.luckylogistics.slack.application.dto.OrderCreatedResult;
 import com.luckylogistics.slack.application.dto.SlackEmailCheckResult;
 import com.luckylogistics.slack.application.dto.SlackMessageResult;
+import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
+import com.luckylogistics.slack.application.external.AiServiceClient;
+import com.luckylogistics.slack.application.external.SlackClient;
 import com.luckylogistics.slack.common.exception.BusinessException;
 import com.luckylogistics.slack.common.exception.ErrorCode;
 import com.luckylogistics.slack.domain.entity.SlackMessage;
 import com.luckylogistics.slack.domain.repository.SlackRepository;
-import com.luckylogistics.slack.infrastructure.external.kafka.event.OrderCreatedEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,17 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 public class SlackService {
 
 	private final SlackRepository slackRepository;
-	private final SlackKafkaEventPublisher slackEventPublisher;
 	private final SlackClient slackClient;
 	private final AiServiceClient aiServiceClient;
 
 	private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
 		.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-	// TODO: 실제로는 application 계층에서 infrastructure 계층을 참조하면 안됨
-	public void publish(OrderCreatedEvent requestDto) {
-		slackEventPublisher.publish(requestDto);
-	}
 
 	// @Transactional
 	public void sendMessage(OrderCreatedResult result, String receiverEmail, LocalTime startTime, LocalTime endTIme) {
