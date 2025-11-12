@@ -100,7 +100,7 @@ public class DeliveryService {
         return DeliveryResponse.from(delivery);
     }
 
-    private Delivery findDeliveryById(UUID id) {
+    public Delivery findDeliveryById(UUID id) {
         return deliveryRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
     }

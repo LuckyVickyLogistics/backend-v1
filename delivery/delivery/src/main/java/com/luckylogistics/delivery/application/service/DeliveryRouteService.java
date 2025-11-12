@@ -11,7 +11,6 @@ import com.luckylogistics.delivery.domain.model.Delivery;
 import com.luckylogistics.delivery.domain.model.DeliveryRoute;
 import com.luckylogistics.delivery.domain.model.DeliveryRouteStatus;
 import com.luckylogistics.delivery.domain.repository.DeliveryManagerRepository;
-import com.luckylogistics.delivery.domain.repository.DeliveryRepository;
 import com.luckylogistics.delivery.domain.repository.DeliveryRouteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,7 @@ import java.util.UUID;
 public class DeliveryRouteService {
 
     private final DeliveryRouteRepository routeRepository;
-    private final DeliveryRepository deliveryRepository;
+    private final DeliveryService deliveryService;
     private final DeliveryManagerRepository managerRepository;
     private final HubService hubService;
 
@@ -54,7 +53,7 @@ public class DeliveryRouteService {
         validateStatusChangePermission(route, currentUserId, currentUserRole);
 
         // 배송 조회 (Delivery)
-        Delivery delivery = findDeliveryById(route.getDeliveryId());
+        Delivery delivery = deliveryService.findDeliveryById(route.getDeliveryId());
 
         // 배송 경로 상태 변경 (자신의 상태만)
         route.changeStatus(request.status(), request.actualDistance(), request.actualDuration());
@@ -71,11 +70,6 @@ public class DeliveryRouteService {
     private DeliveryRoute findDeliveryRouteByIdWithManager(UUID deliveryRouteId) {
         return routeRepository.findByIdWithManager(deliveryRouteId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_ROUTE_NOT_FOUND));
-    }
-
-    private Delivery findDeliveryById(UUID deliveryId) {
-        return deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
     }
 
     /**
@@ -126,7 +120,7 @@ public class DeliveryRouteService {
         // 배송 경로 조회
         DeliveryRoute route = findDeliveryRouteByIdWithManager(routeId);
         // 배송 조회
-        Delivery delivery = findDeliveryById(route.getDeliveryId());
+        Delivery delivery = deliveryService.findDeliveryById(route.getDeliveryId());
         // 조회 권한 검증
         validateReadPermission(delivery, route, currentUserId, currentUserRole);
         // 응답 반환
