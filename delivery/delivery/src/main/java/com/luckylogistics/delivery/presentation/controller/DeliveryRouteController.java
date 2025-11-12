@@ -1,5 +1,6 @@
 package com.luckylogistics.delivery.presentation.controller;
 
+import com.luckylogistics.delivery.application.dto.DeliveryRouteResponse;
 import com.luckylogistics.delivery.application.dto.UpdateDeliveryRouteResponse;
 import com.luckylogistics.delivery.application.dto.UpdateDeliveryRouteStatusRequest;
 import com.luckylogistics.delivery.application.service.DeliveryRouteService;
@@ -29,5 +30,21 @@ public class DeliveryRouteController {
         UpdateDeliveryRouteResponse response = deliveryRouteService.updateDeliveryRouteStatus(
                 routeId, request, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(response, "배송 경로 상태가 변경되었습니다"));
+    }
+
+    @GetMapping("/{deliveryRouteId}")
+    public ResponseEntity<ApiResponse<DeliveryRouteResponse>> getDeliveryRoute(
+            @PathVariable UUID deliveryRouteId,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
+    ) {
+
+        DeliveryRouteResponse response = deliveryRouteService.getDeliveryRoute(
+                deliveryRouteId,
+                currentUserId,
+                currentUserRole
+        );
+
+        return ResponseEntity.ok(ApiResponse.success(response, "배송 경로가 조회되었습니다"));
     }
 }
