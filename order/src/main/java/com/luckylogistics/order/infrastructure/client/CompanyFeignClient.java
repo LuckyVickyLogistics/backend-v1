@@ -11,9 +11,6 @@ import com.luckylogistics.order.infrastructure.client.dto.GetCompanyClientRespon
 
 @FeignClient(name = "company", path = "/api/v1/companies")
 public interface CompanyFeignClient {
-    @GetMapping("/{companyId}")
-    boolean isCompanyIdExists(@PathVariable("companyId") UUID companyId);
-
-	@GetMapping("/companyId")
+	@GetMapping("/{companyId}")
 	ApiResponse<GetCompanyClientResponse> getCompany(@PathVariable("companyId") UUID companyId);
 }
