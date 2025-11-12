@@ -1,21 +1,13 @@
+server:
+  port: 19094
+
 spring:
   application:
     name: hub
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/luckylogistics
-    username: luckyvicky
-    password: luckyvicky
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update   # 개발 중이면 update / 초기엔 create-drop 가능
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    include:
+      - datasource
 
   jackson:
     time-zone: Asia/Seoul
@@ -24,5 +16,3 @@ spring:
     ansi:
       enabled: always
 
-server:
-  port: 8080
