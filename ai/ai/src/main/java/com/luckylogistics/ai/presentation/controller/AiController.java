@@ -1,8 +1,9 @@
 package com.luckylogistics.ai.presentation.controller;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
@@ -20,6 +22,7 @@ import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
 import com.luckylogistics.ai.application.service.AiService;
 import com.luckylogistics.ai.common.response.ApiResponse;
+import com.luckylogistics.ai.domain.vo.Status;
 import com.luckylogistics.ai.presentation.dto.AiPromptCreatedRequest;
 import com.luckylogistics.ai.presentation.dto.AiPromptCreatedResponse;
 import com.luckylogistics.ai.presentation.dto.AiPromptDetailResponse;
@@ -51,14 +54,19 @@ public class AiController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("AI 프롬프트가 생성되었습니다.", responseDto));
 	}
 
-	// TODO: 페이징 및 검색 구현
 	@Operation(summary = "AI 프롬프트 목록 조회", description = "마스터 관리자만 사용 가능합니다.")
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<AiPromptSummaryResponse>>> getAllPrompts() {
-		List<AiPromptReadResult> resultList = aiService.getAllPrompts();
-		List<AiPromptSummaryResponse> responseDtoList = resultList.stream().map(AiPromptSummaryResponse::from).toList();
+	public ResponseEntity<ApiResponse<Page<AiPromptSummaryResponse>>> getAllPrompts(
+		@RequestParam(required = false) Status status,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "createdAt") String sortBy,
+		@RequestParam(defaultValue = "DESC") Sort.Direction direction
+	) {
+		Page<AiPromptSummaryResponse> responseDtoPage = aiService.getAllPrompts(status, page, size, sortBy, direction)
+			.map(AiPromptSummaryResponse::from);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("AI 프롬프트 목록이 조회되었습니다.", responseDtoList));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("AI 프롬프트 목록이 조회되었습니다.", responseDtoPage));
 	}
 
 	@Operation(summary = "AI 프롬프트 조회", description = "마스터 관리자만 사용 가능합니다.")
