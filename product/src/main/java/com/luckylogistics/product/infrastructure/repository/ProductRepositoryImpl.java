@@ -39,5 +39,33 @@ public class ProductRepositoryImpl implements ProductRepository {
         return  productJPARepository.findByProductNameContainingIgnoreCase(keyword);
     }
 
+    @Override
+    public Optional<Product> findByProductIdAndCompanyId(UUID productId, UUID companyId) {
+        return productJPARepository.findByProductIdAndCompanyId(productId, companyId);
+    }
 
+    @Override
+    public Optional<Product> findByProductIdAndHubId(UUID productId, UUID hubId) {
+        return productJPARepository.findByProductIdAndHubId(productId, hubId);
+    }
+
+    @Override
+    public List<Product> findByHubIdAndProductNameContainingIgnoreCase(UUID hubId, String keyword) {
+        return productJPARepository.findByHubIdAndProductNameContainingIgnoreCase(hubId, keyword);
+    }
+
+    @Override
+    public List<Product> findByCompanyIdAndProductNameContainingIgnoreCase(UUID companyId, String keyword) {
+        return productJPARepository.findByCompanyIdAndProductNameContainingIgnoreCase(companyId, keyword);
+    }
+
+    @Override
+    public List<Product> findByHubId(UUID hubId) {
+        return productJPARepository.findByHubId(hubId);
+    }
+
+    @Override
+    public List<Product> findByCompanyId(UUID companyId) {
+        return productJPARepository.findByCompanyId(companyId);
+    }
 }

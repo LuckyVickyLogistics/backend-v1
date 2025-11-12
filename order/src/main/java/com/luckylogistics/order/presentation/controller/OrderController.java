@@ -42,13 +42,13 @@ public class OrderController {
 	}
 
 
-    //FeignClient의 orderId 체크하는 메소드 추가
-    @Operation(summary = "FeignClient 조회 메서드", description = "FeginClient 주문 체크용")
-    @GetMapping("/{orderId}")
-    public ResponseEntity<ApiResponse<Boolean>> isOrderIdExists(@PathVariable(name = "orderId") UUID orderId){
-        Boolean result = orderService.checkOrder(orderId);
-        return ResponseEntity.ok(ApiResponse.success(result,"FeignClient: 주문 정상 조회 되었습니다."));
-    }
+//    //FeignClient의 orderId 체크하는 메소드 추가
+//    @Operation(summary = "FeignClient 조회 메서드", description = "FeginClient 주문 체크용")
+//    @GetMapping("/{orderId}")
+//    public ResponseEntity<ApiResponse<Boolean>> isOrderIdExists(@PathVariable(name = "orderId") UUID orderId){
+//        Boolean result = orderService.checkOrder(orderId);
+//        return ResponseEntity.ok(ApiResponse.success(result,"FeignClient: 주문 정상 조회 되었습니다."));
+//    }
 
 
     //전체 조회, 추후에 권한 추가 필요 (user는 본인, master 는 전부 볼수 있음)
@@ -61,8 +61,8 @@ public class OrderController {
 
     //주문 단건을 조회함
     @Operation(summary ="주문 단건 조회", description = "주문 단건을 조회한다.")
-    @GetMapping("/searchOne/{orderId}")
-    public ResponseEntity<ApiResponse<OrderResponse>> getOrderById(@PathVariable("orderId") UUID orderId){
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrder(@PathVariable("orderId") UUID orderId){
         OrderResponse result = OrderResponse.from(orderService.getOrderById(orderId));
         return ResponseEntity.ok(ApiResponse.success(result,"주문 단건 조회 결과입니다."));
     }

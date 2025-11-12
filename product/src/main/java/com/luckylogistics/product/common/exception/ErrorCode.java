@@ -35,6 +35,8 @@ public enum ErrorCode {
     QUANTITY_AMOUNT_ERROR(HttpStatus.BAD_REQUEST, "P-016", "추가 및 삭제하려고 하는 상품 개수는 총 수량을 넘길 수 없습니다."),
     QUANTITY_PLUS_EXCEED(HttpStatus.BAD_REQUEST, "P-017", "추가한 수량의 합이 총 수량을 초과합니다."),
     QUANTITY_PLUS_NONZERO(HttpStatus.BAD_REQUEST, "P-018", "추가할 재고를 1개 이상 선택해야 합니다."),
+    PRODUCT_HUB_MANAGER_ERROR(HttpStatus.BAD_REQUEST, "P-019", "해당 허브의 담당자가 아닙니다."),
+    PRODCUT_COMP_MANAGER_ERROR(HttpStatus.BAD_REQUEST, "P-020", "해당 업체의 담당자가 아닙니다.")
     ;
 
     private final HttpStatus status;
