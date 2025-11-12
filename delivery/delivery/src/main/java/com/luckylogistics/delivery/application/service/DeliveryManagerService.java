@@ -44,7 +44,7 @@ public class DeliveryManagerService {
     ) {
         log.info("[DeliveryManager] 배송 담당자 생성 시작. userId: {}, type: {}", request.deliveryManagerId(), request.type());
         // 외부 User 서비스: USER 도메인에서 배송 담당자 타입 검증
-        userService.validateDeliveryManagerRole(request.deliveryManagerId());
+        userService.validateUserIsDeliveryManager(request.deliveryManagerId());
         // 도메인 서비스: 중복 검증
         domainService.validateNotDuplicate(request.deliveryManagerId());
         // Hub ID 검증
@@ -113,7 +113,7 @@ public class DeliveryManagerService {
         }
 
         if (currentUserRole.isHubManager()) {
-            UUID hubId = hubService.getUserHubId(currentUserId);
+            UUID hubId = hubService.getHubByUserId(currentUserId);
 
             if (!manager.belongsToHub(hubId)) {
                 throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
@@ -176,7 +176,7 @@ public class DeliveryManagerService {
         }
 
         if (currentUserRole.isHubManager()) {
-            UUID hubId = hubService.getUserHubId(currentUserId);
+            UUID hubId = hubService.getHubByUserId(currentUserId);
 
             if (!manager.belongsToHub(hubId)) {
                 throw new BusinessException(ErrorCode.HUB_MANAGER_FORBIDDEN);
@@ -276,7 +276,7 @@ public class DeliveryManagerService {
         }
 
         // 허브 관리자
-        UUID myHubId = hubService.getUserHubId(currentUserId);
+        UUID myHubId = hubService.getHubByUserId(currentUserId);
         if (myHubId == null) {
             throw new BusinessException(ErrorCode.USER_HUB_NOT_FOUND);
         }
