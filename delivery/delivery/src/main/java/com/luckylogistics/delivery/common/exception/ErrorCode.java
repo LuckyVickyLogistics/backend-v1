@@ -40,6 +40,8 @@ public enum ErrorCode {
     FORBIDDEN_ROUTE_MODIFY(HttpStatus.FORBIDDEN, "DR-004", "해당 배송 경로를 수정할 권한이 없습니다"),
     FORBIDDEN_NOT_HUB_ROUTE(HttpStatus.FORBIDDEN, "DR-005", "담당 허브의 배송 경로가 아닙니다"),
     FORBIDDEN_NOT_ASSIGNED_ROUTE(HttpStatus.FORBIDDEN, "DR-006", "배정된 경로가 아닙니다"),
+    FORBIDDEN_ROUTE_SEARCH(HttpStatus.FORBIDDEN, "DR-007", "해당 배송 경로 목록을 조회할 권한이 없습니다."),
+    FORBIDDEN_DELIVERY_MANAGER_ROUTE(HttpStatus.FORBIDDEN, "DR-008", "본인이 담당하는 경로만 조회할 수 있습니다"),
 
     // Hub
     HUB_MANAGER_FORBIDDEN(HttpStatus.FORBIDDEN, "H-001","허브 관리자는 다른 허브의 데이터를 조회할 수 없습니다"),
