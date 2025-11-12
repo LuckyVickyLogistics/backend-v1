@@ -14,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -74,6 +73,18 @@ public class User extends BaseEntity {
 			.organizationType(command.organizationType())
 			.organizationId(command.organizationId())
 			//.organizationName(command.organizationName())
+			.build();
+	}
+
+	public static User createMasterAdmin(String username, String password, String slackId) {
+		return User.builder()
+			.username(username)
+			.password(password)
+			.role(UserRole.MASTER_ADMIN)
+			.status(Status.APPROVED)
+			.slackId(slackId)
+			.organizationId(null)
+			.organizationType(null)
 			.build();
 	}
 
