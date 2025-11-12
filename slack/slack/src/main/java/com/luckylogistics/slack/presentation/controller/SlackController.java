@@ -1,8 +1,9 @@
 package com.luckylogistics.slack.presentation.controller;
 
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.luckylogistics.slack.application.dto.EmailCheckCommand;
@@ -19,6 +21,7 @@ import com.luckylogistics.slack.application.dto.SlackMessageResult;
 import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
 import com.luckylogistics.slack.application.service.SlackService;
 import com.luckylogistics.slack.common.response.ApiResponse;
+import com.luckylogistics.slack.domain.vo.Status;
 import com.luckylogistics.slack.presentation.dto.SlackCheckInWorkSpaceResponse;
 import com.luckylogistics.slack.presentation.dto.SlackCheckInWorkspaceRequest;
 import com.luckylogistics.slack.presentation.dto.SlackDetailResponse;
@@ -41,13 +44,18 @@ public class SlackController {
 	// TODO: 페이징 및 검색 구현
 	@Operation(summary = "슬랙 메시지 목록 조회", description = "마스터 관리자만 사용 가능합니다.")
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<SlackSummaryResponse>>> getAllMessages() {
-		List<SlackMessageResult> resultList = slackService.getAllMessages();
-		List<SlackSummaryResponse> responseDtoList = resultList.stream()
-			.map(SlackSummaryResponse::from)
-			.toList();
+	public ResponseEntity<ApiResponse<Page<SlackSummaryResponse>>> getAllMessages(
+		@RequestParam(required = false) String receiverEmail,
+		@RequestParam(required = false) Status status,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "createdAt") String sortBy,
+		@RequestParam(defaultValue = "DESC") Sort.Direction direction
+	) {
+		Page<SlackSummaryResponse> responseDtoPage = slackService.getAllMessages(receiverEmail, status, page, size, sortBy, direction)
+			.map(SlackSummaryResponse::from);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지 목록이 조회되었습니다.", responseDtoList));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지 목록이 조회되었습니다.", responseDtoPage));
 	}
 
 	@Operation(summary = "슬랙 메시지 조회", description = "마스터 관리자만 사용 가능합니다.")

@@ -2,9 +2,11 @@ package com.luckylogistics.slack.application.service;
 
 import java.time.Instant;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +24,10 @@ import com.luckylogistics.slack.application.external.AiServiceClient;
 import com.luckylogistics.slack.application.external.SlackClient;
 import com.luckylogistics.slack.common.exception.BusinessException;
 import com.luckylogistics.slack.common.exception.ErrorCode;
+import com.luckylogistics.slack.common.util.PageableUtils;
 import com.luckylogistics.slack.domain.entity.SlackMessage;
 import com.luckylogistics.slack.domain.repository.SlackRepository;
+import com.luckylogistics.slack.domain.vo.Status;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,8 +64,13 @@ public class SlackService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<SlackMessageResult> getAllMessages() {
-		return slackRepository.findAll().stream().map(SlackMessageResult::from).toList();
+	public Page<SlackMessageResult> getAllMessages(
+		String receiverEmail, Status status, int page, int size, String sortBy, Sort.Direction direction
+	) {
+		Pageable pageable = PageableUtils.createPageable(page, size, sortBy, direction);
+
+		return slackRepository.findAllByReceiverEmailAndStatusAndDeletedAtIsNull(receiverEmail, status, pageable)
+			.map(SlackMessageResult::from);
 	}
 
 	@Transactional(readOnly = true)
