@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
-@FeignClient(name = "delivery")
+@FeignClient(name = "delivery", path = "/api/v1/deliveries")
 public interface DeliveryFeignClient {
     //단건조회 메소드로 이름 바꿀 필요 있음
     @GetMapping("/{deliveryId}")

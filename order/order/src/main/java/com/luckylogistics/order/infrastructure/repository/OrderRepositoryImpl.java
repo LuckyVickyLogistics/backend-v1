@@ -32,4 +32,23 @@ public class OrderRepositoryImpl implements OrderRepository {
 		return orderJPARepository.findAll();
 	}
 
+    @Override
+    public Optional<Order> findByOrderIdAndDeliveryId(UUID orderId, UUID deliveryId) {
+        return orderJPARepository.findByOrderIdAndDeliveryId(orderId, deliveryId);
+    }
+
+    @Override
+    public Optional<Order> findByOrderIdAndCreatedBy(UUID orderId, String createdBy) {
+        return orderJPARepository.findByOrderIdAndCreatedBy(orderId, createdBy);
+    }
+
+    @Override
+    public List<Order> findAllByDeliveryId(UUID deliveryId) {
+        return orderJPARepository.findAllByDeliveryId(deliveryId);
+    }
+
+    @Override
+    public List<Order> findAllByCreatedBy(String createdBy) {
+        return orderJPARepository.findAllByCreatedBy(createdBy);
+    }
 }
