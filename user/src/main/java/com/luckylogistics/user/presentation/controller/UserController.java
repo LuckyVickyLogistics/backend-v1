@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.user.application.dto.SignupCommand;
 import com.luckylogistics.user.application.dto.UserDeactiveCommand;
 import com.luckylogistics.user.application.dto.UserResponse;
@@ -23,10 +25,13 @@ import com.luckylogistics.user.presentation.request.UserUpdateRequest;
 import com.luckylogistics.user.presentation.response.UserDetailResponse;
 import com.luckylogistics.user.presentation.response.UserListResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "user api", description = "user domain api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -35,6 +40,7 @@ public class UserController {
 	private final UserService userService;
 
 	// 회원가입
+	@Operation(summary = "회원가입")
 	@PostMapping("/signup")
 	public ResponseEntity<ApiResponse<String>> signup(@Valid @RequestBody UserSignupRequest request) {
 
@@ -52,55 +58,79 @@ public class UserController {
 	}
 
 	// 회원가입 요청 처리 (master, hub)
+	@Operation(summary = "회원가입 요청 처리(승인, 거절)", description = "master, hub manager 권한")
 	@PutMapping("/{userId}/status")
 	public ResponseEntity<ApiResponse<UserResponse>> updateStatus(
 		@PathVariable Long userId,
-		@RequestBody UserStatusUpdateRequest request
+		@RequestBody UserStatusUpdateRequest request,
+		@RequestHeader("X-User-Id") Long currentUserId,
+		@RequestHeader("X-User-Role") UserRole currentUserRole
 	) {
-		UserResponse updatedUser = userService.updateStatus(userId, request);
+		UserResponse updatedUser = userService.updateStatus(userId, request, currentUserId, currentUserRole);
 		return ResponseEntity.ok(ApiResponse.success(updatedUser, "회원가입 요청을 처리했습니다."));
 	}
 
 	// 내 정보 조회
+	@Operation(summary = "내 정보 조회", description = "로그인한 사용자의 내 정보 조회")
 	@GetMapping("/me")
-	public ResponseEntity<ApiResponse<UserResponse>> getMyInfo(HttpServletRequest request) {
+	public ResponseEntity<ApiResponse<UserResponse>> getMyInfo(
+		HttpServletRequest request
+	) {
 		UserResponse myInfo = userService.getMyInfo(request);
 		return ResponseEntity.ok(ApiResponse.success(myInfo, "내 정보 조회를 완료했습니다."));
 	}
 
-	// 내 정보 수정
+	// 정보 수정 (master)
+	@Operation(summary = "회원 정보 수정", description = "master 권한")
 	@PutMapping("/{userId}")
 	public ResponseEntity<ApiResponse<UserResponse>> updateUser(
 		@PathVariable Long userId,
-		@RequestBody @Valid UserUpdateRequest request
+		@RequestBody @Valid UserUpdateRequest request,
+		@RequestHeader("X-User-Id") Long currentUserId,
+		@RequestHeader("X-User-Role") UserRole currentUserRole
 	) {
 		UserResponse updatedUser = userService.updateUser(
 			UserUpdateCommand.builder()
-				.userId(userId)
+				.userId(currentUserId)
 				.slackId(request.slackId())
-				.build()
+				.build(),
+			currentUserRole
 		);
 		return ResponseEntity.ok(ApiResponse.success(updatedUser, "회원 정보를 수정했습니다."));
 	}
 
 	// 전체 회원 조회 (master)
+	@Operation(summary = "전체 회원 목록 조회", description = "master 권한")
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<UserListResponse>>> getAllUsers() {
-		List<UserListResponse> users = userService.getAllUsers();
+	public ResponseEntity<ApiResponse<List<UserListResponse>>> getAllUsers(
+		@RequestHeader("X-User-Id") Long currentUserId,
+		@RequestHeader("X-User-Role") UserRole currentUserRole
+	) {
+		List<UserListResponse> users = userService.getAllUsers(currentUserRole);
 		return ResponseEntity.ok(ApiResponse.success(users, "전체 회원 목록을 조회를 완료했습니다."));
 	}
 
 	// 회원 상세 조회 (master)
+	@Operation(summary = "회원 상세 조회", description = "master 권한")
 	@GetMapping("/{userId}")
-	public ResponseEntity<ApiResponse<UserDetailResponse>> getUserById(@PathVariable Long userId) {
-		UserDetailResponse user = userService.getUserById(userId);
+	public ResponseEntity<ApiResponse<UserDetailResponse>> getUserById(
+		@PathVariable Long userId,
+		@RequestHeader("X-User-Id") Long currentUserId,
+		@RequestHeader("X-User-Role") UserRole currentUserRole
+	) {
+		UserDetailResponse user = userService.getUserById(userId, currentUserRole);
 		return ResponseEntity.ok(ApiResponse.success(user, "회원 상세 조회를 완료했습니다."));
 	}
 
 	// 회원 비활성화 (master)
+	@Operation(summary = "회원 비활성화", description = "master 권한")
 	@PutMapping("/{userId}/deactivate")
-	public ResponseEntity<ApiResponse<Void>> deactiveUser(@PathVariable Long userId, HttpServletRequest request) {
-		userService.deactiveUser(UserDeactiveCommand.builder().userId(userId).build(), request);
+	public ResponseEntity<ApiResponse<Void>> deactiveUser(
+		@PathVariable Long userId, HttpServletRequest request,
+		@RequestHeader("X-User-Id") Long currentUserId,
+		@RequestHeader("X-User-Role") UserRole currentUserRole
+	) {
+		userService.deactiveUser(UserDeactiveCommand.builder().userId(userId).build(), request, currentUserRole);
 		return ResponseEntity.ok(ApiResponse.success("회원이 비활성화 되었습니다."));
 	}
 }

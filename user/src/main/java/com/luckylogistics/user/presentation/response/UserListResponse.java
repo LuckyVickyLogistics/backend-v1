@@ -2,10 +2,10 @@ package com.luckylogistics.user.presentation.response;
 
 import java.util.UUID;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.user.domain.model.OrganizationType;
 import com.luckylogistics.user.domain.model.Status;
 import com.luckylogistics.user.domain.model.User;
-import com.luckylogistics.user.domain.model.UserRole;
 
 public record UserListResponse (
 	Long userId,
