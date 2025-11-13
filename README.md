@@ -273,41 +273,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 
 <br>
 
-## ⭐ CI/CD
-<details>
-  <summary><strong> 수정 필요 </strong></summary>
-    <div markdown="1"> 
-      <h3>main 브랜치에 Push 시 자동으로 빌드/테스트/배포가 진행됩니다</h3>
 
-      ```yaml
-      - 코드 체크아웃
-      - Gradle 빌드 및 테스트
-      - Docker 이미지 빌드
-      - EC2로 이미지 전송
-      - 컨테이너 실행
-      ```
-      
-      <p>✅ 테스트 통과 후 자동 배포</p>
-      <p>✅ Docker를 통한 일관된 실행 환경</p>
-      <p>✅ EC2에서 안정적인 서비스 제공</p>
-</details>
-
-<details>
-  <summary><strong> Docker(수정 필요) </strong></summary>
-    <div markdown="1"> 
-        <h3>Dockerfile을 통한 msa 작업과 컨테이너 빌드로 개인 개발 환경 유지</h3>
-
-        ```dockerfile
-        FROM openjdk:17-jdk-slim
-        COPY build/libs/*.jar app.jar
-        ENTRYPOINT ["java","-jar","/app.jar"]
-        ```
-        
-        <p>✅ 개발/운영 환경 동일화</p>
-        <p>✅ 빠른 배포와 롤백</p>
-</details>
-
-</br>
 
 ## 🐞 Trouble Shooting (수정 필요)
 
