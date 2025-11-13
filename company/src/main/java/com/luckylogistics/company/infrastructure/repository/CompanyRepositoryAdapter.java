@@ -1,6 +1,6 @@
 package com.luckylogistics.company.infrastructure.repository;
 
-import com.luckylogistics.company.domain.CompanyRepository;
+import com.luckylogistics.company.domain.repository.CompanyRepository;
 import com.luckylogistics.company.domain.entity.Company;
 import java.util.List;
 import java.util.Optional;

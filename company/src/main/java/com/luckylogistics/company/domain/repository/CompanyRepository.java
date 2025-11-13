@@ -1,4 +1,4 @@
-package com.luckylogistics.company.domain;
+package com.luckylogistics.company.domain.repository;
 
 import com.luckylogistics.company.domain.entity.Company;
 import java.util.List;

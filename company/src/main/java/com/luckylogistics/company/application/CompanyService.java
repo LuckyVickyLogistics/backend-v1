@@ -5,11 +5,9 @@ import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import com.luckylogistics.company.application.dto.CompanyRequest;
 import com.luckylogistics.company.application.dto.CompanyResponse;
 import com.luckylogistics.company.application.external.HubService;
-import com.luckylogistics.company.common.exception.BusinessException;
-import com.luckylogistics.company.common.exception.ErrorCode;
 import com.luckylogistics.company.domain.CompanyDomainService;
-import com.luckylogistics.company.domain.CompanyRepository;
 import com.luckylogistics.company.domain.entity.Company;
+import com.luckylogistics.company.domain.repository.CompanyRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +38,7 @@ public class CompanyService {
     }
 
     public CompanyResponse getCompany(UUID companyId) {
-        Company company = companyRepository.findById(companyId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+        Company company = findCompany(companyId);
         return CompanyResponse.from(company);
     }
 
@@ -56,15 +53,22 @@ public class CompanyService {
     @Transactional
     public void updateCompany(UUID companyId, CompanyRequest request) {
         hubService.isHubExists(request.hubId());
-        Company company = companyRepository.findById(companyId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
+        Company company = findCompany(companyId);
         company.update(request.name(), request.address(), request.type(), request.hubId());
     }
 
     @Transactional
-    public void deleteCompany(String userId, UUID companyId) {
-        Company company = companyRepository.findById(companyId)
+    public void deleteCompany(Long userId, UUID companyId) {
+        Company company = findCompany(companyId);
+        company.delete(userId);
+    }
+
+    public void validateCompany(UUID companyId) {
+        findCompany(companyId);
+    }
+
+    private Company findCompany(UUID companyId) {
+        return companyRepository.findById(companyId)
             .orElseThrow(() -> new BusinessException(ErrorCode.COMPANY_NOT_FOUND));
-        company.delete(Long.valueOf(userId));
     }
 }

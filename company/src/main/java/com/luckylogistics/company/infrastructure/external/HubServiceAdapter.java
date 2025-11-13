@@ -1,10 +1,6 @@
 package com.luckylogistics.company.infrastructure.external;
 
-import com.luckylogistics.common.infrastructure.exception.BusinessException;
-import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import com.luckylogistics.company.application.external.HubService;
-import com.luckylogistics.company.common.exception.BusinessException;
-import com.luckylogistics.company.common.exception.ErrorCode;
 import com.luckylogistics.company.infrastructure.client.HubFeignClient;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +13,6 @@ public class HubServiceAdapter implements HubService {
 
     @Override
     public void isHubExists(UUID hubId){
-        if (!(hubFeignClient.isHubExists(hubId))){
-            throw new BusinessException(ErrorCode.HUB_NOT_FOUND);
-        };
+        hubFeignClient.getHub(hubId); // 없다면 hub 쪽에서 예외처리
     }
 }
