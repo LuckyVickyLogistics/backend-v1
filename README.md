@@ -142,6 +142,16 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 
   </details> 
 
+  <details>
+  <summary><strong> 9️⃣ Kafka </strong></summary>  
+  <div markdown="1">     
+
+    1.실시간 스트림 처리 구조를 구성하여 재고 동기화, 주문 상태 업데이트, 알림 기능 등을 효율적으로 구현할 수 있습니다.
+    2.Kafka는 대용량 실시간 데이터 처리에 강해 주문 생성, 재고 변경, 배송 상태 변경 등 이벤트 기반 처리에 적합합니다.
+    3.MSA 환경에서 서비스 간 직접적인 의존성을 줄이고, 비동기 이벤트 기반 통신을 가능하게 하여 시스템 결합도를 낮춥니다.
+
+  </details> 
+
 </div>
 </details>
 </br>
