@@ -9,7 +9,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  * JPA Auditing 설정 X-User-Id 헤더를 createdBy, updatedBy에 자동 주입
  */
-@Component
+@Component("headerAuditorAware")
 public class HeaderAuditorAware implements AuditorAware<Long> {
 
     @Override
