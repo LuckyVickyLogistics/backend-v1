@@ -1,5 +1,6 @@
 package com.luckylogistics.hub.presentation.controller;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.hub.application.dto.*;
 import com.luckylogistics.hub.application.service.HubManagerService;
 import com.luckylogistics.hub.presentation.ApiResponse;
@@ -19,10 +20,11 @@ public class HubManagerController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<HubManagerCreateResponse>> createHubManager(
-            @RequestBody HubManagerCreateRequest requestDto
+            @RequestBody HubManagerCreateRequest requestDto,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
-        Long userId = 1L;
-        HubManagerCreateResponse response = hubManagerService.createHubManager(requestDto, userId);
+        HubManagerCreateResponse response = hubManagerService.createHubManager(requestDto, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -60,19 +62,22 @@ public class HubManagerController {
     @PutMapping("/{managerId}")
     public ResponseEntity<ApiResponse<HubManagerResponse>> updateHubManager(
             @PathVariable UUID managerId,
-            @RequestBody HubManagerUpdateRequest requestDto
+            @RequestBody HubManagerUpdateRequest requestDto,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
-        Long userId = 1L;
-        HubManagerResponse hubManagerResponse = hubManagerService.updateHubManager(managerId, requestDto, userId);
+
+        HubManagerResponse hubManagerResponse = hubManagerService.updateHubManager(managerId, requestDto, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(hubManagerResponse));
     }
 
     @DeleteMapping("/{managerId}")
     public ResponseEntity<ApiResponse<Void>> deleteHubManager(
-            @PathVariable UUID managerId
+            @PathVariable UUID managerId,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
-        Long userId = 1L;
-        hubManagerService.deleteHubManager(managerId,userId);
+        hubManagerService.deleteHubManager(managerId,currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success());
     }
 }

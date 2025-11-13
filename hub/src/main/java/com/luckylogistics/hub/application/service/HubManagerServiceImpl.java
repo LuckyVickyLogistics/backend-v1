@@ -1,5 +1,6 @@
 package com.luckylogistics.hub.application.service;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.hub.application.dto.*;
 import com.luckylogistics.hub.application.exception.HubNotFoundException;
 import com.luckylogistics.hub.domain.model.Hub;
@@ -22,7 +23,12 @@ public class HubManagerServiceImpl implements HubManagerService {
     private final HubRepository hubRepository;
 
     @Override
-    public HubManagerCreateResponse createHubManager(HubManagerCreateRequest request, Long userId) {
+    public HubManagerCreateResponse createHubManager(HubManagerCreateRequest request, Long userId, UserRole currentUserRole) {
+
+        if(!currentUserRole.isMaster()){
+            throw new IllegalArgumentException("허가되지 않은 접근입니다.");
+        }
+
         HubManager hubManager = HubManager.create(
                 request.userId(),
                 request.name(),
@@ -75,7 +81,12 @@ public class HubManagerServiceImpl implements HubManagerService {
     }
 
     @Override
-    public HubManagerResponse updateHubManager(UUID hubManagerId, HubManagerUpdateRequest request, Long userId) {
+    public HubManagerResponse updateHubManager(UUID hubManagerId, HubManagerUpdateRequest request, Long userId, UserRole currentUserRole) {
+
+        if(!currentUserRole.isMaster()){
+            throw new IllegalArgumentException("허가되지 않은 접근입니다.");
+        }
+
         HubManager hubManager = repository.findActiveByManagerId(hubManagerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 삭제된 매니저입니다."));
 
@@ -89,7 +100,12 @@ public class HubManagerServiceImpl implements HubManagerService {
     }
 
     @Override
-    public void deleteHubManager(UUID hubManagerId, Long userId) {
+    public void deleteHubManager(UUID hubManagerId, Long userId, UserRole currentUserRole) {
+
+        if(!currentUserRole.isMaster()){
+            throw new IllegalArgumentException("허가되지 않은 접근입니다.");
+        }
+
         HubManager hubManager = repository.findActiveByManagerId(hubManagerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 삭제된 매니저입니다."));
         hubManager.delete(userId);
