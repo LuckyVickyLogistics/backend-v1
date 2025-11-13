@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.slack.application.dto.EmailCheckCommand;
 import com.luckylogistics.slack.application.dto.SlackEmailCheckResult;
 import com.luckylogistics.slack.application.dto.SlackMessageResult;
 import com.luckylogistics.slack.application.dto.StatusUpdateCommand;
 import com.luckylogistics.slack.application.service.SlackService;
-import com.luckylogistics.slack.common.response.ApiResponse;
 import com.luckylogistics.slack.domain.vo.Status;
 import com.luckylogistics.slack.presentation.dto.SlackCheckInWorkSpaceResponse;
 import com.luckylogistics.slack.presentation.dto.SlackCheckInWorkspaceRequest;
@@ -55,7 +55,7 @@ public class SlackController {
 		Page<SlackSummaryResponse> responseDtoPage = slackService.getAllMessages(receiverEmail, status, page, size, sortBy, direction)
 			.map(SlackSummaryResponse::from);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지 목록이 조회되었습니다.", responseDtoPage));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDtoPage, "Slack 메시지 목록이 조회되었습니다."));
 	}
 
 	@Operation(summary = "슬랙 메시지 조회", description = "마스터 관리자만 사용 가능합니다.")
@@ -64,7 +64,7 @@ public class SlackController {
 		SlackMessageResult result = slackService.getMessage(slackMessageId);
 		SlackDetailResponse responseDto = SlackDetailResponse.from(result);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 메시지가 조회되었습니다.", responseDto));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto, "Slack 메시지가 조회되었습니다."));
 	}
 
 	@Operation(summary = "슬랙 워크스페이스 가입 여부 확인", description = "모두 사용 가능합니다.")
@@ -76,7 +76,7 @@ public class SlackController {
 		SlackEmailCheckResult result = slackService.checkInWorkspace(command);
 		SlackCheckInWorkSpaceResponse responseDto = SlackCheckInWorkSpaceResponse.from(result);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Slack 워크스페이스 가입 여부가 확인되었습니다.", responseDto));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto, "Slack 워크스페이스 가입 여부가 확인되었습니다."));
 	}
 
 	@Operation(summary = "슬랙 메시지 상태 수정", description = "마스터 관리자만 사용 가능합니다.")

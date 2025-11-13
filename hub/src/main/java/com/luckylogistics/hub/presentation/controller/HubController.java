@@ -1,5 +1,6 @@
 package com.luckylogistics.hub.presentation.controller;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.hub.application.dto.*;
 import com.luckylogistics.hub.application.service.HubService;
 import com.luckylogistics.hub.presentation.ApiResponse;
@@ -20,10 +21,11 @@ public class HubController {
     // CREATE
     @PostMapping
     public ResponseEntity<ApiResponse<HubCreateResponse>> createHub(
-            @RequestBody HubCreateRequest requestDto
+            @RequestBody HubCreateRequest requestDto,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
-        Long userId = 1L; // TODO: Security 붙이면 인증 정보에서 꺼내기
-        HubCreateResponse response = hubService.createHub(requestDto, userId);
+        HubCreateResponse response = hubService.createHub(requestDto, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -47,20 +49,22 @@ public class HubController {
     @PutMapping("/{hubId}")
     public ResponseEntity<ApiResponse<HubResponse>> updateHub(
             @PathVariable UUID hubId,
-            @RequestBody HubUpdateRequest requestDto
+            @RequestBody HubUpdateRequest requestDto,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
-        Long userId = 1L; // TODO: 인증 정보에서 꺼내기
-        HubResponse updated = hubService.updateHub(hubId, requestDto, userId);
+        HubResponse updated = hubService.updateHub(hubId, requestDto, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success(updated));
     }
 
     // DELETE (soft delete)
     @DeleteMapping("/{hubId}")
     public ResponseEntity<ApiResponse<Void>> deleteHub(
-            @PathVariable UUID hubId
+            @PathVariable UUID hubId,
+            @RequestHeader("X-User-Id") Long currentUserId,
+            @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
-        Long userId = 1L; // TODO: 인증 정보에서 꺼내기
-        hubService.deleteHub(hubId, userId);
+        hubService.deleteHub(hubId, currentUserId, currentUserRole);
         return ResponseEntity.ok(ApiResponse.success());
     }
 }

@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider {
+    private final Key key;
 
-    @Value("${jwt.secret}")
-    private String SECRET_KEY;
-
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    }
 
     public boolean validateToken(String token) {
         try {

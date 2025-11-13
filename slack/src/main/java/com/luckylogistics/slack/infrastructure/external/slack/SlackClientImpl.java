@@ -9,10 +9,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import com.luckylogistics.slack.application.external.SlackClient;
 import com.luckylogistics.slack.application.dto.OrderCreatedResult;
-import com.luckylogistics.slack.common.exception.BusinessException;
-import com.luckylogistics.slack.common.exception.ErrorCode;
 import com.slack.api.Slack;
 import com.slack.api.SlackConfig;
 import com.slack.api.methods.MethodsClient;
