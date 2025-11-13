@@ -1,9 +1,6 @@
 package com.luckylogistics.delivery.infrastructure.configuration;
 
-import com.luckylogistics.common.infrastructure.util.HeaderAuditorAware;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 /**
@@ -14,8 +11,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing(auditorAwareRef = "headerAuditorAware")
 public class JpaAuditingConfig {
 
-    @Bean
-    public AuditorAware<Long> headerAuditorAware() {
-        return new HeaderAuditorAware();
-    }
+//    @Bean
+//    public AuditorAware<Long> headerAuditorAware() {
+//        return new HeaderAuditorAware();
+//    }
 }

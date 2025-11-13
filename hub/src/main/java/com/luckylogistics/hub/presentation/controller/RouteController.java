@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/routes")
+@RequestMapping("/api/v1/hubs/routes")
 @RequiredArgsConstructor
 @Tag(name = "Route", description = "허브 간 경로 계획 API")
 public class RouteController {
