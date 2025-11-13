@@ -8,6 +8,8 @@ import com.luckylogistics.delivery.application.service.DeliveryManagerService;
 import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/delivery-managers")
 @RequiredArgsConstructor
+@Tag(name = "배송 담당자", description = "배송 담당자 관리 API")
 public class DeliveryManagerController {
 
     private final DeliveryManagerService deliveryManagerService;
@@ -28,6 +31,7 @@ public class DeliveryManagerController {
     /**
      * 배송 담당자 생성
      */
+    @Operation(summary = "배송 담당자 생성", description = "새로운 배송 담당자를 생성합니다")
     @PostMapping
     public ResponseEntity<ApiResponse<CreateDeliveryManagerResponse>> createDeliveryManager(
             @Valid @RequestBody CreateDeliveryManagerRequest request,
@@ -43,6 +47,7 @@ public class DeliveryManagerController {
      * 배송 담당자 단건 조회
      * - X-User-Id, X-User-Role: 권한 검증 필요
      */
+    @Operation(summary = "배송 담당자 단건 조회", description = "특정 배송 담당자의 상세 정보를 조회합니다")
     @GetMapping("/{deliveryManagerId}")
     public ResponseEntity<ApiResponse<DeliveryManagerResponse>> getDeliveryManager(
             @PathVariable Long deliveryManagerId,
@@ -59,6 +64,7 @@ public class DeliveryManagerController {
      * 배송 담당자 수정
      * - X-User-Id, X-User-Role: 권한 검증 필요
      */
+    @Operation(summary = "배송 담당자 수정", description = "배송 담당자 정보를 수정합니다")
     @PutMapping("/{deliveryManagerId}")
     public ResponseEntity<ApiResponse<DeliveryManagerResponse>> updateDeliveryManager(
             @PathVariable Long deliveryManagerId,
@@ -75,6 +81,7 @@ public class DeliveryManagerController {
      * 배송 담당자 삭제
      * - X-User-Id, X-User-Role: 권한 검증 필요
      */
+    @Operation(summary = "배송 담당자 삭제", description = "배송 담당자를 삭제합니다")
     @DeleteMapping("/{deliveryManagerId}")
     public ResponseEntity<ApiResponse<Void>> deleteDeliveryManager(
             @PathVariable Long deliveryManagerId,
@@ -89,6 +96,7 @@ public class DeliveryManagerController {
      * 배송 담당자 목록 조회
      * - X-User-Id, X-User-Role: 권한별 필터링 필요
      */
+    @Operation(summary = "배송 담당자 목록 조회", description = "배송 담당자 목록을 조회합니다 (타입, 허브 필터링 가능)")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<DeliveryManagerResponse>>> getDeliveryManagers(
             @RequestParam(required = false) DeliveryManagerType type,
