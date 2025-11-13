@@ -5,8 +5,8 @@ import com.luckylogistics.delivery.application.dto.CreateDeliveryManagerResponse
 import com.luckylogistics.delivery.application.dto.DeliveryManagerResponse;
 import com.luckylogistics.delivery.application.dto.UpdateDeliveryManagerRequest;
 import com.luckylogistics.delivery.application.service.DeliveryManagerService;
-import com.luckylogistics.delivery.common.enums.UserRole;
-import com.luckylogistics.delivery.common.response.ApiResponse;
+import com.luckylogistics.common.enums.UserRole;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.delivery.domain.model.DeliveryManagerType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

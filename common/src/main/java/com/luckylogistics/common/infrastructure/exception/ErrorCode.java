@@ -27,15 +27,15 @@ public enum ErrorCode {
     DELIVERY_MANAGER_SELF_ONLY(HttpStatus.FORBIDDEN, "DM-004","배송 담당자는 본인 정보만 조회할 수 있습니다"),
 
     // Delivery
-    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "DD-001", "배송을 찾을 수 없습니다"),
-    DELIVERY_DELETED(HttpStatus.BAD_REQUEST, "DD-002", "삭제된 배송입니다"),
-    DUPLICATE_DELIVERY(HttpStatus.CONFLICT, "DD-003", "이미 배송이 생성된 주문입니다"),
-    FORBIDDEN_DELIVERY_READ(HttpStatus.FORBIDDEN, "DD-004", "해당 배송을 조회할 권한이 없습니다"),
-    FORBIDDEN_DELIVERY_MODIFY(HttpStatus.FORBIDDEN, "DD-005", "해당 배송을 수정할 권한이 없습니다"),
-    FORBIDDEN_DELIVERY_DELETE(HttpStatus.FORBIDDEN, "DD-006", "해당 배송을 삭제할 권한이 없습니다"),
-    FORBIDDEN_NOT_HUB_DELIVERY(HttpStatus.FORBIDDEN, "DD-007", "담당 허브의 배송이 아닙니다"),
-    FORBIDDEN_NOT_COMPANY_DELIVERY(HttpStatus.FORBIDDEN, "DD-008", "담당 배송이 아닙니다"),
-    FORBIDDEN_DELIVERY_SEARCH(HttpStatus.FORBIDDEN, "DD-009", "해당 배송 목록을 조회할 권한이 없습니다."),
+    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "D-001", "배송을 찾을 수 없습니다"),
+    DELIVERY_DELETED(HttpStatus.BAD_REQUEST, "D-002", "삭제된 배송입니다"),
+    DUPLICATE_DELIVERY(HttpStatus.CONFLICT, "D-003", "이미 배송이 생성된 주문입니다"),
+    FORBIDDEN_DELIVERY_READ(HttpStatus.FORBIDDEN, "D-004", "해당 배송을 조회할 권한이 없습니다"),
+    FORBIDDEN_DELIVERY_MODIFY(HttpStatus.FORBIDDEN, "D-005", "해당 배송을 수정할 권한이 없습니다"),
+    FORBIDDEN_DELIVERY_DELETE(HttpStatus.FORBIDDEN, "D-006", "해당 배송을 삭제할 권한이 없습니다"),
+    FORBIDDEN_NOT_HUB_DELIVERY(HttpStatus.FORBIDDEN, "D-007", "담당 허브의 배송이 아닙니다"),
+    FORBIDDEN_NOT_COMPANY_DELIVERY(HttpStatus.FORBIDDEN, "D-008", "담당 배송이 아닙니다"),
+    FORBIDDEN_DELIVERY_SEARCH(HttpStatus.FORBIDDEN, "D-009", "해당 배송 목록을 조회할 권한이 없습니다."),
 
     // DeliveryRoute
     DELIVERY_ROUTE_NOT_FOUND(HttpStatus.NOT_FOUND, "DR-001", "배송 경로를 찾을 수 없습니다"),

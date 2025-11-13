@@ -2,8 +2,8 @@ package com.luckylogistics.delivery.presentation.controller;
 
 import com.luckylogistics.delivery.application.dto.*;
 import com.luckylogistics.delivery.application.service.DeliveryService;
-import com.luckylogistics.delivery.common.enums.UserRole;
-import com.luckylogistics.delivery.common.response.ApiResponse;
+import com.luckylogistics.common.enums.UserRole;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.delivery.domain.model.DeliveryStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

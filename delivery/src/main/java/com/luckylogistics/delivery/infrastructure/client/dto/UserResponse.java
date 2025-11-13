@@ -1,7 +1,7 @@
 package com.luckylogistics.delivery.infrastructure.client.dto;
 
 import com.luckylogistics.delivery.common.enums.UserOrganizationType;
-import com.luckylogistics.delivery.common.enums.UserRole;
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.delivery.common.enums.UserStatus;
 import lombok.Builder;
 
