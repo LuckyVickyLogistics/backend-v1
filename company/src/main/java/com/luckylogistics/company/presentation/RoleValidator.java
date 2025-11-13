@@ -8,19 +8,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RoleValidator {
-    public void validate(UserRole userRole, String... roles) {
+    public void validate(UserRole userRole, UserRole... roles) {
         boolean authorized =  Arrays.stream(roles)
-            .anyMatch(role -> role.equalsIgnoreCase(userRole));
+            .anyMatch(role -> role.equals(userRole));
 
         if (!authorized) {
             throw new BusinessException(ErrorCode.INVALID_HEADER_USER_ROLE);
         }
-    }
-
-    public final class Roles {
-        public static final String MASTER_ADMIN = "MASTER_ADMIN";
-        public static final String HUB_MANAGER = "HUB_MANAGER";
-        public static final String DELIVERY_MANAGER = "DELIVERY_MANAGER";
-        public static final String COMPANY_MANAGER = "COMPANY_MANAGER";
     }
 }

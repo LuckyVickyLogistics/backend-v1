@@ -43,7 +43,7 @@ public class CompanyController {
     public ResponseEntity<ApiResponse<CompanyResponse>> createCompany(
         @RequestHeader("X-User-Role") UserRole role,
         @Valid @RequestBody CompanyRequest companyRequest) {
-        roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER");
+        roleValidator.validate(role, UserRole.MASTER_ADMIN, UserRole.HUB_MANAGER);
         CompanyResponse result = companyService.createCompany(companyRequest);
         return ResponseEntity.ok(ApiResponse.success(result, "업체가 생성되었습니다"));
     }
@@ -54,7 +54,7 @@ public class CompanyController {
         @RequestHeader("X-User-Role") UserRole role,
         @PathVariable(name = "companyId") UUID companyId,
         @Valid @RequestBody CompanyRequest companyRequest) {
-        roleValidator.validate(role, "MASTER_ADMIN", "HUB_MANAGER", "COMPANY_MANAGER");
+        roleValidator.validate(role, UserRole.MASTER_ADMIN, UserRole.HUB_MANAGER, UserRole.COMPANY_MANAGER);
         companyService.updateCompany(companyId, companyRequest);
         return ResponseEntity.ok(ApiResponse.success(null, "업체가 수정되었습니다."));
     }
