@@ -353,8 +353,35 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
   | deleted_by          | bigint          |                |
 
 #### 🕊 Company (2개)
-- ``
-- ``
+- `p_company`
+
+  | 컬럼명       | 데이터 타입 | 제약 조건        |
+    |-------------|------------|----------------|
+  | company_id  | uuid       | PK, NOT NULL   |
+  | hub_id      | uuid       | NOT NULL       |
+  | name        | varchar    | NOT NULL       |
+  | address     | varchar    | NOT NULL       |
+  | type        | varchar    | NOT NULL       |
+  | created_at  | timestamp  | NOT NULL       |
+  | created_by  | bigint     | NOT NULL       |
+  | updated_at  | timestamp  |                |
+  | updated_by  | bigint     |                |
+  | deleted_at  | timestamp  |                |
+  | deleted_by  | bigint     |                |
+
+- `p_company_manager`
+
+  | 컬럼명      | 데이터 타입 | 제약 조건        |
+    |------------|------------|----------------|
+  | manager_id | uuid       | PK, NOT NULL   |
+  | user_id    | bigint     | NOT NULL       |
+  | company_id | uuid       | NOT NULL       |
+  | created_at | timestamp  | NOT NULL       |
+  | created_by | bigint     | NOT NULL       |
+  | updated_at | timestamp  |                |
+  | updated_by | bigint     |                |
+  | deleted_at | timestamp  |                |
+  | deleted_by | bigint     |                |
 
 #### 🤖 AI (1개)
 - `p_ai_prompt`
