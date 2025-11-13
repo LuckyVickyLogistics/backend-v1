@@ -13,6 +13,6 @@ public class HubServiceAdapter implements HubService {
 
     @Override
     public void isHubExists(UUID hubId){
-        hubFeignClient.getHub(hubId);
+        hubFeignClient.getHub(hubId); // 없다면 hub 쪽에서 예외처리
     }
 }

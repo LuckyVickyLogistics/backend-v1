@@ -12,7 +12,16 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +35,6 @@ public class CompanyController {
     @Operation(summary = "업체 목록 조회", description = "업체 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<List<CompanyResponse>>> getCompanies(
-        @RequestHeader("X-User-Id") Long userId,
         @RequestParam(required = false) String name) {
         List<CompanyResponse> result = companyService.getCompanies(name);
         return ResponseEntity.ok(ApiResponse.success(result, "업체 목록이 조회되었습니다"));
@@ -35,7 +43,6 @@ public class CompanyController {
     @Operation(summary = "업체 조회", description = "업체를 조회합니다.")
     @GetMapping("/{companyId}")
     public ResponseEntity<ApiResponse<CompanyResponse>> getCompany(
-        @RequestHeader("X-User-Id") Long userId,
         @PathVariable(name = "companyId") UUID companyId) {
 
         CompanyResponse result = companyService.getCompany(companyId);
@@ -46,7 +53,7 @@ public class CompanyController {
     @PostMapping
     public ResponseEntity<ApiResponse<CompanyResponse>> createCompany(
         @RequestHeader("X-User-Role") UserRole role,
-        @RequestHeader("X-User-Id") Long userId,
+        @RequestHeader("X-User-Id") Long currentUserId,
         @Valid @RequestBody CompanyRequest companyRequest) {
         roleValidator.validate(role, UserRole.MASTER_ADMIN, UserRole.HUB_MANAGER);
         CompanyResponse result = companyService.createCompany(companyRequest);
@@ -57,7 +64,7 @@ public class CompanyController {
     @PutMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> updateCompany(
         @RequestHeader("X-User-Role") UserRole role,
-        @RequestHeader("X-User-Id") Long userId,
+        @RequestHeader("X-User-Id") Long currentUserId,
         @PathVariable(name = "companyId") UUID companyId,
         @Valid @RequestBody CompanyRequest companyRequest) {
         roleValidator.validate(role, UserRole.MASTER_ADMIN, UserRole.HUB_MANAGER, UserRole.COMPANY_MANAGER);
@@ -69,11 +76,10 @@ public class CompanyController {
     @DeleteMapping("/{companyId}")
     public ResponseEntity<ApiResponse<Void>> deleteCompany(
         @RequestHeader("X-User-Role") UserRole role,
-        @RequestHeader("X-User-Id") Long userId,
+        @RequestHeader("X-User-Id") Long currentUserId,
         @PathVariable(name = "companyId") UUID companyId) {
         roleValidator.validate(role, UserRole.MASTER_ADMIN, UserRole.HUB_MANAGER);
-        companyService.deleteCompany(userId, companyId);
+        companyService.deleteCompany(currentUserId, companyId);
         return ResponseEntity.ok(ApiResponse.success(null, "업체가 삭제되었습니다"));
     }
-
 }
