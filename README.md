@@ -3,8 +3,8 @@
 
 <br>
 
-## ❇️ [프로젝트 개요](https://github.com/goatgam/goatgam/wiki)
-#### 음식 주문과 배달을 효율적으로 관리하는 백엔드 중심 플랫폼
+## ❇️ [프로젝트 개요](https://github.com/LuckyVickyLogistics/backend-v1/tree/develop?tab=readme-ov-file)
+#### B2B 물류 관리 및 배송 시스템을 위한 MSA 기반 플랫폼
 <details>
 <summary>[ERD](https://www.erdcloud.com/d/eFc8S6qtouLNEfYKF)</summary>
 - ERD 이미지 삽입(여기넣어주세용)
