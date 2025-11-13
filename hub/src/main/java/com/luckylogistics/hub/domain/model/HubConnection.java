@@ -40,11 +40,30 @@ public class HubConnection extends BaseEntity{
         this.distance = distance;
     }
 
-    public static HubConnection of(Hub fromHub, Hub toHub, int time, double distance) {
+    public static void of(Hub fromHub, Hub toHub, int time, double distance) {
         if (distance <= 0) throw new IllegalArgumentException("거리는 0 보다 커야합니다.");
         if (time <= 0) throw new IllegalArgumentException("시간은 0보다 커야합니다.");
-        return new HubConnection(fromHub, toHub, time, distance);
     }
+
+    public static HubConnection create(Hub fromHub, Hub toHub, int time, double distance) {
+        of(fromHub, toHub, time, distance);
+        HubConnection hc = new HubConnection();
+        hc.fromHub = fromHub;
+        hc.toHub = toHub;
+        hc.time = time;
+        hc.distance = distance;
+        return hc;
+    }
+
+    public void update(Hub fromHub, Hub toHub, int time, double distance) {
+        of(fromHub, toHub, time, distance);
+        this.fromHub = fromHub;
+        this.toHub = toHub;
+        this.time = time;
+        this.distance = distance;
+    }
+
+    public void softDelete(Long deletedBy){ delete(deletedBy); }
 
     public UUID fromId() {return fromHub.getHubId();}
     public UUID toId() {return toHub.getHubId();}

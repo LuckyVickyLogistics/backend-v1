@@ -1,8 +1,9 @@
 package com.luckylogistics.hub.application.service;
 
-import com.luckylogistics.hub.application.dto.RoutePlanRequest;
-import com.luckylogistics.hub.application.dto.RoutePlanResponse;
-import com.luckylogistics.hub.application.dto.RouteSegmentResponse;
+import com.luckylogistics.common.enums.UserRole;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
+import com.luckylogistics.hub.application.dto.*;
 import com.luckylogistics.hub.domain.model.Hub;
 import com.luckylogistics.hub.domain.model.HubConnection;
 import com.luckylogistics.hub.domain.repository.HubConnectionRepository;
@@ -128,5 +129,58 @@ public class RouteServiceImpl implements RouteService {
         }
 
         return new RoutePlanResponse(segments, totalDist, totalTime);
+    }
+
+    @Override
+    public RouteCreateResponse createRoute(RouteCreateRequest request, Long userId, UserRole currentUserRole) {
+
+        if(!currentUserRole.isMaster()){
+            throw new IllegalArgumentException("허가되지 않은 접근입니다.");
+        }
+        if(request.fromHubId().equals(request.toHubId())){
+            throw new BusinessException(ErrorCode.BAD_REQUEST);
+        }
+        Hub from = hubRepository.findById(request.fromHubId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.HUB_NOT_FOUND));
+        Hub to = hubRepository.findById(request.toHubId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.HUB_NOT_FOUND));
+
+        hubConnectionRepository.findByFromIdAndToId(from.getHubId(), to.getHubId())
+                .ifPresent(c -> {throw new BusinessException(ErrorCode.BAD_REQUEST); });
+        HubConnection hubConnection = HubConnection.create(
+                from, to, request.duration(), request.distanceKm()
+        );
+        HubConnection saved = hubConnectionRepository.save(hubConnection);
+        HubConnection hubConnection2 = HubConnection.create(
+                to, from, request.duration(), request.distanceKm()
+        );
+        HubConnection saved2 = hubConnectionRepository.save(hubConnection2);
+        return new RouteCreateResponse(
+                saved.getRouteId(),
+                from.getHubId(),
+                to.getHubId(),
+                saved.getDistance(),
+                saved.getTime()
+        );
+    }
+
+    @Override
+    public List<RouteResponse> getAllRoutes() {
+        return List.of();
+    }
+
+    @Override
+    public RouteResponse getRoute(UUID departureHubId, UUID arrivalHubId) {
+        return null;
+    }
+
+    @Override
+    public RouteResponse updateRoute(UUID routeId, RouteUpdateRequest request, Long userId, UserRole currentUserRole) {
+        return null;
+    }
+
+    @Override
+    public void deleteRoute(UUID routeId, Long userId, UserRole currentUserRole) {
+
     }
 }
