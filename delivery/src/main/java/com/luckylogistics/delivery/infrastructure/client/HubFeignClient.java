@@ -1,6 +1,6 @@
 package com.luckylogistics.delivery.infrastructure.client;
 
-import com.luckylogistics.delivery.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.delivery.infrastructure.client.dto.HubResponse;
 import com.luckylogistics.delivery.infrastructure.client.dto.HubRoutePlanResponse;
 import org.springframework.cloud.openfeign.FeignClient;

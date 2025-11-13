@@ -2,9 +2,11 @@ package com.luckylogistics.delivery.presentation.controller;
 
 import com.luckylogistics.delivery.application.dto.*;
 import com.luckylogistics.delivery.application.service.DeliveryService;
-import com.luckylogistics.delivery.common.enums.UserRole;
-import com.luckylogistics.delivery.common.response.ApiResponse;
+import com.luckylogistics.common.enums.UserRole;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.delivery.domain.model.DeliveryStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/deliveries")
 @RequiredArgsConstructor
+@Tag(name = "배송", description = "배송 관리 API")
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
@@ -27,6 +30,7 @@ public class DeliveryController {
      * 배송 생성
      * Order Service에서 주문 생성 시 자동 호출
      */
+    @Operation(summary = "배송 생성", description = "Order Service에서 주문 생성 시 자동 호출")
     @PostMapping
     public ResponseEntity<ApiResponse<CreateDeliveryResponse>> createDelivery(
             @Valid @RequestBody CreateDeliveryRequest request,
@@ -37,7 +41,7 @@ public class DeliveryController {
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(response, "배송이 생성되었습니다"));
     }
-
+    @Operation(summary = "배송 단건 조회", description = "특정 배송의 상세 정보를 조회합니다")
     @GetMapping("/{deliveryId}")
     public ResponseEntity<ApiResponse<DeliveryResponse>> getDelivery(
             @PathVariable UUID deliveryId,
@@ -48,6 +52,7 @@ public class DeliveryController {
         return ResponseEntity.ok(ApiResponse.success(response, "배송이 조회되었습니다"));
     }
 
+    @Operation(summary = "배송 상태 변경", description = "배송의 상태를 변경합니다")
     @PutMapping("/{deliveryId}/status")
     public ResponseEntity<ApiResponse<UpdateDeliveryResponse>> updateDeliveryStatus(
             @PathVariable UUID deliveryId,
@@ -60,6 +65,7 @@ public class DeliveryController {
         return ResponseEntity.ok(ApiResponse.success(response, "배송 상태가 변경되었습니다"));
     }
 
+    @Operation(summary = "배송 삭제", description = "배송을 삭제합니다")
     @DeleteMapping("/{deliveryId}")
     public ResponseEntity<ApiResponse<Void>> deleteDelivery(
             @PathVariable UUID deliveryId,
@@ -70,6 +76,7 @@ public class DeliveryController {
         return ResponseEntity.ok(ApiResponse.success("배송이 삭제되었습니다"));
     }
 
+    @Operation(summary = "배송 목록 조회", description = "배송 목록을 조회합니다 (상태, 출발/도착 허브 필터링 가능)")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<DeliverySummaryResponse>>> getDeliveries(
             @RequestParam(required = false) DeliveryStatus status,
@@ -87,6 +94,7 @@ public class DeliveryController {
         return ResponseEntity.ok(ApiResponse.success(response, "배송 목록이 조회되었습니다"));
     }
 
+    @Operation(summary = "배송별 배송 경로 목록 조회", description = "특정 배송의 모든 경로를 조회합니다")
     @GetMapping("/{deliveryId}/routes")
     public ResponseEntity<ApiResponse<List<DeliveryRouteResponse>>> getDeliveryRoutes(
             @PathVariable UUID deliveryId,
