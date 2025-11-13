@@ -1,7 +1,7 @@
 package com.luckylogistics.product.infrastructure.external;
 
 import com.luckylogistics.product.application.external.UserService;
-import com.luckylogistics.product.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.product.infrastructure.client.UserFeignClient;
 import com.luckylogistics.product.infrastructure.client.dto.UserResponse;
 import lombok.RequiredArgsConstructor;

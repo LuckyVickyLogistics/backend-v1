@@ -7,17 +7,17 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.luckylogistics.order.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 
-@FeignClient(name = "hub", path = "/api/v1/hubs")
+@FeignClient(name = "hub")
 public interface HubFeignClient {
-    @GetMapping("/{hubId}")
+    @GetMapping("/api/v1/hubs/{hubId}")
     ApiResponse<HubResponse> getHub(@PathVariable("hubId") UUID hubId);
 
-    @GetMapping("/manager/{userId}/hub")
+    @GetMapping("/api/v1/hubs/manager/{userId}/hub")
     ApiResponse<HubResponse> getHubByUserId(@PathVariable("userid")Long userId);
 
-	@GetMapping("/manager/{hubId}/slack")
+	@GetMapping("/api/v1/hubs/manager/{hubId}/slack")
 	ApiResponse<String> getHubManager(@PathVariable("hubId") UUID hubId);
 
 

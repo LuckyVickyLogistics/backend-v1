@@ -7,7 +7,7 @@ import com.luckylogistics.product.application.service.ProductService;
 import com.luckylogistics.product.application.dto.ProductRequest;
 import com.luckylogistics.product.application.dto.ProductResponse;
 import com.luckylogistics.common.enums.UserRole;
-import com.luckylogistics.product.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

@@ -10,20 +10,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.luckylogistics.order.application.dto.MinusRequest;
 import com.luckylogistics.order.application.dto.PlusRequest;
-import com.luckylogistics.order.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.order.infrastructure.client.dto.GetProductClientResponse;
 
-@FeignClient(name = "product", path = "/api/v1/products")
+@FeignClient(name = "product")
 public interface ProductFeignClient {
 
 
-    @PutMapping("/plusProductsQuan/{productId}")
+    @PutMapping("/api/v1/products/plusProductsQuan/{productId}")
     ApiResponse<Void> plusProduct(@PathVariable("productId") UUID productId , @RequestBody PlusRequest plusRequest);
 
-    @PutMapping("/minusProductsQuan/{productId}")
+    @PutMapping("/api/v1/products/minusProductsQuan/{productId}")
     ApiResponse<Void> minusProduct(@PathVariable("productId")  UUID productId, @RequestBody MinusRequest minusRequest);
 
-	@GetMapping("/{productId}")
+	@GetMapping("/api/v1/products/{productId}")
 	ApiResponse<GetProductClientResponse> getProductById(@PathVariable("productId") UUID productId);
 
 }

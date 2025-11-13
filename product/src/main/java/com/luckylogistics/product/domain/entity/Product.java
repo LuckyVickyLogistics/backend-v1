@@ -1,7 +1,7 @@
 package com.luckylogistics.product.domain.entity;
 
-import com.luckylogistics.product.common.exception.BusinessException;
-import com.luckylogistics.product.common.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import com.luckylogistics.product.domain.vo.Quantity;
 import jakarta.persistence.*;
 import lombok.*;
