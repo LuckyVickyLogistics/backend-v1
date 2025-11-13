@@ -4,7 +4,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import com.luckylogistics.order.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
+
 
 @Component
 public class HubDummyClient {

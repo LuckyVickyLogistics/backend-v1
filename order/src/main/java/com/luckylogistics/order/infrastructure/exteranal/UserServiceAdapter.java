@@ -4,7 +4,8 @@ import org.springframework.stereotype.Component;
 
 import com.luckylogistics.order.application.dto.UserResponse;
 import com.luckylogistics.order.application.external.UserService;
-import com.luckylogistics.order.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
+
 import com.luckylogistics.order.infrastructure.client.UserDummyClient;
 import com.luckylogistics.order.infrastructure.client.dto.GetUserClientResponse;
 

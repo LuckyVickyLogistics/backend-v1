@@ -2,8 +2,8 @@ package com.luckylogistics.order.domain.entity;
 
 import java.util.UUID;
 
-import com.luckylogistics.order.common.exception.BusinessException;
-import com.luckylogistics.order.common.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

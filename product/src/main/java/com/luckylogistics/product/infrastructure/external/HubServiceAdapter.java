@@ -2,7 +2,7 @@ package com.luckylogistics.product.infrastructure.external;
 
 import com.luckylogistics.product.infrastructure.client.dto.HubResponse;
 import com.luckylogistics.product.application.external.HubService;
-import com.luckylogistics.product.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.product.infrastructure.client.HubFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

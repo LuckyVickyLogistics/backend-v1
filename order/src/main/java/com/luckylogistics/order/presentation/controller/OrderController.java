@@ -13,7 +13,7 @@ import com.luckylogistics.order.application.dto.OrderResponse;
 import com.luckylogistics.order.application.dto.OrderUpdateRequest;
 import com.luckylogistics.order.application.dto.OrderUpdateResponse;
 import com.luckylogistics.order.application.service.OrderService;
-import com.luckylogistics.order.common.response.ApiResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

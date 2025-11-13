@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.luckylogistics.order.application.dto.HubManagerEmailResponse;
 import com.luckylogistics.order.application.external.HubService;
-import com.luckylogistics.order.common.response.ApiResponse;
-import com.luckylogistics.order.infrastructure.HubDummyClient;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
+
 
 import lombok.RequiredArgsConstructor;
 

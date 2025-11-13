@@ -1,7 +1,7 @@
 package com.luckylogistics.product.domain.vo;
 
-import com.luckylogistics.product.common.exception.BusinessException;
-import com.luckylogistics.product.common.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

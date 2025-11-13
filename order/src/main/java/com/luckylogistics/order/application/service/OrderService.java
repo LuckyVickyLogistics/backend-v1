@@ -16,8 +16,8 @@ import com.luckylogistics.order.application.external.DeliveryService;
 import com.luckylogistics.order.application.external.HubService;
 import com.luckylogistics.order.application.external.ProductService;
 import com.luckylogistics.order.application.external.UserService;
-import com.luckylogistics.order.common.exception.BusinessException;
-import com.luckylogistics.order.common.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import com.luckylogistics.order.domain.entity.Order;
 import com.luckylogistics.order.domain.repository.OrderRepository;
 
