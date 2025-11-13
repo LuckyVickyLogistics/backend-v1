@@ -2,6 +2,7 @@ package com.luckylogistics.user.domain.model;
 
 import java.util.UUID;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.user.application.dto.SignupCommand;
 import com.luckylogistics.user.common.exception.BusinessException;
 import com.luckylogistics.user.common.exception.ErrorCode;

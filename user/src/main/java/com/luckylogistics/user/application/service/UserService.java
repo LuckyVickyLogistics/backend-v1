@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.user.application.dto.SignupCommand;
 import com.luckylogistics.user.application.dto.UserDeactiveCommand;
 import com.luckylogistics.user.application.dto.UserResponse;
@@ -87,7 +88,7 @@ public class UserService {
 	}
 
 	// 회원가입 요청 처리 (master, hub)
-	public UserResponse updateStatus(Long userId, UserStatusUpdateRequest request) {
+	public UserResponse updateStatus(Long userId, UserStatusUpdateRequest request, Long currentUserId, UserRole currentUserRole) {
 
 		// 유저가 존재하는지 확인
 		User user = userRepository.findById(userId)
@@ -98,6 +99,11 @@ public class UserService {
 			throw new BusinessException(ErrorCode.ALREADY_PROCESSED_USER);
 		}
 
+		// 권한 아닌 사람은 throw
+		if (currentUserRole.isDeliveryManager() || currentUserRole.isCompanyManager()) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
+
 		// 상태별 처리
 		switch (request.status()) {
 			case APPROVED -> {
@@ -105,7 +111,7 @@ public class UserService {
 				if (request.role() == null) {
 					throw new BusinessException(ErrorCode.USER_ROLE_REQUIRED);
 				}
-				user.approve(request.role());
+				user.approve(currentUserRole);
 
 			}
 
@@ -128,8 +134,13 @@ public class UserService {
 		return UserResponse.from(user);
 	}
 
-	// 내 정보 수정
-	public UserResponse updateUser(UserUpdateCommand command) {
+	// 정보 수정 (master)
+	public UserResponse updateUser(UserUpdateCommand command, UserRole currentUserRole) {
+
+		if (!currentUserRole.isMaster()) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
+
 		User user = userRepository.findById(command.userId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -140,7 +151,12 @@ public class UserService {
 
 
 	// 전체 회원 조회 (master)
-	public List<UserListResponse> getAllUsers() {
+	public List<UserListResponse> getAllUsers(UserRole currentUserRole) {
+
+		if (!currentUserRole.isMaster()) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
+
 		// 활성화 상태의 회원 목록 조회
 		return userRepository.findAllByIsDeletedFalse().stream()
 			.map(UserListResponse::from)
@@ -149,7 +165,12 @@ public class UserService {
 
 
 	// 회원 상세 조회 (master)
-	public UserDetailResponse getUserById(Long userId) {
+	public UserDetailResponse getUserById(Long userId, UserRole currentUserRole) {
+
+		if (!currentUserRole.isMaster()) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
+
 		User user = userRepository.findById(userId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
@@ -157,7 +178,12 @@ public class UserService {
 	}
 
 	// 회원 비활성화 (master)
-	public void deactiveUser(UserDeactiveCommand command, HttpServletRequest request) {
+	public void deactiveUser(UserDeactiveCommand command, HttpServletRequest request, UserRole currentUserRole) {
+
+		if (!currentUserRole.isMaster()) {
+			throw new BusinessException(ErrorCode.FORBIDDEN);
+		}
+
 		User user = userRepository.findById(command.userId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
