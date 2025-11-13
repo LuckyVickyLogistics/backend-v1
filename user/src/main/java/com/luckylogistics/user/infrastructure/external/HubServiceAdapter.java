@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.luckylogistics.user.application.external.HubService;
 import com.luckylogistics.user.common.response.ApiResponse;
-import com.luckylogistics.user.infrastructure.client.HubDummyClient;
+import com.luckylogistics.user.infrastructure.client.HubFeignClient;
 import com.luckylogistics.user.infrastructure.client.HubResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HubServiceAdapter implements HubService {
 
-	//private final HubFeignClient hubFeignClient;
-	private final HubDummyClient hubFeignClient;
+	private final HubFeignClient hubFeignClient;
+	//private final HubDummyClient hubFeignClient;
 
 	@Override
 	public ApiResponse<HubResponse> getHubById(UUID hubId) {

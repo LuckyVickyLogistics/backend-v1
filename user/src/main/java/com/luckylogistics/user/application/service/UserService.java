@@ -100,7 +100,7 @@ public class UserService {
 		}
 
 		// 권한 아닌 사람은 throw
-		if (currentUserRole.isDeliveryManager() || currentUserRole.isCompanyManager()) {
+		if (!currentUserRole.isMaster() || !currentUserRole.isHubManager()) {
 			throw new BusinessException(ErrorCode.FORBIDDEN);
 		}
 
@@ -111,7 +111,7 @@ public class UserService {
 				if (request.role() == null) {
 					throw new BusinessException(ErrorCode.USER_ROLE_REQUIRED);
 				}
-				user.approve(currentUserRole);
+				user.approve(request.role());
 
 			}
 

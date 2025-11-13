@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.luckylogistics.user.application.external.CompanyService;
 import com.luckylogistics.user.common.response.ApiResponse;
-import com.luckylogistics.user.infrastructure.client.CompanyDummyClient;
+import com.luckylogistics.user.infrastructure.client.CompanyFeignClient;
 import com.luckylogistics.user.infrastructure.client.CompanyResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CompanyServiceAdapter implements CompanyService {
 
-	//private final CompanyFeignClient companyFeignClient;
-	private final CompanyDummyClient companyFeignClient;
+	private final CompanyFeignClient companyFeignClient;
+	//private final CompanyDummyClient companyFeignClient;
 
 	@Override
 	public List<CompanyResponse> getCompanies(String name) {
@@ -27,7 +27,7 @@ public class CompanyServiceAdapter implements CompanyService {
 			throw new RuntimeException(res != null ? res.message() : "getCompanies failed");
 		}
 
-		return List.of();
+		return res.data();
 	}
 
 	@Override

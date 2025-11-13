@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.luckylogistics.user.common.response.ApiResponse;
 
-@FeignClient(name = "hub", path ="/api/v1/hubs")
+@FeignClient(name = "hub")
 public interface HubFeignClient {
 
-	@GetMapping("{hubId}")
+	@GetMapping("/{hubId}")
 	ApiResponse<HubResponse> getHubById(
 		//@RequestHeader("X-Internal-Request") String internalHeader,
 		@PathVariable UUID hubId

@@ -15,13 +15,11 @@ public interface CompanyFeignClient {
 
 	@GetMapping
 	ApiResponse<List<CompanyResponse>> getCompanies(
-		//@RequestHeader("X-Internal-Request") String internalHeader,
 		@RequestParam(required = false) String name
 	);
 
 	@GetMapping("/{companyId}")
 	ApiResponse<CompanyResponse> getCompany(
-		//@RequestHeader("X-Internal-Request") String internalHeader,
 		@PathVariable(name = "companyId") UUID companyId
 	);
 
