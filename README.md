@@ -157,36 +157,237 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 </br>
 
 ## 📁 아키텍처
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9bd325e8-17b6-488a-9184-016444e5c9a1" width="500" />
+</p>
+
 ```
 럭키비키로지스틱스 아키텍처는 다음과 같이 구성됩니다:
-- Docker 컨테이너화로 일관된 실행 환경 제공
-- PostgreSQL RDS로 데이터 관리
-- 추가..
+- **Microservices Architecture(MSA)** 기반 설계
+- **Aggregate** 단위로 각 서비스 분리
+- Eureka Sever에 각 서비스를 등록하고 **Gateway**를 통해 서버 간 통신
+-  Docker 컨테이너화로 일관된 실행 환경 제공
 ```
 
 <br>
 
 
-### 테이블 구조 (총 19개)
+### 테이블 구조 (총 13개)
 <details>
-<summary><strong>상세 테이블 구조</strong></summary>
+<summary><strong>서비스별 상세 테이블 구조</strong></summary>
 
-#### 👤 유저 관련 (4개)
-- 유저 (p_user)
+#### 👤 User (1개)
+- `p_user`
 
-#### 🏪 허브 관련 (개)
+  | 컬럼명              | 데이터 타입        | 제약 조건                  |
+    |--------------------|-----------------|---------------------------|
+  | user_id            | bigint          | PK, NOT NULL              |
+  | identifier         | uuid            | UNIQUE, NOT NULL          |
+  | organization_type  | varchar(255)    |                           |
+  | password           | varchar(255)    | NOT NULL                  |
+  | role               | varchar(255)    | NOT NULL                  |
+  | slack_id           | varchar(255)    | NOT NULL                  |
+  | status             | varchar(255)    |                           |
+  | username           | varchar(100)    | UNIQUE, NOT NULL          |
+  | created_at         | timestamp(6)    |                           |
+  | created_by         | varchar(100)    |                           |
+  | updated_at         | timestamp(6)    |                           |
+  | updated_by         | varchar(100)    |                           |
+  | deleted_at         | timestamp(6)    |                           |
+  | deleted_by         | varchar(100)    |                           |
 
-#### 🛒 상품 관련 ( 개)
 
-#### 🎁 주문 관련 (n개)
+#### 🏪 Hub (3개)
+- `p_hub`
 
-#### 📦 배송 관련 (N개)
+  | 컬럼명              | 데이터 타입        | 제약 조건                  |
+    |--------------------|-----------------|---------------------------|
+  | user_id            | bigint          | PK, NOT NULL              |
+  | identifier         | uuid            | UNIQUE, NOT NULL          |
+  | organization_type  | varchar(255)    |                           |
+  | password           | varchar(255)    | NOT NULL                  |
+  | role               | varchar(255)    | NOT NULL                  |
+  | slack_id           | varchar(255)    | NOT NULL                  |
+  | status             | varchar(255)    |                           |
+  | username           | varchar(100)    | UNIQUE, NOT NULL          |
+  | created_at         | timestamp(6)    |                           |
+  | created_by         | varchar(100)    |                           |
+  | updated_at         | timestamp(6)    |                           |
+  | updated_by         | varchar(100)    |                           |
+  | deleted_at         | timestamp(6)    |                           |
+  | deleted_by         | varchar(100)    |                           |
 
+- `p_hub_manager`
+
+  | 컬럼명          | 데이터 타입     | 제약 조건        |
+    |----------------|----------------|----------------|
+  | hub_manager_id  | uuid           | PK, NOT NULL   |
+  | user_id         | bigint         | NOT NULL       |
+  | hub_id          | uuid           | NOT NULL       |
+  | is_deleted      | boolean        |                |
+  | name            | varchar(255)   |                |
+  | slack_id        | varchar(255)   |                |
+  | created_at      | timestamp      | NOT NULL       |
+  | created_by      | bigint         |                |
+  | updated_at      | timestamp      |                |
+  | updated_by      | bigint         |                |
+  | deleted_at      | timestamp      |                |
+  | deleted_by      | bigint         |                |
+
+- `p_hub_route`
+
+  | 컬럼명       | 데이터 타입       | 제약 조건        |
+    |-------------|-----------------|----------------|
+  | route_id    | uuid            | PK, NOT NULL   |
+  | distance    | doubleprecision | NOT NULL       |
+  | time        | integer         | NOT NULL       |
+  | from_hub_id | uuid            | NOT NULL       |
+  | to_hub_id   | uuid            | NOT NULL       |
+  | is_deleted  | boolean         |                |
+  | created_at  | timestamp       | NOT NULL       |
+  | created_by  | bigint          |                |
+  | updated_at  | timestamp       |                |
+  | updated_by  | bigint          |                |
+  | deleted_at  | timestamp       |                |
+  | deleted_by  | bigint          |                |
+
+#### 🛒 Product (1개)
+- `p_products`
+
+  | 컬럼명                 | 데이터 타입     | 제약 조건        |
+    |-----------------------|----------------|----------------|
+  | product_id            | uuid           | PK, NOT NULL   |
+  | company_id            | uuid           | NOT NULL       |
+  | hub_id                | uuid           | NOT NULL       |
+  | price                 | integer        | NOT NULL       |
+  | product_name          | varchar(255)   | NOT NULL       |
+  | product_quantity      | integer        | NOT NULL       |
+  | p_status              | varchar(255)   | NOT NULL       |
+  | product_total_quantity| integer        | NOT NULL       |
+  | created_by            | varchar(255)   |                |
+  | updated_by            | varchar(255)   |                |
+  | deleted_by            | varchar(255)   |                |
+  | created_at            | timestamp      | NOT NULL       |
+  | updated_at            | timestamp      |                |
+  | deleted_at            | timestamp      |                |
+
+
+#### 🎁 Order (1개)
+- `p_orders`
+
+  | 컬럼명            | 데이터 타입     | 제약 조건        |
+    |------------------|----------------|----------------|
+  | order_id         | uuid           | PK, NOT NULL   |
+  | quantity         | integer        | NOT NULL       |
+  | customer_id      | uuid           | NOT NULL       |
+  | delivery_id      | uuid           |                |
+  | product_id       | uuid           | NOT NULL       |
+  | supplier_id      | uuid           | NOT NULL       |
+  | delivery_address | varchar(255)   | NOT NULL       |
+  | request          | varchar(255)   | NOT NULL       |
+  | status           | varchar(255)   | NOT NULL       |
+  | created_by       | varchar(255)   |                |
+  | updated_by       | varchar(255)   |                |
+  | deleted_by       | varchar(255)   |                |
+  | created_at       | timestamp      | NOT NULL       |
+  | updated_at       | timestamp      |                |
+
+#### 📦 Delivery (3개)
+- `p_delivery`
+
+  | 컬럼명                     | 데이터 타입     | 제약 조건        |
+    |----------------------------|----------------|----------------|
+  | delivery_id                | uuid           | PK, NOT NULL   |
+  | arrival_hub_id             | uuid           | NOT NULL       |
+  | delivery_address           | varchar(500)   | NOT NULL       |
+  | departure_hub_id           | uuid           | NOT NULL       |
+  | order_id                   | uuid           | NOT NULL       |
+  | recipient_name             | varchar(100)   | NOT NULL       |
+  | recipient_slack_id         | varchar(100)   | NOT NULL       |
+  | status                     | varchar(20)    | NOT NULL       |
+  | company_delivery_manager_id| bigint         | NOT NULL       |
+  | created_at                 | timestamp      | NOT NULL       |
+  | created_by                 | bigint         |                |
+  | updated_at                 | timestamp      |                |
+  | updated_by                 | bigint         |                |
+  | deleted_at                 | timestamp      |                |
+  | deleted_by                 | bigint         |                |
+
+- `p_delivery_manager`
+
+  | 컬럼명              | 데이터 타입     | 제약 조건        |
+    |--------------------|----------------|----------------|
+  | delivery_manager_id| bigint         | PK, NOT NULL   |
+  | delivery_sequence  | integer        | NOT NULL       |
+  | hub_id             | varchar(255)   |                |
+  | slack_id           | varchar(100)   | NOT NULL       |
+  | type               | varchar(20)    | NOT NULL       |
+  | end_time           | time           | NOT NULL       |
+  | start_time         | time           | NOT NULL       |
+  | created_at         | timestamp      | NOT NULL       |
+  | created_by         | bigint         |                |
+  | updated_at         | timestamp      |                |
+  | updated_by         | bigint         |                |
+  | deleted_at         | timestamp      |                |
+  | deleted_by         | bigint         |                |
+
+- `p_delivery_route`
+
+  | 컬럼명               | 데이터 타입      | 제약 조건        |
+    |---------------------|-----------------|----------------|
+  | delivery_route_id   | uuid            | PK, NOT NULL   |
+  | actual_distance     | numeric(10,2)   |                |
+  | actual_duration     | integer         |                |
+  | arrival_hub_id      | uuid            | NOT NULL       |
+  | delivery_id         | uuid            | NOT NULL       |
+  | departure_hub_id    | uuid            | NOT NULL       |
+  | estimated_distance  | numeric(10,2)   | NOT NULL       |
+  | estimated_duration  | integer         | NOT NULL       |
+  | sequence            | integer         | NOT NULL       |
+  | status              | varchar(20)     | NOT NULL       |
+  | hub_delivery_manager_id | bigint      | NOT NULL       |
+  | created_at          | timestamp       | NOT NULL       |
+  | created_by          | bigint          |                |
+  | updated_at          | timestamp       |                |
+  | updated_by          | bigint          |                |
+  | deleted_at          | timestamp       |                |
+  | deleted_by          | bigint          |                |
+
+#### 🕊 Company (2개)
+- ``
+- ``
 
 #### 🤖 AI (1개)
-- AI 로그 (AILog)
+- `p_ai_prompt`
 
-#### 🕊 SLACK ()
+  | 컬럼명            | 데이터 타입  | 제약 조건      |
+    |------------------|--------------|----------------|
+  | ai_prompt_id     | uuid         | PK, NOT NULL   |
+  | request_content  | text         | NOT NULL       |
+  | status           | varchar(255) | NOT NULL       |
+  | created_at       | timestamp    |                |
+  | created_by       | bigint       |                |
+  | updated_at       | timestamp    |                |
+  | updated_by       | bigint       |                |
+  | deleted_at       | timestamp    |                |
+  | deleted_by       | bigint       |                |
+  | response_content | timestamp    |                |
+
+#### 🕊 SLACK (1개)
+- `p_slack_message`
+
+  | 컬럼명          | 데이터 타입  | 제약 조건      |
+    |----------------|--------------|----------------|
+  | slack_message_id | uuid         | PK, NOT NULL   |
+  | content          | text         | NOT NULL       |
+  | receiver_email   | varchar(255) | NOT NULL       |
+  | status           | varchar(255) | NOT NULL       |
+  | created_at       | timestamp    |                |
+  | created_by       | bigint       |                |
+  | updated_at       | timestamp    |                |
+  | updated_by       | bigint       |                |
+  | deleted_at       | timestamp    |                |
+  | deleted_by       | bigint       |                |
 
 
 </details>
@@ -196,16 +397,15 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 
 ### 도메인 구성
 ```
-✅ 인증/인가: JWT 기반 로그인/회원가입
-✅ 사용자: 
-✅ 허브: 
-✅ 업체: 
-✅ 상품 : 
-✅ 주문: 
-✅ 배송: 
-✅ AI: Google Gemini API를 활용한 배송 설명 생성
-✅ Slack: 
-
+✅ Gateway : 헤더의 토큰 파싱 후 인가 처리
+✅ User: 회원 관리, JWT 기반 액세스 토큰, 리프레시 토큰을 통한 인증 처리
+✅ Hub: 허브 관리, 각 허브 간 경로 관리, 허브 관리자 관리
+✅ Product: 상품 관리
+✅ Order: 주문 관리, 배송 생성 요청
+✅ Delivery : 배송 관리, 배송 경로 관리, 배송 담당자 관리
+✅ Company : 업체 관리
+✅ AI: Google Gemini API를 활용한 최종 발송 시한 계산
+✅ Slack: Slack API를 활용한 개별 다이렉트 메시지 발송
 ```
 
 <br>
