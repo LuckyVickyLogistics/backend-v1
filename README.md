@@ -13,16 +13,12 @@
 
 ## 서비스 구성 및 실행방법!
 -
-``
+```
 프로젝트 파일에서 
 cd infra
 docker compose up -d 실행 (db 및 docker 세팅 완료)
-
 eureka-server 먼저 실행 후 다른 서비스 실행
-
-
-
-``
+```
  
 
 ## 👨‍👩‍👧‍👦 팀원 소개
