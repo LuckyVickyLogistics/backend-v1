@@ -12,7 +12,18 @@
 - [API 명세서](https://teamsparta.notion.site/29f2dc3ef51480528907cccc534ae546?v=29f2dc3ef51480bcaad3000c10b8edbd)
 
 ## 서비스 구성 및 실행방법!
-- 
+-
+``
+프로젝트 파일에서 
+cd infra
+docker compose up -d 실행 (db 및 docker 세팅 완료)
+
+eureka-server 먼저 실행 후 다른 서비스 실행
+
+
+
+``
+ 
 
 ## 👨‍👩‍👧‍👦 팀원 소개
 | 이름                          | 프로필 | 담당 역할                                                                                                                                                 |
@@ -45,10 +56,11 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
   <summary><strong> 1️⃣ Spring Boot 3.5.7</strong></summary>
     <div markdown="1"> 
 
-    1. 자동 설정 기능으로 개발 생산성을 향상시킬 수 있습니다.
-    2. 스타터 패키지를 통해 의존성 관리가 용이합니다.
-    3. 내장 서버를 제공하여 별도의 WAS 설정 없이 바로 실행 가능합니다.
+    1. 자동 설정 기능으로 개발 생산성이 높으며 설정 부담이 적다는 장점이 있습니다.
+    2. 스타터 패키지 제공으로 의존성 관리가 간편합니다.
+    3. 내장 Tomcat 서버를 제공하여 별도의 WAS 설정 없이 바로 실행 가능합니다.
     4. 최신 버전으로 보안 패치와 성능 개선이 반영되어 있습니다.
+    5. 3.x 버전은 현대적 아키텍쳐와의 호환성이 높다는 장점이 있습니다.
 
   </details> 
 
@@ -57,9 +69,10 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
     <div markdown="1">     
 
     1. 무료로 제공되는 오픈소스 RDBMS입니다.
-    2. 안정성과 확장성이 뛰어나며 대용량 데이터 처리에 적합합니다.
+    2. 안정성과 확장성이 뛰어나며 대규모 환경에서도 안정적으로 동작합니다.
     3. JSON 타입 지원 등 다양한 데이터 타입을 제공합니다.
     4. ACID 특성을 완벽하게 지원하여 데이터 무결성을 보장합니다.
+    5. 대규모 트랜잭션 처리 및 복잡한 쿼리 처리에 강하다는 장점이 있습니다.
 
   </details> 
 
@@ -67,10 +80,11 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
   <summary><strong> 3️⃣ JWT & Spring Security</strong></summary>
     <div markdown="1">     
 
-    1. Stateless한 인증 방식으로 서버 확장성이 좋습니다.
+    1. 서버 상태를 저장하지 않는 Stateless한 인증 방식으로 확장성이 좋습니다.
     2. Spring Security와의 완벽한 통합으로 보안 구현이 용이합니다.
-    3. 토큰 기반 인증으로 세션 관리 부담이 없습니다.
+    3. 토큰 기반 인증으로 세션 관리 부담이 없습니다. 즉, 서버의 부담이 적습니다.
     4. 역할 기반 접근 제어(RBAC)를 쉽게 구현할 수 있습니다.
+    5. MSA 구조에서 서비스 간의 인증과 인가 적용에 유리합니다.
 
   </details> 
 
@@ -78,10 +92,13 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
   <summary><strong> 4️⃣ Docker</strong></summary>
     <div markdown="1">
 
-    1. 개발 환경과 운영 환경의 일관성을 유지할 수 있습니다.
-    2. 격리된 환경에서 테스트가 가능하여 시스템 영향을 최소화합니다.
-    3. 이미지 기반으로 빠른 배포가 가능합니다.
+    1. Docker파일을 기반으로 팀원 모두가 동일한 개발 환경을 쉽게 구성할 수 있으며,
+       환경 차이로 인한 오류를 방지 할 수 있습니다. (개발 환경과 운영 환경의 일관성 유지)
+    2. 각 MSA 서비스는 독립된 컨테이너에서 실행되어 시스템 간의 간섭 없이 안정적으로 테스트 가능합니다.
+    3. 이미지 기반의 배포 방식이기 때문에 일관되고 빠른 배포가 가능합니다.
     4. 마이크로서비스 아키텍처로의 확장이 용이합니다.
+     -> 서비스 단위로 배포, 스케일링이 용이합니다.
+    5. 추후 CI/CD 파이프라인과 연동해 자동화된 배포 환경을 구축 가능합니다.
 
   </details> 
 
@@ -89,7 +106,9 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
   <summary><strong> 5️⃣ Redis </strong></summary>
     <div markdown="1">     
 
-    1. REDIS 관련 설명
+    1. Redis는 인메모리 기반으로 매우 빠른 읽기 및 쓰기 성능을 제공합니다
+    2. MSA 환경에서 트래픽 분산 및 응답 속도 개선, lock을 통한 동시성 제어가 가능합니다.
+    3. TTL 기능으로 데이터 만료 처리가 간편합니다.
 
   </details> 
 
@@ -98,9 +117,10 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
     <div markdown="1">     
 
     1. RestTemplate의 후속 버전으로 더 나은 성능과 유지보수성을 제공합니다.
-    2. 동기 방식으로 구현이 간단하고 학습 곡선이 낮습니다.
-    3. 예외 처리가 명확하고 직관적입니다.
+    2. 동기 방식으로 구현이 간단하고 직관적입니다.
+    3. 예외 처리가 명확해 안정적인 API 호출을 구성할 수 있습니다.
     4. 현재 프로젝트 규모에서는 비동기보다 동기 방식이 더 적합합니다.
+    5. 외부 API나 MSA 간 서비스 호출 시 코드의 가독성이 더 좋습니다.
 
   </details> 
 
@@ -108,10 +128,11 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
   <summary><strong> 7️⃣ Google Gemini API</strong></summary>
     <div markdown="1">
 
-    1. 메뉴 설명 자동 생성으로 사장님의 업무 부담을 줄일 수 있습니다.
+    1. Java/Spring 환경에서도 손쉽게 연동할 수 있습니다
     2. 자연스러운 한국어 생성이 가능합니다.
     3. API 호출이 간단하여 빠르게 통합할 수 있습니다.
     4. 무료 티어로 프로젝트 테스트가 가능합니다.
+    5. 텍스트 요약, 분류, 문장 생성 등 다양한 기능을 활용할 수 있습니다.
 
   </details> 
 
@@ -119,7 +140,10 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
   <summary><strong> 8️⃣ eureka + gateway</strong></summary>  
   <div markdown="1">     
 
-    1. 
+    1. Eureka는 서비스 관련 기능을 제공해 MSA 환경에서 서비스 위치를 자동으로 관리할 수 있습니다.
+    2. Eureka Server를 먼저 실행해 각 마이크로서비스(Product, Order, Company, Hub 등)가 자동으로 등록되도록 구성했습니다.
+    3. 서비스들이 Eureka에 등록되면 Gateway가 해당 정보를 기반으로 자동 라우팅을 수행하기 때문에, 별도의 수동 설정 없이 서비스 추가·변경을 처리할 수 있습니다.
+    4. 서비스 간 결합도를 낮추고, 각각의 서비스가 독립적으로 배포·확장될 수 있어 MSA 환경에서 유연한 확장성을 확보할 수 있습니다.
 
   </details> 
 
