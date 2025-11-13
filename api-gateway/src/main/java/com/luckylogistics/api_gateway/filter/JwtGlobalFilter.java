@@ -37,6 +37,7 @@ public class JwtGlobalFilter implements GlobalFilter {
                 ServerHttpRequest modified = exchange.getRequest().mutate()
                     .header("X-User-Id", userId)
                     .header("X-User-Role", role)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .build();
 
                 return chain.filter(exchange.mutate().request(modified).build());
@@ -49,7 +50,7 @@ public class JwtGlobalFilter implements GlobalFilter {
             }
 
             return webClient.post()
-                .uri("http://localhost:19099/api/v1/auth/reissue") //todo: eureka 확인 후 재설정
+                .uri("lb://USER/api/v1/auth/reissue")
                 .header("Authorization", "Bearer " + refreshToken)
                 .retrieve()
                 .bodyToMono(String.class)
