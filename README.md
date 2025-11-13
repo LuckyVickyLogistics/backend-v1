@@ -420,76 +420,74 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 💳 AI : 프롬프트 생성/조회/관리
 ⭐ SLACK: 메세지 조회/관리, 워크스페이스 참가여부 확인
 ```
-
 <details>
   <summary><strong>1️⃣ 사용자 및 JWT 인증/인가</strong></summary>
   <br>
-- [x] Spring Security와 JWT를 활용한 Stateless 인증
-- [x] 토큰 기반 인증으로 확장성 확보
-- [x] 로그인 및 기본 회원가입 기능 제공
+  <input type="checkbox" checked> Spring Security와 JWT를 활용한 Stateless 인증<br>
+  <input type="checkbox" checked> 토큰 기반 인증으로 확장성 확보<br>
+  <input type="checkbox" checked> 로그인 및 기본 회원가입 기능 제공<br>
 </details>
 
 <details>
   <summary><strong>2️⃣ 허브</strong></summary>
   <br>
-- [x] 허브 생성 및 조회
-- [x] 다익스트라 알고리즘을 통한 허브 경로 플랜 구현
-- [x] 허브 담당자 배정 및 조회
-- [x] 허브 및 허브 담당자 관리
+  <input type="checkbox" checked> 허브 생성 및 조회<br>
+  <input type="checkbox" checked> 다익스트라 알고리즘을 통한 허브 경로 플랜 구현<br>
+  <input type="checkbox" checked> 허브 담당자 배정 및 조회<br>
+  <input type="checkbox" checked> 허브 및 허브 담당자 관리<br>
 </details>
 
 <details>
-  <summary><strong>3️⃣ 업체 </strong></summary>
+  <summary><strong>3️⃣ 업체</strong></summary>
   <br>
-- [x] 업체 생성 및 상세 조회/검색 기능
-- [x] 업체 상태 관리 기능 제공
-- [x] 업체 담당자 생성
-- [x] RoleValidator 를 통한 인가처리
+  <input type="checkbox" checked> 업체 생성 및 상세 조회/검색 기능<br>
+  <input type="checkbox" checked> 업체 상태 관리 기능 제공<br>
+  <input type="checkbox" checked> 업체 담당자 생성<br>
+  <input type="checkbox" checked> RoleValidator 를 통한 인가처리<br>
 </details>
 
 <details>
   <summary><strong>4️⃣ 상품</strong></summary>
   <br>
-- [x] 검색 기능
-- [x] 상품 생성 및 정보 관리
-- [x] 재고 관리 기능
+  <input type="checkbox" checked> 검색 기능<br>
+  <input type="checkbox" checked> 상품 생성 및 정보 관리<br>
+  <input type="checkbox" checked> 재고 관리 기능<br>
 </details>
 
 <details>
-  <summary><strong>5️⃣ 주문 </strong></summary>
+  <summary><strong>5️⃣ 주문</strong></summary>
   <br>
-- [x] 주문 생성 및 상태 관리
-- [x] 주문에 따른 이벤트 발행(to 상품, 주문, 허브 도메인)
-- [x] 주문 조회(단건, 내역) 기능
+  <input type="checkbox" checked> 주문 생성 및 상태 관리<br>
+  <input type="checkbox" checked> 주문에 따른 이벤트 발행(to 상품, 주문, 허브 도메인)<br>
+  <input type="checkbox" checked> 주문 조회(단건, 내역) 기능<br>
 </details>
 
 <details>
-  <summary><strong>6️⃣ 배송 </strong></summary>
+  <summary><strong>6️⃣ 배송</strong></summary>
   <br>
-- [x] 배송 생성 및 조회와 상태 관리
-- [x] 배송에 따른 담당자 할당 및 관련 데이터 조회와 관리 기능 제공
-- [x] 배송 경로 조회 및 관리
-- [x] 생성, 상태 변경에 대한 로그 관리
-- [x] 배송 시퀀스 관리 및 경로 관리
+  <input type="checkbox" checked> 배송 생성 및 조회와 상태 관리<br>
+  <input type="checkbox" checked> 배송 담당자 할당 및 관련 데이터 조회/관리<br>
+  <input type="checkbox" checked> 배송 경로 조회 및 관리<br>
+  <input type="checkbox" checked> 생성/상태 변경 로그 관리<br>
+  <input type="checkbox" checked> 배송 시퀀스 및 경로 관리<br>
 </details>
 
 <details>
   <summary><strong>7️⃣ AI</strong></summary>
   <br>
-- [x] Google Gemini API 연동
-- [x] AI 호출 로그 저장
-- [x] 프롬프트 생성 및 조회
-- [x] 프롬프트 상태 로그 관리
+  <input type="checkbox" checked> Google Gemini API 연동<br>
+  <input type="checkbox" checked> AI 호출 로그 저장<br>
+  <input type="checkbox" checked> 프롬프트 생성 및 조회<br>
+  <input type="checkbox" checked> 프롬프트 상태 로그 관리<br>
 </details>
 
 <details>
-  <summary><strong> 8️⃣ Slack</strong></summary>
+  <summary><strong>8️⃣ Slack</strong></summary>
   <br>
-- [x] slack API 연동
-- [x] 메세지 조회
-- [x] 메세지 발송 상태 관리
-- [x] 워크스페이스 참가 여부 체크
+  <input type="checkbox" checked> Slack API 연동<br>
+  <input type="checkbox" checked> 메시지 조회<br>
+  <input type="checkbox" checked> 메시지 발송 상태 관리<br>
+  <input type="checkbox" checked> 워크스페이스 참가 여부 체크<br>
 </details>
 
 <br>
-
