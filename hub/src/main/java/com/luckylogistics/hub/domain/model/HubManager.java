@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "p_hub_manager")
+@Table(schema = "hubs", name = "p_hub_manager")
 public class HubManager extends BaseEntity{
 
     @Id

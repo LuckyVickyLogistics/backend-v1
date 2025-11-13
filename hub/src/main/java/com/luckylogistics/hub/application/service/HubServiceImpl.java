@@ -1,5 +1,6 @@
 package com.luckylogistics.hub.application.service;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.hub.application.dto.*;
 import com.luckylogistics.hub.application.exception.HubNotFoundException;
 import com.luckylogistics.hub.domain.model.Hub;
@@ -19,7 +20,11 @@ public class HubServiceImpl implements HubService {
     private final HubRepository hubRepository;
 
     @Override
-    public HubCreateResponse createHub(HubCreateRequest request, Long userId) {
+    public HubCreateResponse createHub(HubCreateRequest request, Long userId, UserRole currentUserRole) {
+
+        if(!currentUserRole.isMaster()){
+            throw new IllegalArgumentException("허가되지 않은 접근입니다.");
+        }
         Hub hub = Hub.create(
                 request.name(),
                 request.address(),
@@ -57,7 +62,12 @@ public class HubServiceImpl implements HubService {
     }
 
     @Override
-    public HubResponse updateHub(UUID hubId, HubUpdateRequest request, Long userId) {
+    public HubResponse updateHub(UUID hubId, HubUpdateRequest request, Long userId, UserRole currentUserRole) {
+
+        if(!currentUserRole.isMaster()){
+            throw new IllegalArgumentException("허가되지 않은 접근입니다.");
+        }
+
         Hub hub = hubRepository.findActiveById(hubId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 삭제된 허브입니다."));
 
@@ -72,7 +82,12 @@ public class HubServiceImpl implements HubService {
     }
 
     @Override
-    public void deleteHub(UUID hubId, Long userId) {
+    public void deleteHub(UUID hubId, Long userId, UserRole currentUserRole) {
+
+        if(!currentUserRole.isMaster()){
+            throw new IllegalArgumentException("허가되지 않은 접근입니다.");
+        }
+
         Hub hub = hubRepository.findActiveById(hubId)
                 .orElseThrow(() -> new IllegalArgumentException("이미 삭제되었거나 존재하지 않는 허브입니다."));
 
