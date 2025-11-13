@@ -432,69 +432,69 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 <details>
   <summary><strong>2️⃣ 허브</strong></summary>
 
-✅ 허브 생성 및 조회
-✅ 다익스트라 알고리즘을 통한 허브 경로 플랜 구현
-✅ 허브 담당자 배정 및 조회
-✅ 허브 및 허브 담당자 관리
+- ✅ 허브 생성 및 조회
+- ✅ 다익스트라 알고리즘을 통한 허브 경로 플랜 구현
+- ✅ 허브 담당자 배정 및 조회
+- ✅ 허브 및 허브 담당자 관리
 
 </details>
 
 <details>
   <summary><strong>3️⃣ 업체</strong></summary>
 
-✅ 업체 생성 및 상세 조회/검색 기능
-✅ 업체 상태 관리 기능 제공
-✅ 업체 담당자 생성
-✅ RoleValidator 를 통한 인가처리
+- ✅ 업체 생성 및 상세 조회/검색 기능
+- ✅ 업체 상태 관리 기능 제공
+- ✅ 업체 담당자 생성
+- ✅ RoleValidator 를 통한 인가처리
 
 </details>
 
 <details>
   <summary><strong>4️⃣ 상품</strong></summary>
 
-✅ 검색 기능
-✅ 상품 생성 및 정보 관리
-✅ 재고 관리 기능
+- ✅ 검색 기능
+- ✅ 상품 생성 및 정보 관리
+- ✅ 재고 관리 기능
 
 </details>
 
 <details>
   <summary><strong>5️⃣ 주문</strong></summary>
 
-✅ 주문 생성 및 상태 관리
-✅ 주문에 따른 이벤트 발행(to 상품, 주문, 허브 도메인)
-✅ 주문 조회(단건, 내역) 기능
+- ✅ 주문 생성 및 상태 관리
+- ✅ 주문에 따른 이벤트 발행(to 상품, 주문, 허브 도메인)
+- ✅ 주문 조회(단건, 내역) 기능
 
 </details>
 
 <details>
   <summary><strong>6️⃣ 배송</strong></summary>
 
-✅ 배송 생성 및 조회와 상태 관리
-✅ 배송에 따른 담당자 할당 및 관련 데이터 조회/관리 기능 제공
-✅ 배송 경로 조회 및 관리
-✅ 생성·상태 변경 로그 관리
-✅ 배송 시퀀스 및 경로 관리
+- ✅ 배송 생성 및 조회와 상태 관리
+- ✅ 배송에 따른 담당자 할당 및 관련 데이터 조회/관리 기능 제공
+- ✅ 배송 경로 조회 및 관리
+- ✅ 생성·상태 변경 로그 관리
+- ✅ 배송 시퀀스 및 경로 관리
 
 </details>
 
 <details>
   <summary><strong>7️⃣ AI</strong></summary>
 
-✅ Google Gemini API 연동
-✅ AI 호출 로그 저장
-✅ 프롬프트 생성 및 조회
-✅ 프롬프트 상태 로그 관리
+- ✅ Google Gemini API 연동
+- ✅ AI 호출 로그 저장
+- ✅ 프롬프트 생성 및 조회
+- ✅ 프롬프트 상태 로그 관리
 
 </details>
 
 <details>
   <summary><strong>8️⃣ Slack</strong></summary>
 
-✅ Slack API 연동
-✅ 메시지 조회
-✅ 메시지 발송 상태 관리
-✅ 워크스페이스 참가 여부 체크
+- ✅ Slack API 연동
+- ✅ 메시지 조회
+- ✅ 메시지 발송 상태 관리
+- ✅ 워크스페이스 참가 여부 체크
 
 </details>
 
