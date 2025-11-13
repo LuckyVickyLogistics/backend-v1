@@ -1,5 +1,6 @@
 package com.luckylogistics.company.presentation;
 
+import com.luckylogistics.common.enums.UserRole;
 import com.luckylogistics.common.infrastructure.exception.BusinessException;
 import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import java.util.Arrays;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RoleValidator {
-    public void validate(String userRole, String... roles) {
+    public void validate(UserRole userRole, String... roles) {
         boolean authorized =  Arrays.stream(roles)
             .anyMatch(role -> role.equalsIgnoreCase(userRole));
 
