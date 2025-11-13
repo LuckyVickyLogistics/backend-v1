@@ -32,6 +32,12 @@ eureka:
 server:
   port: 19093
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 management:
   zipkin:
     tracing:
