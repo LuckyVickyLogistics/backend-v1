@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "p_hub", indexes = {
         @Index(name = "ux_hub_address", columnList = "address", unique = true)
@@ -14,7 +16,7 @@ public class HubJpaEntity extends BaseEntity {
 
     @Id
     @Column(name = "hub_id", length = 100)
-    private String hubId;
+    private UUID hubId;
 
     @Column(name = "name", length = 100, nullable = false)
     private String name;
