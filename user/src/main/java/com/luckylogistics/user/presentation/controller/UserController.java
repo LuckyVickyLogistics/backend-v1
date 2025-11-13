@@ -25,10 +25,13 @@ import com.luckylogistics.user.presentation.request.UserUpdateRequest;
 import com.luckylogistics.user.presentation.response.UserDetailResponse;
 import com.luckylogistics.user.presentation.response.UserListResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "user api", description = "user domain api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -37,6 +40,7 @@ public class UserController {
 	private final UserService userService;
 
 	// 회원가입
+	@Operation(summary = "회원가입")
 	@PostMapping("/signup")
 	public ResponseEntity<ApiResponse<String>> signup(@Valid @RequestBody UserSignupRequest request) {
 
@@ -54,6 +58,7 @@ public class UserController {
 	}
 
 	// 회원가입 요청 처리 (master, hub)
+	@Operation(summary = "회원가입 요청 처리(승인, 거절)", description = "master, hub manager 권한")
 	@PutMapping("/{userId}/status")
 	public ResponseEntity<ApiResponse<UserResponse>> updateStatus(
 		@PathVariable Long userId,
@@ -66,6 +71,7 @@ public class UserController {
 	}
 
 	// 내 정보 조회
+	@Operation(summary = "내 정보 조회", description = "로그인한 사용자의 내 정보 조회")
 	@GetMapping("/me")
 	public ResponseEntity<ApiResponse<UserResponse>> getMyInfo(
 		HttpServletRequest request
@@ -75,6 +81,7 @@ public class UserController {
 	}
 
 	// 정보 수정 (master)
+	@Operation(summary = "회원 정보 수정", description = "master 권한")
 	@PutMapping("/{userId}")
 	public ResponseEntity<ApiResponse<UserResponse>> updateUser(
 		@PathVariable Long userId,
@@ -93,6 +100,7 @@ public class UserController {
 	}
 
 	// 전체 회원 조회 (master)
+	@Operation(summary = "전체 회원 목록 조회", description = "master 권한")
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<UserListResponse>>> getAllUsers(
 		@RequestHeader("X-User-Id") Long currentUserId,
@@ -103,6 +111,7 @@ public class UserController {
 	}
 
 	// 회원 상세 조회 (master)
+	@Operation(summary = "회원 상세 조회", description = "master 권한")
 	@GetMapping("/{userId}")
 	public ResponseEntity<ApiResponse<UserDetailResponse>> getUserById(
 		@PathVariable Long userId,
@@ -114,6 +123,7 @@ public class UserController {
 	}
 
 	// 회원 비활성화 (master)
+	@Operation(summary = "회원 비활성화", description = "master 권한")
 	@PutMapping("/{userId}/deactivate")
 	public ResponseEntity<ApiResponse<Void>> deactiveUser(
 		@PathVariable Long userId, HttpServletRequest request,
