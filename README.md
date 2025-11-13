@@ -1,6 +1,5 @@
 # 🍀️📦 LuckyVickyLogistics🍀🍀
-<img width="600" height="400" alt="image" src="" />
-
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/3d1e90e0-cef1-4ebb-ba78-d675662ddfc0" />
 <br>
 
 ## ❇️ [프로젝트 개요](https://github.com/LuckyVickyLogistics/backend-v1/tree/develop?tab=readme-ov-file)
