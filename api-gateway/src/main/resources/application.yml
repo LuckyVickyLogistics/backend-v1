@@ -13,7 +13,7 @@ spring:
             - id: company
               uri: lb://COMPANY
               predicates:
-                - Path=/api/v1/companies/**
+                - Path=/api/v1/companies/**, /api/v1/company-managers/**
             - id: delivery
               uri: lb://DELIVERY
               predicates:
