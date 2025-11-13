@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -16,15 +15,29 @@ public class FeignClientConfig {
     @Bean
     public RequestInterceptor requestInterceptor() {
         return template -> {
-            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes requestAttributes =
+                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
-            if (requestAttributes != null) {
-                HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
+            if (requestAttributes == null) return;
 
-                String token = request.getHeader("Authorization");
-                if (token != null && !token.isEmpty()) {
-                    template.header(HttpHeaders.AUTHORIZATION, token);
-                }
+            HttpServletRequest request = requestAttributes.getRequest();
+
+            // Authorization 헤더 전파
+            String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+            if (token != null && !token.isEmpty()) {
+                template.header(HttpHeaders.AUTHORIZATION, token);
+            }
+
+            // X-User-Id 헤더 전파
+            String userId = request.getHeader("X-User-Id");
+            if (userId != null && !userId.isEmpty()) {
+                template.header("X-User-Id", userId);
+            }
+
+            // X-User-Role헤더 전파
+            String userRole = request.getHeader("X-User-Role");
+            if (userRole != null && !userRole.isEmpty()) {
+                template.header("X-User-Role", userRole);
             }
         };
     }
@@ -38,5 +51,4 @@ public class FeignClientConfig {
             }
         };
     }
-
 }
