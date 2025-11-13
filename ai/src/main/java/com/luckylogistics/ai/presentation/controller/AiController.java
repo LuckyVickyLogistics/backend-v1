@@ -21,13 +21,13 @@ import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
 import com.luckylogistics.ai.application.service.AiService;
-import com.luckylogistics.ai.common.response.ApiResponse;
 import com.luckylogistics.ai.domain.vo.Status;
 import com.luckylogistics.ai.presentation.dto.AiPromptCreatedRequest;
 import com.luckylogistics.ai.presentation.dto.AiPromptCreatedResponse;
 import com.luckylogistics.ai.presentation.dto.AiPromptDetailResponse;
 import com.luckylogistics.ai.presentation.dto.AiPromptStatusUpdateRequest;
 import com.luckylogistics.ai.presentation.dto.AiPromptSummaryResponse;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,7 +51,7 @@ public class AiController {
 		AiPromptResult result = aiService.createAiPrompt(command);
 		AiPromptCreatedResponse responseDto = AiPromptCreatedResponse.from(result);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("AI 프롬프트가 생성되었습니다.", responseDto));
+		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(responseDto, "AI 프롬프트가 생성되었습니다."));
 	}
 
 	@Operation(summary = "AI 프롬프트 목록 조회", description = "마스터 관리자만 사용 가능합니다.")
@@ -66,7 +66,7 @@ public class AiController {
 		Page<AiPromptSummaryResponse> responseDtoPage = aiService.getAllPrompts(status, page, size, sortBy, direction)
 			.map(AiPromptSummaryResponse::from);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("AI 프롬프트 목록이 조회되었습니다.", responseDtoPage));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDtoPage, "AI 프롬프트 목록이 조회되었습니다."));
 	}
 
 	@Operation(summary = "AI 프롬프트 조회", description = "마스터 관리자만 사용 가능합니다.")
@@ -75,7 +75,7 @@ public class AiController {
 		AiPromptReadResult result = aiService.getPrompt(aiPromptId);
 		AiPromptDetailResponse responseDto = AiPromptDetailResponse.from(result);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("AI 프롬프트가 조회되었습니다.", responseDto));
+		return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(responseDto, "AI 프롬프트가 조회되었습니다."));
 	}
 
 	@Operation(summary = "AI 프롬프트 상태 수정", description = "마스터 관리자만 사용 가능합니다.")

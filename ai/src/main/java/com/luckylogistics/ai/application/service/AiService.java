@@ -17,12 +17,13 @@ import com.luckylogistics.ai.application.dto.AiPromptReadResult;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.dto.StatusUpdateCommand;
 import com.luckylogistics.ai.application.external.AiPromptGenerator;
-import com.luckylogistics.ai.common.exception.BusinessException;
-import com.luckylogistics.ai.common.exception.ErrorCode;
-import com.luckylogistics.ai.common.util.PageableUtils;
+
 import com.luckylogistics.ai.domain.entity.AiPrompt;
 import com.luckylogistics.ai.domain.repository.AiRepository;
 import com.luckylogistics.ai.domain.vo.Status;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.util.PageableUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

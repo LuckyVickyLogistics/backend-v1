@@ -28,8 +28,8 @@ import com.google.genai.types.Type;
 import com.luckylogistics.ai.application.dto.AiPromptCreatedCommand;
 import com.luckylogistics.ai.application.dto.AiPromptResult;
 import com.luckylogistics.ai.application.external.AiPromptGenerator;
-import com.luckylogistics.ai.common.exception.BusinessException;
-import com.luckylogistics.ai.common.exception.ErrorCode;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 
 import lombok.extern.slf4j.Slf4j;
 

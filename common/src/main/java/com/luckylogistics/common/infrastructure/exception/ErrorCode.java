@@ -14,7 +14,8 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "Z-003", "권한이 없습니다"),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "Z-004", "잘못된 요청입니다"),
     INVALID_HEADER_USER_ROLE(HttpStatus.BAD_REQUEST, "Z-005", "잘못된 X-User-Role 헤더입니다"),
-    FEIGN_ERROR(HttpStatus.BAD_GATEWAY, "Z-500", "외부 서비스 요청 중 오류가 발생했습니다."),
+	NOT_FOUND(HttpStatus.NOT_FOUND, "D-006", "리소스를 찾을 수 없습니다."),
+	FEIGN_ERROR(HttpStatus.BAD_GATEWAY, "Z-500", "외부 서비스 요청 중 오류가 발생했습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Z-999", "서버 오류가 발생했습니다"),
 
     // Company
@@ -58,11 +59,30 @@ public enum ErrorCode {
     ORDER_SERVICE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "O-002", "주문 서비스 오류가 발생했습니다"),
 
     // User
-    USER_ROLE_UNAUTHORIZED(HttpStatus.FORBIDDEN, "U-001", "해당 권한으로는 접근할 수 없습니다")
-    ;
+    USER_ROLE_UNAUTHORIZED(HttpStatus.FORBIDDEN, "U-001", "해당 권한으로는 접근할 수 없습니다"),
+
+	// Slack
+	SLACK_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "S-001", "일치하는 Slack 메시지를 찾을 수 없습니다."),
+	SLACK_API_INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "S-002", "Slack API 토큰이 유효하지 않습니다."),
+	SLACK_API_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, "S-003", "Slack API 요청이 타임아웃되었습니다."),
+	SLACK_API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S-999", "Slack API 서비스 내부에 오류가 발생했습니다."),
+
+	// Gemini
+	GEMINI_API_BAD_REQUEST(HttpStatus.BAD_REQUEST, "G-001", "Gemini API 요청이 잘못되었습니다."),
+	GEMINI_API_FORBIDDEN(HttpStatus.FORBIDDEN, "G-002", "Gemini API 요청에 권한이 없습니다."),
+	GEMINI_API_NOT_FOUND(HttpStatus.NOT_FOUND, "G-003", "Gemini API 요청한 리소스를 찾을 수 없습니다."),
+	GEMINI_API_TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "G-004", "Gemini API 요청 제한 횟수를 초과했습니다."),
+	GEMINI_API_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, "G-005", "Gemini API 요청이 타임아웃되었습니다."),
+	GEMINI_API_INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "G-006", "Gemini API 서비스 내부에 오류가 발생했습니다."),
+	GEMINI_API_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "G-007", "Gemini API 서비스를 일시적으로 호출할 수 없습니다."),
+	GEMINI_API_UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "G-008", "Gemini API 서비스에 알 수 없는 오류가 발생했습니다."),
+	GEMINI_API_RESPONSE_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "G-009", "Gemini API 응답 파싱에 실패했습니다.");
+	;
 
     private final HttpStatus status;
     private final String code;
     private final String message;
 
 }
+
+
