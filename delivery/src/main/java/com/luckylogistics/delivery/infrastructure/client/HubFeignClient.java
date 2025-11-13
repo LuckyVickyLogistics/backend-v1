@@ -8,15 +8,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@FeignClient(name = "hub", path = "/api/v1/hubs")
+@FeignClient(name = "hub", path = "/api/v1")
 public interface HubFeignClient {
 
     // 허브 단건 조회
-    @GetMapping("/{hubId}")
+    @GetMapping("/hubs/{hubId}")
     ApiResponse<HubResponse> getHub(@PathVariable("hubId") UUID hubId);
 
     // 사용자 id로 담당 허브 조회
-    @GetMapping("/manager/{userId}/hub")
+    @GetMapping("/hubs/manager/{userId}/hub")
     ApiResponse<HubResponse> getHubByUserId(@PathVariable("userId") Long userId);
 
     // 배송 경로 조회
