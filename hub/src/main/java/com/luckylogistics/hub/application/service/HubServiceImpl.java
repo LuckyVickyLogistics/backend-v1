@@ -1,8 +1,9 @@
 package com.luckylogistics.hub.application.service;
 
 import com.luckylogistics.common.enums.UserRole;
+import com.luckylogistics.common.infrastructure.exception.BusinessException;
+import com.luckylogistics.common.infrastructure.exception.ErrorCode;
 import com.luckylogistics.hub.application.dto.*;
-import com.luckylogistics.hub.application.exception.HubNotFoundException;
 import com.luckylogistics.hub.domain.model.Hub;
 import com.luckylogistics.hub.domain.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class HubServiceImpl implements HubService {
     @Transactional(readOnly = true)
     public HubResponse getHub(UUID hubId) {
         Hub hub = hubRepository.findActiveById(hubId)
-                .orElseThrow(() -> new HubNotFoundException("존재하지 않거나 삭제된 허브입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.HUB_NOT_FOUND));
 
         return toHubResponse(hub);
     }

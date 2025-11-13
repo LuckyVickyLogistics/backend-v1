@@ -1,9 +1,9 @@
 package com.luckylogistics.hub.presentation.controller;
 
 import com.luckylogistics.common.enums.UserRole;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.hub.application.dto.*;
 import com.luckylogistics.hub.application.service.HubManagerService;
-import com.luckylogistics.hub.presentation.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +25,13 @@ public class HubManagerController {
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
         HubManagerCreateResponse response = hubManagerService.createHubManager(requestDto, currentUserId, currentUserRole);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(response, "success"));
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<HubManagerResponse>>> getHubAllManager() {
         List<HubManagerResponse> hubManagerResponses = hubManagerService.getAllHubManagers();
-        return ResponseEntity.ok(ApiResponse.success(hubManagerResponses));
+        return ResponseEntity.ok(ApiResponse.success(hubManagerResponses, "success"));
     }
 
     // hubId로 매니저 조회
@@ -40,7 +40,7 @@ public class HubManagerController {
             @PathVariable UUID hubId
     ) {
         HubManagerResponse hubManagerResponse = hubManagerService.getHubManager(hubId);
-        return ResponseEntity.ok(ApiResponse.success(hubManagerResponse));
+        return ResponseEntity.ok(ApiResponse.success(hubManagerResponse, "success"));
     }
     // hubId로 매니저 슬랙 조회
     @GetMapping("/{hubId}/slack")
@@ -56,7 +56,7 @@ public class HubManagerController {
             @PathVariable Long userId
     ) {
         HubResponse hubResponse = hubManagerService.getHubByUserId(userId);
-        return ResponseEntity.ok(ApiResponse.success(hubResponse));
+        return ResponseEntity.ok(ApiResponse.success(hubResponse, "success"));
     }
 
     @PutMapping("/{managerId}")
@@ -68,7 +68,7 @@ public class HubManagerController {
     ) {
 
         HubManagerResponse hubManagerResponse = hubManagerService.updateHubManager(managerId, requestDto, currentUserId, currentUserRole);
-        return ResponseEntity.ok(ApiResponse.success(hubManagerResponse));
+        return ResponseEntity.ok(ApiResponse.success(hubManagerResponse, "success"));
     }
 
     @DeleteMapping("/{managerId}")
@@ -78,6 +78,6 @@ public class HubManagerController {
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
         hubManagerService.deleteHubManager(managerId,currentUserId, currentUserRole);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success("success"));
     }
 }

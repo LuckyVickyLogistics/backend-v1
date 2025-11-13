@@ -1,9 +1,9 @@
 package com.luckylogistics.hub.presentation.controller;
 
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.hub.application.dto.RoutePlanRequest;
 import com.luckylogistics.hub.application.dto.RoutePlanResponse;
 import com.luckylogistics.hub.application.service.RouteService;
-import com.luckylogistics.hub.presentation.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,7 +49,7 @@ public class RouteController {
 
         RoutePlanRequest request = new RoutePlanRequest(departureHubId, arrivalHubId, criterion);
         RoutePlanResponse res = routeService.plan(request);
-        return ResponseEntity.ok(ApiResponse.success(res));
+        return ResponseEntity.ok(ApiResponse.success(res, "success"));
     }
 }
 
