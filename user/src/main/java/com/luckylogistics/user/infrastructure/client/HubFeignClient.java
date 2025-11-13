@@ -12,7 +12,7 @@ import com.luckylogistics.user.common.response.ApiResponse;
 @FeignClient(name = "hub", path ="/api/v1/hubs")
 public interface HubFeignClient {
 
-	@GetMapping("{hubId}")
+	@GetMapping("/{hubId}")
 	ApiResponse<HubResponse> getHubById(
 		//@RequestHeader("X-Internal-Request") String internalHeader,
 		@PathVariable UUID hubId
