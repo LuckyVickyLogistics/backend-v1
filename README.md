@@ -411,21 +411,19 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 
 ##  🛠 주요 기능
 ```
-👨‍👩‍👧 유저: 로그인 | 회원가입 | JWT 인증 | 권한 관리
-🏪 허브: 
-🍱 업체: 
-🛒 상품: 
-🎁 주문: 주문 생성 | 상태 관리 | 주문 내역 조회
-📦 배송: 
-💳 AI : 
-⭐ SLACK: 
-
+👨‍👩‍👧 유저: 로그인, 회원가입, JWT 인증, 권한 관리
+🏪 허브: 허브 생성/조회/관리, 허브관리자 생성, 허브 경로 관리
+🍱 업체: 업체 생성/조회/관리, 업체담당자 생성/조회
+🛒 상품: 상품 생성/조회, 상품 정보 및 재고 관리
+🎁 주문: 주문 생성/조회, 주문 상태 관리
+📦 배송: 배송 생성/조회/관리, 배송담당자 생성/조회/관리, 배송 경로 조회/관리
+💳 AI : 프롬프트 생성/조회/관리
+⭐ SLACK: 메세지 조회/관리, 워크스페이스 참가여부 확인
 ```
 
 <details>
   <summary><strong>1️⃣ 사용자 및 JWT 인증/인가</strong></summary>
   <br>
-
 - [x] Spring Security와 JWT를 활용한 Stateless 인증
 - [x] 토큰 기반 인증으로 확장성 확보
 - [x] 로그인 및 기본 회원가입 기능 제공
@@ -434,278 +432,64 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 <details>
   <summary><strong>2️⃣ 허브</strong></summary>
   <br>
-
-- [x] 
-- [x] 
-- [x] 
-- [x] 
+- [x] 허브 생성 및 조회
+- [x] 다익스트라 알고리즘을 통한 허브 경로 플랜 구현
+- [x] 허브 담당자 배정 및 조회
+- [x] 허브 및 허브 담당자 관리
 </details>
 
 <details>
   <summary><strong>3️⃣ 업체 </strong></summary>
   <br>
-
-- [x] 
-- [x] 
-- [x] 
-- [x] 
+- [x] 업체 생성 및 상세 조회/검색 기능
+- [x] 업체 상태 관리 기능 제공
+- [x] 업체 담당자 생성
+- [x] RoleValidator 를 통한 인가처리
 </details>
 
 <details>
   <summary><strong>4️⃣ 상품</strong></summary>
   <br>
-
 - [x] 검색 기능
-- [x] 
-- [x] 
-- [x]
+- [x] 상품 생성 및 정보 관리
+- [x] 재고 관리 기능
 </details>
 
 <details>
   <summary><strong>5️⃣ 주문 </strong></summary>
   <br>
-
 - [x] 주문 생성 및 상태 관리
-- [x] 
-- [x] 
-- [x] 
+- [x] 주문에 따른 이벤트 발행(to 상품, 주문, 허브 도메인)
+- [x] 주문 조회(단건, 내역) 기능
 </details>
 
 <details>
   <summary><strong>6️⃣ 배송 </strong></summary>
   <br>
-
-- [x] 
-- [x]
-- [x] 
-- [x] 기본 배송지 설정
+- [x] 배송 생성 및 조회와 상태 관리
+- [x] 배송에 따른 담당자 할당 및 관련 데이터 조회와 관리 기능 제공
+- [x] 배송 경로 조회 및 관리
+- [x] 생성, 상태 변경에 대한 로그 관리
+- [x] 배송 시퀀스 관리 및 경로 관리
 </details>
 
 <details>
   <summary><strong>7️⃣ AI</strong></summary>
   <br>
-
 - [x] Google Gemini API 연동
 - [x] AI 호출 로그 저장
-- [x] 
+- [x] 프롬프트 생성 및 조회
+- [x] 프롬프트 상태 로그 관리
 </details>
 
 <details>
   <summary><strong> 8️⃣ Slack</strong></summary>
   <br>
-
-- [x] 
-- [x] 
-- [x] 
+- [x] slack API 연동
+- [x] 메세지 조회
+- [x] 메세지 발송 상태 관리
+- [x] 워크스페이스 참가 여부 체크
 </details>
 
 <br>
 
-
-
-## 🐞 Trouble Shooting (수정 필요)
-
-<details>
-  <summary><strong>1️⃣ PostgreSQL 설치 오류 해결</strong></summary>
-    <div markdown="1"> 
-
-**문제**
-- PostgreSQL을 로컬에 설치하는 과정에서 에러 코드 1 발생
-- 설치 경로에 한글이 포함되어 설치 실패
-
-**원인**
-- 한글 경로로 인한 설치 오류
-
-**해결 방안**
-- DBeaver를 사용하여 원격 RDS에 직접 접근
-- 로컬 설치 없이 개발 환경 구성
-
-**결과**
-- ✅ 팀원 모두 동일한 DB 환경에서 작업 가능
-- ✅ 초기 환경 구축 시간 단축
-- ✅ 경로 오류 근본적 해결
-
-</details>
-
-<details>
-  <summary><strong>2️⃣ Spring Security 권한 거부 응답 개선</strong></summary>
-    <div markdown="1"> 
-
-**문제**
-- `@PreAuthorize`로 권한 제어 시 403 에러만 반환
-- Swagger에서 에러 상세 정보 확인 불가
-
-**원인**
-- 기본 `AccessDeniedHandler`가 HTML 기반 에러 페이지 반환
-- API 클라이언트에서는 단순 403만 표시됨
-
-**해결 방안**
-- 커스텀 예외 처리 핸들러 구현
-- JSON 형태의 상세 에러 응답 반환
-
-**결과**
-```json
-{
-  "status": 403,
-  "error": "Forbidden",
-  "message": "접근 권한이 없습니다.",
-  "path": "/api/v1/user"
-}
-```
-- ✅ 명확한 에러 메시지 제공
-- ✅ 디버깅 효율 향상
-- ✅ API 응답 일관성 확보
-
-</details>
-
-<details>
-  <summary><strong>3️⃣ 주문 생성 시 다중 오류 해결</strong></summary>
-    <div markdown="1"> 
-
-**문제**
-- POST `/api/orders` 호출 시 순차적 오류 발생
-    1. `HttpMediaTypeNotAcceptableException`
-    2. `HttpMessageNotReadableException`
-    3. SQL NOT NULL 제약 조건 위반
-
-**원인**
-1. DTO에 getter 없어 JSON 변환 불가
-2. `@RequestBody String` 타입 불일치
-3. 클래스 레벨 `@Transactional(readOnly = true)`로 INSERT 무시
-4. 엔티티와 DB 스키마 불일치
-
-**해결 방안**
-1. DTO를 `record`로 변경하여 자동 getter 생성
-2. 요청 DTO 타입을 적절한 객체로 변경
-3. 쓰기 메서드에 `@Transactional` 오버라이드
-4. DB 스키마와 엔티티 동기화
-
-**결과**
-- ✅ JSON 직렬화/역직렬화 정상 작동
-- ✅ 트랜잭션 정상 커밋
-- ✅ 불필요한 컬럼 제거
-- ✅ 안정적인 주문 생성 기능
-
-</details>
-
-<details>
-  <summary><strong>4️⃣ 회원가입 시 인증 정보 오류</strong></summary>
-    <div markdown="1"> 
-
-**문제**
-- 회원가입 시 `UserDetailsImpl` 캐스팅 오류 발생
-- SecurityContextHolder가 인증정보를 찾지 못함
-
-**원인**
-- 회원가입은 인증 없이 접근 가능한 API
-- principal이 "anonymous" 문자열이라 캐스팅 불가
-
-**해결 방안**
-```java
-if (principal instanceof UserDetailsImpl) {
-    return ((UserDetailsImpl) principal).getUsername();
-}
-return "SYSTEM";
-```
-
-**결과**
-- ✅ 미인증 사용자 작업 시 "SYSTEM" 기록
-- ✅ 인증된 사용자는 닉네임 기록
-- ✅ created_by, updated_by 추적 가능
-
-</details>
-
-<details>
-  <summary><strong>5️⃣ Soft Delete 데이터 조회 문제</strong></summary>
-    <div markdown="1"> 
-
-**문제**
-- Cart 조회 시 삭제된 CartFood와 CartFoodOption까지 조회됨
-- Soft Delete한 데이터가 함께 반환됨
-
-**원인**
-- 연관 엔티티에 조회 조건이 적용되지 않음
-- `is_deleted = true`인 데이터까지 전부 조회
-
-**해결 방안**
-```java
-@OneToMany(mappedBy = "cart")
-@SQLRestriction("is_deleted = false")
-private List<CartFood> cartFoods;
-```
-
-**결과**
-- ✅ 삭제되지 않은 데이터만 조회
-- ✅ 데이터 정합성 유지
-- ✅ 불필요한 필터링 로직 제거
-
-</details>
-
-<details>
-  <summary><strong>6️⃣ 장바구니 음식 추가 시 ID 미생성 오류</strong></summary>
-    <div markdown="1"> 
-
-**문제**
-- 새 장바구니 생성 후 음식 추가 시 오류 발생
-- 외래키 참조 실패
-
-**원인**
-- `Cart.create()`로 생성한 엔티티를 저장하지 않고 사용
-- ID가 생성되지 않은 상태에서 참조 시도
-
-**해결 방안**
-```java
-Cart newCart = Cart.create(user, restaurant);
-cartRepository.save(newCart); // 저장 후 사용
-```
-
-**결과**
-- ✅ 안전한 데이터 저장 및 조회
-- ✅ 외래키 참조 정상 작동
-- ✅ 장바구니 기능 안정화
-
-</details>
-
-<details>
-  <summary><strong>7️⃣ 식당 정보 접근 권한 문제</strong></summary>
-    <div markdown="1"> 
-
-**문제**
-- 식당 등록/수정/삭제 시 본인 확인 없이 접근 가능
-- 다른 사장님의 식당 정보 수정 가능
-
-**원인**
-- 본인 ID 체크 로직 부재
-- 권한만 확인하고 소유권은 미확인
-
-**해결 방안**
-```java
-if (!restaurant.getOwnerId().equals(user.getId())) {
-    throw new UnauthorizedException("본인의 식당만 수정 가능합니다");
-}
-```
-
-**결과**
-- ✅ 본인 식당만 관리 가능
-- ✅ 권한과 소유권 이중 검증
-- ✅ 데이터 보안 강화
-
-</details>
-
-<details>
-  <summary><strong>8️⃣ 리뷰 재작성 시 Unique 제약 조건 위반</strong></summary>
-    <div markdown="1"> 
-
-**문제**
-- 리뷰 작성 → 삭제 → 재작성 시 오류 발생
-- Soft Delete로 인해 실제 데이터는 남아있어 Unique 제약 위반
-
-**원인**
-- 주문과 리뷰가 1:1 관계
-- 외래키에 Unique 제약 조건 존재
-
-**해결 방안**
-1. 주문과 리뷰 관계를 1:N으로 변경
-2. 리뷰 생성 시 활성 상태 확인 로직 추가
-```java
-if (reviewRepository.existsByOrderIdAndStatusTrue(orderId))
