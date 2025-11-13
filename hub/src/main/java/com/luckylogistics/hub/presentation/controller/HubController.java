@@ -1,9 +1,9 @@
 package com.luckylogistics.hub.presentation.controller;
 
 import com.luckylogistics.common.enums.UserRole;
+import com.luckylogistics.common.infrastructure.response.ApiResponse;
 import com.luckylogistics.hub.application.dto.*;
 import com.luckylogistics.hub.application.service.HubService;
-import com.luckylogistics.hub.presentation.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +26,14 @@ public class HubController {
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
         HubCreateResponse response = hubService.createHub(requestDto, currentUserId, currentUserRole);
-        return ResponseEntity.ok(ApiResponse.success(response));
+        return ResponseEntity.ok(ApiResponse.success(response, "success"));
     }
 
     // READ - 전체
     @GetMapping
     public ResponseEntity<ApiResponse<List<HubResponse>>> getAllHubs() {
         List<HubResponse> hubs = hubService.getAllHubs();
-        return ResponseEntity.ok(ApiResponse.success(hubs));
+        return ResponseEntity.ok(ApiResponse.success(hubs, "success"));
     }
 
     // READ - 단건
@@ -42,7 +42,7 @@ public class HubController {
             @PathVariable UUID hubId
     ) {
         HubResponse hub = hubService.getHub(hubId);
-        return ResponseEntity.ok(ApiResponse.success(hub));
+        return ResponseEntity.ok(ApiResponse.success(hub, "success"));
     }
 
     // UPDATE
@@ -54,7 +54,7 @@ public class HubController {
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
         HubResponse updated = hubService.updateHub(hubId, requestDto, currentUserId, currentUserRole);
-        return ResponseEntity.ok(ApiResponse.success(updated));
+        return ResponseEntity.ok(ApiResponse.success(updated, "success"));
     }
 
     // DELETE (soft delete)
@@ -65,6 +65,6 @@ public class HubController {
             @RequestHeader("X-User-Role") UserRole currentUserRole
     ) {
         hubService.deleteHub(hubId, currentUserId, currentUserRole);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success("success"));
     }
 }

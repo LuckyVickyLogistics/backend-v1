@@ -24,7 +24,7 @@ INSERT INTO hubs.p_hub (hub_id, name, address, latitude, longitude, created_at, 
 ON CONFLICT (address) DO NOTHING;
 
 WITH
--- 1) 원본(단방향) 정의: 네가 제공한 연결 목록
+-- 1) 단방향 정의
 edges_base (from_name, to_name) AS (
     VALUES
         -- 경기 남부 → 인접
@@ -105,5 +105,5 @@ SELECT
     1                                            AS updated_by,
     false                                        AS is_deleted
 FROM calc c
--- 같은 (from,to) 있으면 생략 (권장: p_hub_route에 UNIQUE(from_hub_id, to_hub_id) 존재)
+-- 같은 (from,to) 있으면 생략
     ON CONFLICT DO NOTHING;
