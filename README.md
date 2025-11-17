@@ -179,7 +179,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_user`
 
   | 컬럼명              | 데이터 타입        | 제약 조건                  |
-      |--------------------|-----------------|---------------------------|
+  |--------------------|-----------------|---------------------------|
   | user_id            | bigint          | PK, NOT NULL              |
   | identifier         | uuid            | UNIQUE, NOT NULL          |
   | organization_type  | varchar(255)    |                           |
@@ -200,7 +200,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_hub`
 
   | 컬럼명              | 데이터 타입        | 제약 조건                  |
-      |--------------------|-----------------|---------------------------|
+  |--------------------|-----------------|---------------------------|
   | user_id            | bigint          | PK, NOT NULL              |
   | identifier         | uuid            | UNIQUE, NOT NULL          |
   | organization_type  | varchar(255)    |                           |
@@ -219,7 +219,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_hub_manager`
 
   | 컬럼명          | 데이터 타입     | 제약 조건        |
-      |----------------|----------------|----------------|
+  |----------------|----------------|----------------|
   | hub_manager_id  | uuid           | PK, NOT NULL   |
   | user_id         | bigint         | NOT NULL       |
   | hub_id          | uuid           | NOT NULL       |
@@ -236,7 +236,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_hub_route`
 
   | 컬럼명       | 데이터 타입       | 제약 조건        |
-      |-------------|-----------------|----------------|
+  |-------------|-----------------|----------------|
   | route_id    | uuid            | PK, NOT NULL   |
   | distance    | doubleprecision | NOT NULL       |
   | time        | integer         | NOT NULL       |
@@ -254,7 +254,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_products`
 
   | 컬럼명                 | 데이터 타입     | 제약 조건        |
-      |-----------------------|----------------|----------------|
+  |-----------------------|----------------|----------------|
   | product_id            | uuid           | PK, NOT NULL   |
   | company_id            | uuid           | NOT NULL       |
   | hub_id                | uuid           | NOT NULL       |
@@ -275,7 +275,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_orders`
 
   | 컬럼명            | 데이터 타입     | 제약 조건        |
-      |------------------|----------------|----------------|
+  |------------------|----------------|----------------|
   | order_id         | uuid           | PK, NOT NULL   |
   | quantity         | integer        | NOT NULL       |
   | customer_id      | uuid           | NOT NULL       |
@@ -295,7 +295,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_delivery`
 
   | 컬럼명                     | 데이터 타입     | 제약 조건        |
-      |----------------------------|----------------|----------------|
+  |----------------------------|----------------|----------------|
   | delivery_id                | uuid           | PK, NOT NULL   |
   | arrival_hub_id             | uuid           | NOT NULL       |
   | delivery_address           | varchar(500)   | NOT NULL       |
@@ -315,7 +315,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_delivery_manager`
 
   | 컬럼명              | 데이터 타입     | 제약 조건        |
-      |--------------------|----------------|----------------|
+  |--------------------|----------------|----------------|
   | delivery_manager_id| bigint         | PK, NOT NULL   |
   | delivery_sequence  | integer        | NOT NULL       |
   | hub_id             | varchar(255)   |                |
@@ -333,7 +333,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_delivery_route`
 
   | 컬럼명               | 데이터 타입      | 제약 조건        |
-      |---------------------|-----------------|----------------|
+  |---------------------|-----------------|----------------|
   | delivery_route_id   | uuid            | PK, NOT NULL   |
   | actual_distance     | numeric(10,2)   |                |
   | actual_duration     | integer         |                |
@@ -356,7 +356,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_company`
 
   | 컬럼명       | 데이터 타입 | 제약 조건        |
-      |-------------|------------|----------------|
+  |-------------|------------|----------------|
   | company_id  | uuid       | PK, NOT NULL   |
   | hub_id      | uuid       | NOT NULL       |
   | name        | varchar    | NOT NULL       |
@@ -372,7 +372,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_company_manager`
 
   | 컬럼명      | 데이터 타입 | 제약 조건        |
-      |------------|------------|----------------|
+  |------------|------------|----------------|
   | manager_id | uuid       | PK, NOT NULL   |
   | user_id    | bigint     | NOT NULL       |
   | company_id | uuid       | NOT NULL       |
@@ -387,7 +387,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_ai_prompt`
 
   | 컬럼명            | 데이터 타입  | 제약 조건      |
-      |------------------|--------------|----------------|
+  |------------------|--------------|----------------|
   | ai_prompt_id     | uuid         | PK, NOT NULL   |
   | request_content  | text         | NOT NULL       |
   | status           | varchar(255) | NOT NULL       |
@@ -403,7 +403,7 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 - `p_slack_message`
 
   | 컬럼명          | 데이터 타입  | 제약 조건      |
-      |----------------|--------------|----------------|
+  |----------------|--------------|----------------|
   | slack_message_id | uuid         | PK, NOT NULL   |
   | content          | text         | NOT NULL       |
   | receiver_email   | varchar(255) | NOT NULL       |
